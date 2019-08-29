@@ -1,4 +1,4 @@
-Installing Percona Toolkit
+Installing MariaDB Toolkit
 ==========================
 
 System Requirements
@@ -15,7 +15,7 @@ Tools that connect to MySQL require:
    * Perl modules DBI and DBD::mysql
    * MySQL 5.0 or newer
 
-Percona Toolkit is only tested on UNIX systems, primarily Debian and
+MariaDB Toolkit is only tested on UNIX systems, primarily Debian and
 Red Hat derivatives; other operating systems are not supported.
 
 Tools that connect to MySQL may work with MySQL v4.1, but this is not
@@ -34,8 +34,8 @@ Detailed Install
 
 Extract the tarball and cd to the resulting directory:
 
-   tar zxvf percona-toolkit-<version>.tar.gz
-   cd percona-toolkit-<version>
+   tar zxvf mariadb-toolkit-<version>.tar.gz
+   cd mariadb-toolkit-<version>
 
 Generate the Makefile, which will check Perl module dependencies and
 so forth:
