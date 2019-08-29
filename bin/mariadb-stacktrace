@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
+
+TOOL="mariadb-stacktrace"
 
 # ###########################################################################
 # log_warn_die package
@@ -10,7 +12,6 @@
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/log_warn_die.sh
 #   t/lib/bash/log_warn_die.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -58,7 +59,6 @@ _d () {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/tmpdir.sh
 #   t/lib/bash/tmpdir.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -99,7 +99,6 @@ rm_tmpdir() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/parse_options.sh
 #   t/lib/bash/parse_options.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -244,9 +243,9 @@ parse_options() {
          _parse_config_files "$user_config_file"
       done
    else
-      _parse_config_files "/etc/percona-toolkit/percona-toolkit.conf" "/etc/percona-toolkit/$TOOL.conf"
+      _parse_config_files "/etc/mariadb/mariadb-tools.conf" "/etc/mariadb/$TOOL.conf"
       if [ "${HOME:-}" ]; then
-         _parse_config_files "$HOME/.percona-toolkit.conf" "$HOME/.$TOOL.conf"
+         _parse_config_files "$HOME/.mariadb-tools.conf" "$HOME/.$TOOL.conf"
       fi
    fi
 
@@ -445,7 +444,6 @@ _parse_command_line() {
          else
             spec=$(grep "^short form:-$opt\$" "$PT_TMPDIR"/po/* | cut -d ':' -f 1)
             if [ -z "$spec"  ]; then
-               option_error "Unknown option: $real_opt"
                continue
             fi
          fi
@@ -507,7 +505,6 @@ size_to_bytes() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/alt_cmds.sh
 #   t/lib/bash/alt_cmds.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -548,105 +545,158 @@ _which() {
 # End alt_cmds package
 # ###########################################################################
 
-TOOL="pt-mext"
+set +u
 
-# Parse command line options.
-mk_tmpdir
-parse_options "$0" "${@:-""}"
+# Actually does the aggregation.  The arguments are the max number of functions
+# to aggregate, and the files to read.  If maxlen=0, it means infinity.  We have
+# to pass the maxlen argument into this function to make maxlen testable.
+aggregate_stacktrace() {
+   local maxlen=$1;
+   shift
+   awk "
+      BEGIN {
+         s = \"\";
+      }
+      /^Thread/ {
+         if ( s != \"\" ) {
+            print s;
+         }
+         s = \"\";
+         c = 0;
+      }
+      /^\#/ {
+         if ( \$2 ~ /0x/ ) {
+            if ( \$4 ~/void|const/ ) {
+               targ = \$5;
+            }
+            else {
+               targ = \$4;
+               tfile= \$NF;
+            }
+            if ( targ ~ /[<\\(]/ ) {
+               targ = substr(\$0, index(\$0, \" in \") + 4);
+               if ( targ ~ / from / ) {
+                  targ = substr(targ, 1, index(targ, \" from \") - 1);
+               }
+               if ( targ ~ / at / ) {
+                  targ = substr(targ, 1, index(targ, \" at \") - 1);
+               }
+               # Shorten C++ templates, e.g. in t/samples/stacktrace-004.txt
+               while ( targ ~ />::/ ) {
+                  if ( 0 == gsub(/<[^<>]*>/, \"\", targ) ) {
+                     break;
+                  }
+               }
+               # Further shorten argument lists.
+               while ( targ ~ /\\(/ ) {
+                  if ( 0 == gsub(/\\([^()]*\\)/, \"\", targ) ) {
+                     break;
+                  }
+               }
+               # Remove void and const decorators.
+               gsub(/ ?(void|const) ?/, \"\", targ);
+               gsub(/ /, \"\", targ);
+            }
+            else if ( targ ~ /\\?\\?/ && \$2 ~ /[1-9]/ ) {
+               # Substitute ?? by the name of the library.
+               targ = \$NF;
+               while ( targ ~ /\\// ) {
+                  targ = substr(targ, index(targ, \"/\") + 1);
+               }
+               targ = substr(targ, 1, index(targ, \".\") - 1);
+               targ = targ \"::??\";
+            }
+         }
+         else {
+            targ = \$2;
+         }
+         # get rid of long symbol names such as 'pthread_cond_wait@@GLIBC_2.3.2'
+         if ( targ ~ /@@/ ) {
+            fname = substr(targ, 1, index(targ, \"@@\") - 1);
+         }
+         else {
+            fname = targ;
+            if ( tfile ~ /^\// ) {
+               last=split(tfile,filen,/\//); 
+               fname = targ \"(\" filen[last] \")\";
+            }
+            else {
+               fname = targ
+            }
+         }
+         if ( ${maxlen:-0} == 0 || c < ${maxlen:-0} ) {
+            if (s != \"\" ) {
+               s = s \",\" fname;
+            }
+            else {
+               s = fname;
+            }
+         }
+         c++;
+      }
+      END {
+         print s
+      }
+   " "$@" | sort | uniq -c | sort -r -n -k 1,1
+}
 
-if [ -z "$OPT_HELP" -a -z "$OPT_VERSION" ]; then
-   if [ -z "$EXT_ARGV" ]; then
-      option_error "No COMMAND was given."
+# The main program to run.
+main() {
+   local output_file="${OPT_SAVE_SAMPLES:-"$PT_TMPDIR/mariadb-tools"}"
+
+   if [ -z "$ARGV" ]; then
+      # There are no files to analyze, so we'll make one.
+      if [ -z "$OPT_PID" ]; then
+         OPT_PID=$(pidof -s "$OPT_BINARY" 2>/dev/null);
+         if [ -z "$OPT_PID" ]; then
+            OPT_PID=$(pgrep -o -x "$OPT_BINARY" 2>/dev/null)
+         fi
+         if [ -z "$OPT_PID" ]; then
+            OPT_PID=$(ps -eaf | grep "$OPT_BINARY" | grep -v grep | awk '{print $2}' | head -n1);
+         fi
+      fi
+      date
+      for x in $(_seq $OPT_ITERATIONS); do
+         gdb -ex "set pagination 0"    \
+             -ex "thread apply all bt" \
+             -batch                    \
+             -p $OPT_PID               \
+             >> "$output_file"
+         date +'TS %N.%s %F %T' >> "$output_file"
+         sleep $OPT_INTERVAL
+      done
    fi
-fi
 
-usage_or_errors "$0"
-po_status=$?
-
-if [ $po_status -ne 0 ]; then
-   [ $OPT_ERRS -gt 0 ] && exit 1
-   exit 0
-fi
-
-FILE="$PT_TMPDIR/mext_temp_file";
-NUM=1;
-
-# Split the output on empty lines and put each into a different file; eliminate
-# lines that don't have "real" content.
-
-$EXT_ARGV | grep -v "| Rsa_public_key *|.*|$" | sed '/| Rsa/, /END PUBLIC KEY-----/d' | grep -v '^ |' | grep -v '+' | grep -v Variable_name | sed 's/|//g' \
-   | while read line; do
-   if [ "$line" = "" ]; then
-      NUM=$(($NUM + 1))
-      echo "" > "$FILE$NUM"
-   fi
-   echo "$line" >> "$FILE$NUM"
-done
-
-SPEC="%-33s %13d"
-AWKS=""
-
-# Count how many files there are and prepare to format the output, but...
-NUM=`ls "$FILE"* | wc -l`;
-
-# ... iterate through files 1..(N-2) because the last file is empty and
-# we join N to N+1 so also don't read the last real file.
-NUM=$((NUM - 2))
-
-# Join each file with the next file, joining on the first field. Build a printf
-# spec and awk spec at the same time.
-for i in `_seq $NUM`; do
-   NEXTFILE=$(($i + 1))
-
-   # Sort each file and eliminate empty lines, so 'join' doesn't complain.
-   sort -s "$FILE$i" | grep . > "$FILE$i.tmp"
-   mv "$FILE$i.tmp" "$FILE$i"
-   sort -s "$FILE${NEXTFILE}" | grep . > "$FILE${NEXTFILE}.tmp"
-   mv "$FILE${NEXTFILE}.tmp" "$FILE${NEXTFILE}"
-
-   # Join the files together.  This gets slow O(n^2) as we add more files, but
-   # this really shouldn't be performance critical.
-   join "$FILE$i" "$FILE${NEXTFILE}" | grep . > "$FILE"
-
-   # Find the max length of the [numeric only] values in the file so we know how
-   # wide to make the columns
-   MAXLEN=`awk '{print $2}' "$FILE${NEXTFILE}" | grep -v '[^0-9]' | awk '{print length($1)}' | sort -rns | head -n1`
-   mv "$FILE" "$FILE${NEXTFILE}"
-   SPEC="$SPEC %${MAXLEN}d";
-
-   # The final file will contain lines like:
-   #
-   #   Bytes_received 100 200 50 300
-   #
-   # For each such line in awk, $1 is the var name and $2 is the first value
-   # of the var, so these are fixed when we build AWKCMD after this loop.
-   # When i=1, we're comparing file1 to file2, and the resulting value becomes
-   # awk $3.  Hence $i + 2=$3 below.  Then incr and repeat for subsequent files.
-   #
-   # With --relative, the $i and awk field numbers are the same, but we print
-   # differences $3-$2, $4-$3, $5-$4 from the input line for awk fields $3, $4,
-   # and $5 respectively.  Here's a table:
-   #
-   #    i  awk  Input line fields
-   #   ==  ===  =================
-   #    1   $3              $3-$2
-   #    2   $4              $4-$3
-   #    3   $5              $5-$4
-   if [ "$OPT_RELATIVE" ]; then
-      AWKS="$AWKS, \$`expr $i + 2` - \$`expr $i + 1`";
+   if [ -z "$ARGV" ]; then
+      aggregate_stacktrace "$OPT_LINES" "$output_file"
    else
-      AWKS="$AWKS, \$$(($i + 2))";
+      aggregate_stacktrace "$OPT_LINES" $ARGV
    fi
-done
+}
 
-# Print output
-AWKCMD="printf(\"$SPEC\n\", \$1, \$2$AWKS);";
-awk "{$AWKCMD}" "$FILE`expr $NUM + 1`"
+# Execute the program if it was not included from another file.  This makes it
+# possible to include without executing, and thus test.
+if    [ "${0##*/}" = "$TOOL" ] \
+   || [ "${0##*/}" = "bash" -a "${_:-""}" = "$0" ]; then
 
-# Remove all temporary files and the tmp dir.
-rm_tmpdir
+   mk_tmpdir
 
-exit 0
+   parse_options "$0" "${@:-""}"
+   if [ -z "$OPT_HELP" -a -z "$OPT_VERSION" ]; then
+      # Validate options
+      :
+   fi
+   usage_or_errors "$0"
+   po_status=$?
+   if [ $po_status -ne 0 ]; then
+      [ $OPT_ERRS -gt 0 ] && exit 1
+      exit 0
+   fi
+
+   main $ARGV
+
+   rm_tmpdir
+fi
 
 # ############################################################################
 # Documentation
@@ -656,33 +706,26 @@ exit 0
 
 =head1 NAME
 
-pt-mext - Look at many samples of MySQL C<SHOW GLOBAL STATUS> side-by-side.
+mariadb-stacktrace - Aggregate GDB stack traces for a selected program.
 
 =head1 SYNOPSIS
 
-Usage: pt-mext [OPTIONS] -- COMMAND
+Usage: mariadb-stacktrace [OPTIONS] [FILES]
 
-pt-mext columnizes repeated output from a program like mysqladmin extended.
-
-Get output from C<mysqladmin>:
-
-   pt-mext -r -- mysqladmin ext -i10 -c3
-
-Get output from a file:
-
-   pt-mext -r -- cat mysqladmin-output.txt
+mariadb-stacktrace is a poor man's profiler, inspired by L<http://poormansprofiler.org>.
+It can create and summarize full stack traces of processes on Linux.
+Summaries of stack traces can be an invaluable tool for diagnosing what
+a process is waiting for.
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+mariadb-stacktrace is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
 =over
 
 =item * Read the tool's documentation
-
-=item * Review the tool's known L<"BUGS">
 
 =item * Test the tool on a non-production server
 
@@ -692,27 +735,68 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-mext executes the C<COMMAND> you specify, and reads through the result one
-line at a time.  It places each line into a temporary file.  When it finds a
-blank line, it assumes that a new sample of SHOW GLOBAL STATUS is starting,
-and it creates a new temporary file.  At the end of this process, it has a
-number of temporary files.  It joins the temporary files together side-by-side
-and prints the result.  If L<"--relative"> option is given, it first subtracts
-each sample from the one after it before printing results.
+mariadb-stacktrace performs two tasks: it gets a stack trace, and it summarizes the stack
+trace.  If a file is given on the command line, the tool skips the first step
+and just aggregates the file.
+
+To summarize the stack trace, the tool extracts the function name (symbol)
+from each level of the stack, and combines them with commas.  It does this
+for each thread in the output.  Afterwards, it sorts similar threads together
+and counts how many of each one there are, then sorts them most-frequent first.
+
+mariadb-stacktrace is a read-only tool.  However, collecting GDB stacktraces is achieved by
+attaching GDB to the program and printing stack traces from all threads. This
+will freeze the program for some period of time, ranging from a second or so to
+much longer on very busy systems with a lot of memory and many threads in the
+program.  In the tool's default usage as a MariaDB profiling tool, this means that
+MariaDB will be unresponsive while the tool runs, although if you are using the
+tool to diagnose an unresponsive server, there is really no reason not to do
+this.  In addition to freezing the server, there is also some risk of the server
+crashing or performing badly after GDB detaches from it.
 
 =head1 OPTIONS
 
 =over
 
+=item --binary
+
+short form: -b; type: string; default: mysqld
+
+Which binary to trace.
+
 =item --help
 
 Show help and exit.
 
-=item --relative
+=item --interval
 
-short form: -r
+short form: -s; type: int; default: 0
 
-Subtract each column from the previous column.
+Number of seconds to sleep between L<"--iterations">.
+
+=item --iterations
+
+short form: -i; type: int; default: 1
+
+How many traces to gather and aggregate.
+
+=item --lines
+
+short form: -l; type: int; default: 0
+
+Aggregate only first specified number of many functions; 0=infinity.
+
+=item --pid
+
+short form: -p; type: int
+
+Process ID of the process to trace; overrides L<"--binary">.
+
+=item --save-samples
+
+short form: -k; type: string
+
+Keep the raw traces in this file after aggregation.
 
 =item --version
 
@@ -726,67 +810,25 @@ This tool does not use any environment variables.
 
 =head1 SYSTEM REQUIREMENTS
 
-This tool requires the Bourne shell (F</bin/sh>) and the seq program.
-
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-mext>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
+This tool requires Bash v3 or newer.  If no backtrace files are given,
+then gdb is also required to create backtraces for the process specified
+on the command line.
 
 =head1 AUTHORS
 
-Baron Schwartz
+Baron Schwartz, based on a script by Domas Mituzas (L<http://poormansprofiler.org/>)
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-pmp in August, 2019. Percona Toolkit was forked from two
 projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates,
-2010 Baron Schwartz.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -804,7 +846,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-mext 3.0.13
+mariadb-stacktrace 3.0.13
 
 =cut
 

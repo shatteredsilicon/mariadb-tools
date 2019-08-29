@@ -530,7 +530,7 @@ print_help() {
       *  View all the files in less
       d  Invoke 'diskstats' on the disk performance data
       i  View the first INNODB STATUS sample in 'less'
-      m  Invoke 'pt-mext' to show the SHOW STATUS counters side by side
+      m  Invoke 'mariadb-status-diff' to show the SHOW STATUS counters side by side
       n  Summarize the 'netstat -antp' status data
                   --- NAVIGATION ---
       j  Select the next timestamp
@@ -566,20 +566,21 @@ main() {
 
    # If the programs we need don't exist, try to get them.
    # Percona Toolkit tools:
-   for prog in pt-diskstats pt-pmp pt-mext pt-align; do
-      # A var can't be named "PR_pt-pmp" so we chop of "pt-" to get
-      # the program's basename, resulting in "PR_pmp".
-      prog_base=${prog#"pt-"}
+   for prog in mariadb-iostat mariadb-stacktrace mariadb-status-diff mariadb-align-output; do
+      # A var can't be named "PR_mariadb-stacktrace" so we chop off "mariadb-" to get
+      # the program's basename, resulting in "PR_stacktrace".
+      prog_base=${prog#"mariadb-"}
+      prog_base=${prog_base//-}
       if which "$prog" >/dev/null 2>&1 ; then
          eval "PR_$prog_base"="$(which "$prog")"
       elif [ -f "$prog" -a -x "$prog" ]; then
          eval "PR_$prog_base"="./$prog"
       elif [ -f "${BASEDIR}/$prog" -a -x "${BASEDIR}/$prog" ]; then
          eval "PR_$prog_base"="${BASEDIR}/$prog"
-      elif which "curl" >/dev/null 2>&1; then
-         echo "Fetching $prog" >&2
-         curl -L "https://www.percona.com/get/$prog" > "$prog" && chmod +x "$prog"
-         eval "PR_$prog_base"="./$prog"
+      # elif which "curl" >/dev/null 2>&1; then
+      #    echo "Fetching $prog" >&2
+      #    curl -L "https://www.percona.com/get/$prog" > "$prog" && chmod +x "$prog"
+      #    eval "PR_$prog_base"="./$prog"
       else
          echo "Cannot find or fetch required program: $prog" >&2
          exit 1
@@ -648,7 +649,7 @@ main() {
             echo "--diskstats--"
             if [ -f "${BASEDIR}/${PREFIX}-diskstats" ]; then
 
-               $PR_diskstats --group-by disk "${BASEDIR}/${PREFIX}-diskstats" \
+               $PR_iostat --group-by disk "${BASEDIR}/${PREFIX}-diskstats" \
                   | awk '
                      /ts/ { header = $0 }
                      /[0-9]/ {
@@ -664,7 +665,7 @@ main() {
                      }'
 
                # Find out which device was the busiest.
-               mdev="$($PR_diskstats --group-by disk "${BASEDIR}/${PREFIX}-diskstats" \
+               mdev="$($PR_iostat --group-by disk "${BASEDIR}/${PREFIX}-diskstats" \
                   | awk '
                      /[0-9]/ {
                         io  = $3 + $9;
@@ -679,7 +680,7 @@ main() {
 
                # Print the busy% for that device, rounded to the nearest N%, with
                # "." as a marker for a repeated value.
-               $PR_diskstats --group-by sample "${BASEDIR}/${PREFIX}-diskstats" \
+               $PR_iostat --group-by sample "${BASEDIR}/${PREFIX}-diskstats" \
                   | awk "
                      BEGIN {
                         fuzz = 5;
@@ -703,7 +704,7 @@ main() {
 
             echo "--vmstat--"
             if [ -f "${BASEDIR}/${PREFIX}-vmstat" ]; then
-               tail -n 3 "${BASEDIR}/${PREFIX}-vmstat-overall" | $PR_align
+               tail -n 3 "${BASEDIR}/${PREFIX}-vmstat-overall" | $PR_alignoutput
 
                # Figure out which column is 'wa' and print this, similar to the
                # busy% for disks above.
@@ -864,7 +865,7 @@ main() {
 
             echo "--stack traces--"
             if [ -e "${BASEDIR}/${PREFIX}-stacktrace" ]; then
-               $PR_pmp -l 5 "${BASEDIR}/${PREFIX}-stacktrace" | head -n 5
+               $PR_stacktrace -l 5 "${BASEDIR}/${PREFIX}-stacktrace" | head -n 5
             else
                echo "    No stack trace file exists"
             fi
@@ -898,8 +899,8 @@ main() {
             ;;
 
          DISKSTATS)
-            echo "Starting $PR_diskstats"
-            $PR_diskstats "${BASEDIR}/${PREFIX}-diskstats"
+            echo "Starting $PR_iostat"
+            $PR_iostat "${BASEDIR}/${PREFIX}-diskstats"
             echo "Press a key to continue or choose a different action"
             ;;
 
@@ -909,12 +910,12 @@ main() {
             echo "Press a key to continue or choose a different action"
             ;;
 
-         MEXT)
+         STATUSDIFF)
             echo "Displaying the first 4 samples of SHOW STATUS counters"
             # Grab the first 4 samples by looking for blank lines.
-            # I'll rewrite pt-mext and this will be simpler in future.
-            # TODO: upgrade, if pt-mext is fixed :)
-            awk '/---/{if(i++>12){exit}}{print}' "${BASEDIR}/${PREFIX}-mysqladmin" | $PR_mext -r -- cat - | less -S
+            # I'll rewrite mariadb-status-diff and this will be simpler in future.
+            # TODO: upgrade, if mariadb-status-diff is fixed :)
+            awk '/---/{if(i++>12){exit}}{print}' "${BASEDIR}/${PREFIX}-mysqladmin" | $PR_statusdiff -r -- cat - | less -S
             echo "Press a key to continue or choose a different action"
             ;;
 
@@ -998,7 +999,7 @@ main() {
             ACTION="INNODB"
             ;;
          m)
-            ACTION="MEXT"
+            ACTION="STATUSDIFF"
             ;;
          n)
             ACTION="NETWORK"
@@ -1085,7 +1086,7 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-mariadb-stat-browser downloads other tools that it might need, such as L<pt-diskstats>,
+mariadb-stat-browser downloads other tools that it might need, such as L<mariadb-iostat>,
 and then makes a list of the unique timestamp prefixes of all the files in
 the directory, as written by the L<mariadb-stat> tool.  If the user specified
 a timestamp on the command line, then it begins with that sample of data;
@@ -1098,7 +1099,7 @@ you can use are as follows:
 
 =item * d
 
-Sets the action to start the L<pt-diskstats> tool on the sample's disk
+Sets the action to start the L<mariadb-iostat> tool on the sample's disk
 performance statistics.
 
 =item * i
@@ -1108,7 +1109,7 @@ Sets the action to view the first INNODB STATUS sample in less.
 =item * m
 
 Displays the first 4 samples of SHOW STATUS counters side by side with the
-L<pt-mext> tool.
+L<mariadb-status-diff> tool.
 
 =item * n
 
@@ -1162,69 +1163,25 @@ This tool does not use any environment variables.
 
 =head1 SYSTEM REQUIREMENTS
 
-This tool requires Bash v3 and the following programs: pt-diskstats, pt-pmp,
-pt-mext, and pt-align.  If these programs are not in your PATH,
+This tool requires Bash v3 and the following programs: mariadb-iostat, mariadb-stacktrace,
+mariadb-status-diff, and mariadb-align-output.  If these programs are not in your PATH,
 they will be fetched from the Internet if curl is available.
-
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/mariadb-stat-browser>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
 
 =head1 AUTHORS
 
 Baron Schwartz
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-stalk in August, 2019. Percona Toolkit was forked from two
 projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates,
-2010-2011 Baron Schwartz.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF

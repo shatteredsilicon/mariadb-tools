@@ -5,9 +5,13 @@ INSTALL
 Makefile.PL
 MANIFEST
 README.md
-bin/mariadb-schema-change
+bin/mariadb-align-output
+bin/mariadb-iostat
 bin/mariadb-query-digest
+bin/mariadb-schema-change
+bin/mariadb-stacktrace
 bin/mariadb-stat-browser
 bin/mariadb-stat
+bin/mariadb-status-diff
 bin/mariadb-summary
 docs/mariadb-tools.pod

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -23,7 +23,6 @@ BEGIN {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/OptionParser.pm
 #   t/lib/OptionParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package OptionParser;
@@ -85,9 +84,9 @@ sub new {
       defaults_to       => {},  # rule: opt defaults to value of other opt
       DSNParser         => undef,
       default_files     => [
-         "/etc/percona-toolkit/percona-toolkit.conf",
-         "/etc/percona-toolkit/$program_name.conf",
-         "$home/.percona-toolkit.conf",
+         "/etc/mariadb/mariadb-tools.conf",
+         "/etc/mariadb/$program_name.conf",
+         "$home/.mariadb-tools.conf",
          "$home/.$program_name.conf",
       ],
       types             => {
@@ -1203,13 +1202,13 @@ if ( !caller ) { exit main(@ARGV); }
 
 =head1 NAME
 
-pt-align - Align output from other tools to columns.
+mariadb-align-output - Align output from other tools to columns.
 
 =head1 SYNOPSIS
 
-Usage: pt-align [FILES]
+Usage: mariadb-align-output [FILES]
 
-pt-align aligns output from other tools to columns.  If no FILES are specified,
+mariadb-align-output aligns output from other tools to columns.  If no FILES are specified,
 STDIN is read.
 
 If a tool prints the following output,
@@ -1219,7 +1218,7 @@ If a tool prints the following output,
    long_db_name table  1
    another  long_name 500
 
-then pt-align reprints the output as,
+then mariadb-align-output reprints the output as,
 
    DATABASE     TABLE     ROWS
    foo          bar        100
@@ -1228,7 +1227,7 @@ then pt-align reprints the output as,
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+mariadb-align-output is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -1246,7 +1245,7 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-align reads lines and splits them into words.  It counts how many
+mariadb-align-output reads lines and splits them into words.  It counts how many
 words each line has, and if there is one number that predominates, it assumes
 this is the number of words in each line.  Then it discards all lines that
 don't have that many words, and looks at the 2nd line that does.  It assumes
@@ -1283,65 +1282,21 @@ This tool does not use any environment variables.
 You need Perl, and some core packages that ought to be installed in any
 reasonably new version of Perl.
 
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-align>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
-
 =head1 AUTHORS
 
 Baron Schwartz, Brian Fraser, and Daniel Nichter
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-align in August, 2019. Percona Toolkit was forked from two
 projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates,
-2010-2011 Baron Schwartz.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -1359,6 +1314,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-align 3.0.13
+mariadb-align-output 3.0.13
 
 =cut
