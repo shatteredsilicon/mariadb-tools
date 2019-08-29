@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -10,7 +10,6 @@
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/log_warn_die.sh
 #   t/lib/bash/log_warn_die.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -58,7 +57,6 @@ _d () {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/tmpdir.sh
 #   t/lib/bash/tmpdir.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -99,7 +97,6 @@ rm_tmpdir() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/parse_options.sh
 #   t/lib/bash/parse_options.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -244,9 +241,9 @@ parse_options() {
          _parse_config_files "$user_config_file"
       done
    else
-      _parse_config_files "/etc/percona-toolkit/percona-toolkit.conf" "/etc/percona-toolkit/$TOOL.conf"
+      _parse_config_files "/etc/mariadb/mariadb-tools.conf" "/etc/mariadb/$TOOL.conf"
       if [ "${HOME:-}" ]; then
-         _parse_config_files "$HOME/.percona-toolkit.conf" "$HOME/.$TOOL.conf"
+         _parse_config_files "$HOME/.mariadb-tools.conf" "$HOME/.$TOOL.conf"
       fi
    fi
 
@@ -505,9 +502,9 @@ size_to_bytes() {
 # Global variables
 # ###########################################################################
 
-TOOL="pt-sift"
-if [ -d "/var/lib/pt-stalk" ]; then
-   BASEDIR="/var/lib/pt-stalk"
+TOOL="mariadb-stat-browser"
+if [ -d "/var/lib/mariadb-stat" ]; then
+   BASEDIR="/var/lib/mariadb-stat"
 else
    BASEDIR="$PWD"
 fi
@@ -561,8 +558,8 @@ main() {
          BASEDIR="$(dirname "$1")"
          PREFIX="$(echo "$1" | perl -ne '$_ =~ m/([\d_]+)/; print $1;')"
       else
-         echo "Error: $1 is not a directory, and there are no pt-stalk files in the curent working directory ($BASEDIR) with a $1 prefix." >&2
-         echo "For more information, 'man pt-sift' or 'perldoc $0'." >&2
+         echo "Error: $1 is not a directory, and there are no mariadb-stat files in the curent working directory ($BASEDIR) with a $1 prefix." >&2
+         echo "For more information, 'man mariadb-stat-browser' or 'perldoc $0'." >&2
          exit 1
       fi
    fi
@@ -593,23 +590,23 @@ main() {
    # there is no PREFIX yet.  NOTE: we rely on the "-output" files here.
    (
       cd "$BASEDIR"
-      ls *-output 2>/dev/null | cut -d- -f1 | sort > "$PT_TMPDIR/pt-sift.prefixes" 
+      ls *-output 2>/dev/null | cut -d- -f1 | sort > "$PT_TMPDIR/mariadb-stat-browser.prefixes" 
    )
-   if [ ! -s "$PT_TMPDIR/pt-sift.prefixes" ]; then
-      echo "Error: There are no pt-stalk files in $BASEDIR" >&2
-      echo "For more information, 'man pt-sift' or 'perldoc $0'." >&2
+   if [ ! -s "$PT_TMPDIR/mariadb-stat-browser.prefixes" ]; then
+      echo "Error: There are no mariadb-stat files in $BASEDIR" >&2
+      echo "For more information, 'man mariadb-stat-browser' or 'perldoc $0'." >&2
       exit 1
    fi
    if [ -z "${PREFIX}" ]; then
-      if [ "$(grep -c . $PT_TMPDIR/pt-sift.prefixes)" = "1" ]; then
+      if [ "$(grep -c . $PT_TMPDIR/mariadb-stat-browser.prefixes)" = "1" ]; then
          # If there is only one sample, we use it as the prefix.
-         PREFIX="$(cat $PT_TMPDIR/pt-sift.prefixes)"
+         PREFIX="$(cat $PT_TMPDIR/mariadb-stat-browser.prefixes)"
       fi
    fi
    if [ -z "${PREFIX}" ]; then
       echo
       i=0
-      cat $PT_TMPDIR/pt-sift.prefixes | while read line; do
+      cat $PT_TMPDIR/mariadb-stat-browser.prefixes | while read line; do
          i=$(($i + 1))
          echo -n "  $line"
          if [ $i -eq 3 ]; then
@@ -619,14 +616,14 @@ main() {
       done
       # We might have ended mid-line or we might have printed a newline; print a
       # newline if required to end the list of timestamp prefixes.
-      awk 'BEGIN { i = 0 } { i++ } END { if ( i % 3 != 0 ) { print "" } }' $PT_TMPDIR/pt-sift.prefixes
+      awk 'BEGIN { i = 0 } { i++ } END { if ( i % 3 != 0 ) { print "" } }' $PT_TMPDIR/mariadb-stat-browser.prefixes
       echo
-      while [ -z "${PREFIX}" -o "$(grep -c "${PREFIX}" $PT_TMPDIR/pt-sift.prefixes)" -ne 1 ]; do
-         DEFAULT="$(tail -1 $PT_TMPDIR/pt-sift.prefixes)"
+      while [ -z "${PREFIX}" -o "$(grep -c "${PREFIX}" $PT_TMPDIR/mariadb-stat-browser.prefixes)" -ne 1 ]; do
+         DEFAULT="$(tail -1 $PT_TMPDIR/mariadb-stat-browser.prefixes)"
          read -e -p "Select a timestamp from the list [${DEFAULT}] " ARG
          ARG="${ARG:-${DEFAULT}}"
-         if [ "$(grep -c "${ARG}" $PT_TMPDIR/pt-sift.prefixes)" -eq 1 ]; then
-            PREFIX="$(grep "${ARG}" $PT_TMPDIR/pt-sift.prefixes)"
+         if [ "$(grep -c "${ARG}" $PT_TMPDIR/mariadb-stat-browser.prefixes)" -eq 1 ]; then
+            PREFIX="$(grep "${ARG}" $PT_TMPDIR/mariadb-stat-browser.prefixes)"
          fi
       done
    fi
@@ -638,7 +635,7 @@ main() {
       if [ "${ACTION}" != "INVALID" ]; then
          # Print the current host, timestamp and action.  Figure out if we're at
          # the first or last sample, to make it easy to navigate.
-         PAGE="$(awk "/./{i++} /${PREFIX}/{c=i} END{print c, \"of\", i}" $PT_TMPDIR/pt-sift.prefixes)"
+         PAGE="$(awk "/./{i++} /${PREFIX}/{c=i} END{print c, \"of\", i}" $PT_TMPDIR/mariadb-stat-browser.prefixes)"
          HOST="$(cat "${BASEDIR}/${PREFIX}-hostname" 2>/dev/null)"
          echo -e "======== ${HOST:-unknown} at \033[34m${PREFIX} \033[31m${ACTION}\033[0m (${PAGE}) ========"
       fi
@@ -853,7 +850,7 @@ main() {
                   if ( $1 ~ regex ) {
                      print $2;
                   }
-                  # Newer versions of pt-stalk gather several samples. We will
+                  # Newer versions of mariadb-stat gather several samples. We will
                   # analyze only the first sample.
                   if ( $0 ~ /^TS/ ) {
                      ts++;
@@ -983,7 +980,7 @@ main() {
                   if ( printed == 0 ) {
                      print \"${PREFIX}\";
                   }
-               }" $PT_TMPDIR/pt-sift.prefixes)"
+               }" $PT_TMPDIR/mariadb-stat-browser.prefixes)"
             ;;
          1)
             ACTION="DEFAULT"
@@ -1054,19 +1051,19 @@ fi
 
 =head1 NAME
 
-pt-sift - Browses files created by pt-stalk.
+mariadb-stat-browser - Browses files created by mariadb-stat.
 
 =head1 SYNOPSIS
 
-Usage: pt-sift FILE|PREFIX|DIRECTORY
+Usage: mariadb-stat-browser FILE|PREFIX|DIRECTORY
 
-pt-sift browses files created by L<pt-stalk>.  If no options are given,
-the tool browses all pt-stalk files in C</var/lib/pt-stalk> if that directory
+mariadb-stat-browser browses files created by L<mariadb-stat>.  If no options are given,
+the tool browses all mariadb-stat files in C</var/lib/mariadb-stat> if that directory
 exists, else the current working directory is used.  If a FILE is given,
 the tool browses files with the same prefix in the given file's directory.
-If a PREFIX is given, the tool browses files in C</var/lib/pt-stalk>
+If a PREFIX is given, the tool browses files in C</var/lib/mariadb-stat>
 (or the current working directory) with the same prefix.  If a DIRECTORY
-is given, the tool browses all pt-stalk files in it.
+is given, the tool browses all mariadb-stat files in it.
 
 =head1 RISKS
 
@@ -1088,9 +1085,9 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-sift downloads other tools that it might need, such as L<pt-diskstats>,
+mariadb-stat-browser downloads other tools that it might need, such as L<pt-diskstats>,
 and then makes a list of the unique timestamp prefixes of all the files in
-the directory, as written by the L<pt-stalk> tool.  If the user specified
+the directory, as written by the L<mariadb-stat> tool.  If the user specified
 a timestamp on the command line, then it begins with that sample of data;
 otherwise it begins by showing a list of the timestamps and prompting for
 a selection.  Thereafter, it displays a summary of the selected sample, and
@@ -1171,7 +1168,7 @@ they will be fetched from the Internet if curl is available.
 
 =head1 BUGS
 
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-sift>.
+For a list of known bugs, see L<http://www.percona.com/bugs/mariadb-stat-browser>.
 
 Please report bugs at L<https://jira.percona.com/projects/PT>.
 Include the following information in your bug report:
@@ -1245,7 +1242,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-sift 3.0.13
+mariadb-stat-browser 3.0.13
 
 =cut
 

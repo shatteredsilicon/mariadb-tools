@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -12,7 +12,6 @@ set -u
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/log_warn_die.sh
 #   t/lib/bash/log_warn_die.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -60,7 +59,6 @@ _d () {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/subshell.sh
 #   t/lib/bash/subshell.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -112,7 +110,6 @@ kill_all_subshells() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/parse_options.sh
 #   t/lib/bash/parse_options.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -128,7 +125,7 @@ OPT_ERRS=0        # How many command line option errors
 OPT_VERSION=""    # If --version was specified
 OPT_HELP=""       # If --help was specified
 OPT_ASK_PASS=""   # If --ask-pass was specified
-OPT_MYSQL_ONLY="" # If --mysql-only was specified
+OPT_MARIADB_ONLY="" # If --mariadb-only was specified
 PO_DIR=""         # Directory with program option spec files
 
 usage() {
@@ -258,9 +255,9 @@ parse_options() {
          _parse_config_files "$user_config_file"
       done
    else
-      _parse_config_files "/etc/percona-toolkit/percona-toolkit.conf" "/etc/percona-toolkit/$TOOL.conf"
+      _parse_config_files "/etc/mariadb/mariadb-tools.conf" "/etc/mariadb/$TOOL.conf"
       if [ "${HOME:-}" ]; then
-         _parse_config_files "$HOME/.percona-toolkit.conf" "$HOME/.$TOOL.conf"
+         _parse_config_files "$HOME/.mariadb-tools.conf" "$HOME/.$TOOL.conf"
       fi
    fi
 
@@ -521,7 +518,6 @@ size_to_bytes() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/mysql_options.sh
 #   t/lib/bash/mysql_options.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -576,7 +572,6 @@ arrange_mysql_options() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/tmpdir.sh
 #   t/lib/bash/tmpdir.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -617,7 +612,6 @@ rm_tmpdir() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/alt_cmds.sh
 #   t/lib/bash/alt_cmds.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -664,7 +658,6 @@ _which() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/safeguards.sh
 #   t/lib/bash/safeguards.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -720,7 +713,6 @@ check_disk_space() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/daemon.sh
 #   t/lib/bash/daemon.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -769,7 +761,6 @@ remove_pid_file() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/collect.sh
 #   t/lib/bash/collect.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -797,7 +788,7 @@ collect() {
    local p="$2"  # prefix for each result file
 
    local mysqld_pid=""
-   if [ ! "$OPT_MYSQL_ONLY" ]; then
+   if [ ! "$OPT_MARIADB_ONLY" ]; then
       mysqld_pid=$(_pidof mysqld | awk '{print $1; exit;}')
    fi
 
@@ -828,14 +819,14 @@ collect() {
    fi
 
    local tail_error_log_pid=""
-   if [ "$mysql_error_log" -a ! "$OPT_MYSQL_ONLY" ]; then
-      log "The MySQL error log seems to be $mysql_error_log"
+   if [ "$mysql_error_log" -a ! "$OPT_MARIADB_ONLY" ]; then
+      log "The MariaDB error log seems to be $mysql_error_log"
       tail -f "$mysql_error_log" >"$d/$p-log_error" &
       tail_error_log_pid=$!
 
       $CMD_MYSQLADMIN $EXT_ARGV
    else
-      log "Could not find the MySQL error log"
+      log "Could not find the MariaDB error log"
    fi 
    if [ "${mysql_version}" '>' "5.1" ]; then
       local mutex="SHOW ENGINE INNODB MUTEX"
@@ -869,7 +860,7 @@ collect() {
       local strace_pid=$!
    fi
 
-   if [ ! "$OPT_MYSQL_ONLY" ]; then 
+   if [ ! "$OPT_MARIADB_ONLY" ]; then 
       ps -eaF  >> "$d/$p-ps"  &
       top -bn${OPT_RUN_TIME} >> "$d/$p-top" &
 
@@ -921,7 +912,7 @@ collect() {
    fi
 
    while [ $((curr_time - start_time)) -lt $OPT_RUN_TIME ]; do
-      if [ ! "$OPT_MYSQL_ONLY" ]; then
+      if [ ! "$OPT_MARIADB_ONLY" ]; then
          disk_space $d > $d/$p-disk-space
          check_disk_space          \
             $d/$p-disk-space       \
@@ -1212,7 +1203,7 @@ collect_mysql_variables() {
 TRIGGER_FUNCTION=""
 RAN_WITH=""
 EXIT_REASON=""
-TOOL="pt-stalk"
+TOOL="mariadb-stat"
 OKTORUN=1
 ITER=1
 
@@ -1414,7 +1405,7 @@ stalk() {
          local value=$($TRIGGER_FUNCTION $OPT_VARIABLE)
          local trg_exit_status=$?
          if [ -z "$value" ]; then
-            # No value.  Maybe we failed to connect to MySQL?
+            # No value.  Maybe we failed to connect to MariaDB?
             warn "Detected value is empty; something failed?  Trigger exit status: $trg_exit_status"
             matched=""
             cycles_true=0
@@ -1446,7 +1437,7 @@ stalk() {
          # Start collecting, maybe.
          # ##################################################################
          log "Collect $ITER triggered"
-         log "MYSQL_ONLY: $OPT_MYSQL_ONLY"
+         log "MARIADB_ONLY: $OPT_MARIADB_ONLY"
 
          # Send email to whomever that collect has been triggered.
          if [ "$OPT_NOTIFY_BY_EMAIL" ]; then
@@ -1472,7 +1463,7 @@ stalk() {
             if [ $? -eq 0 ]; then
                # There should be enough disk space, so collect.
                ts "$msg"                        >> "$OPT_DEST/$prefix-trigger"
-               ts "pt-stalk ran with $RAN_WITH" >> "$OPT_DEST/$prefix-trigger"
+               ts "mariadb-stat ran with $RAN_WITH" >> "$OPT_DEST/$prefix-trigger"
                last_prefix="$prefix"
 
                # Plugin hook:
@@ -1618,7 +1609,7 @@ if    [ "${0##*/}" = "$TOOL" ] \
    # if ASK-PASS , request password on terminal without echoing. This will override --password
    if [ -n "$OPT_ASK_PASS" ]; then 
       stty_orig=`stty -g`           # save original terminal setting.
-      echo -n "Enter MySQL password: ";
+      echo -n "Enter MariaDB password: ";
       stty -echo                    # turn-off echoing.
       read OPT_PASSWORD             # read the password
       stty $stty_orig               # restore terminal setting.
@@ -1637,9 +1628,9 @@ if    [ "${0##*/}" = "$TOOL" ] \
       || die "Cannot execute mysqladmin.  Check that it is in PATH."
 
    # Now that we have the cmd line opts, check that we can actually
-   # connect to MySQL.
+   # connect to MariaDB.
    [ -n "$(mysql $EXT_ARGV -e 'SELECT 1')" ] \
-      || die "Cannot connect to MySQL.  Check that MySQL is running and that the options after -- are correct."
+      || die "Cannot connect to MariaDB.  Check that MariaDB is running and that the options after -- are correct."
 
    # Check existence and access to the --dest dir if we're collecting.
    if [ "$OPT_COLLECT" ]; then
@@ -1693,13 +1684,13 @@ fi
 
 =head1 NAME
 
-pt-stalk - Collect forensic data about MySQL when problems occur.
+mariadb-stat - Collect forensic data about MariaDB when problems occur.
 
 =head1 SYNOPSIS
 
-Usage: pt-stalk [OPTIONS]
+Usage: mariadb-stat [OPTIONS]
 
-pt-stalk waits for a trigger condition to occur, then collects data
+mariadb-stat waits for a trigger condition to occur, then collects data
 to help diagnose problems.  The tool is designed to run as a daemon with root
 privileges, so that you can diagnose intermittent problems that you cannot
 observe directly.  You can also use it to execute a custom command, or to
@@ -1707,7 +1698,7 @@ collect data on demand without waiting for the trigger to occur.
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+mariadb-stat is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -1726,26 +1717,26 @@ server.  Before using this tool, please:
 =head1 DESCRIPTION
 
 Sometimes a problem happens infrequently and for a short time, giving you no
-chance to see the system when it happens. How do you solve intermittent MySQL
-problems when you can't observe them? That's why pt-stalk exists. In addition to
+chance to see the system when it happens. How do you solve intermittent MariaDB
+problems when you can't observe them? That's why mariadb-stat exists. In addition to
 using it when there's a known problem on your servers, it is a good idea to run
-pt-stalk all the time, even when you think nothing is wrong.  You will
+mariadb-stat all the time, even when you think nothing is wrong.  You will
 appreciate the data it collects when a problem occurs, because problems such as
-MySQL lockups or spikes in activity typically leave no evidence to use in root
+MariaDB lockups or spikes in activity typically leave no evidence to use in root
 cause analysis.
 
-pt-stalk does two things: it watches a MySQL server and waits for a trigger
+mariadb-stat does two things: it watches a MariaDB server and waits for a trigger
 condition to occur, and it collects diagnostic data when that trigger occurs.
 To avoid false-positives caused by short-lived problems, the trigger condition
 must be true at least L<"--cycles"> times before a L<"--collect"> is triggered.
 
-To use pt-stalk effectively, you need to define a good trigger.  A good trigger
+To use mariadb-stat effectively, you need to define a good trigger.  A good trigger
 is sensitive enough to fire reliably when a problem occurs, so that you don't
 miss a chance to solve problems.  On the other hand, a good trigger isn't
 prone to false positives, so you don't gather information when the server
 is functioning normally.
 
-The most reliable triggers for MySQL tend to be the number of connections to the
+The most reliable triggers for MariaDB tend to be the number of connections to the
 server, and the number of queries running concurrently. These are available in
 the SHOW GLOBAL STATUS command as Threads_connected and Threads_running.
 Sometimes Threads_connected is not a reliable indicator of trouble, but
@@ -1758,7 +1749,7 @@ L<"--threshold">, and L<"--cycles"> options.  The default values
 for these options define a reasonable trigger, but you should adjust
 or change them to suite your particular system and needs.
 
-By default, pt-stalk tool watches MySQL forever until the trigger occurs,
+By default, mariadb-stat tool watches MariaDB forever until the trigger occurs,
 then it collects diagnostic data for a while, and sleeps afterwards to avoid
 repeatedly collecting data if the trigger remains true.  The general order of
 operations is:
@@ -1810,7 +1801,7 @@ this tool is designed to avoid.
 
 =head1 CONFIGURING
 
-You can use standard Percona Toolkit configuration files to set command line
+You can use standard MariaDB tool configuration files to set command line
 options.
 
 You will probably want to run the tool as a daemon and customize at least the
@@ -1830,7 +1821,7 @@ fail to start.
 
 =item --ask-pass
 
-Prompt for a password when connecting to MySQL.
+Prompt for a password when connecting to MariaDB.
 
 =item --collect
 
@@ -1843,7 +1834,7 @@ See also L<"--stalk">.
 
 =item --collect-gdb
 
-Collect GDB stacktraces.  This is achieved by attaching to MySQL and printing
+Collect GDB stacktraces.  This is achieved by attaching to MariaDB and printing
 stack traces from all threads. This will freeze the server for some period of
 time, ranging from a second or so to much longer on very busy systems with a lot
 of memory and many threads in the server.  For this reason, it is disabled by
@@ -1872,8 +1863,8 @@ simultaneously.
 =item --collect-tcpdump
 
 Collect tcpdump data. This option causes tcpdump to capture all traffic on all
-interfaces for the port on which MySQL is listening.  You can later use
-pt-query-digest to decode the MySQL protocol and extract a log of query traffic
+interfaces for the port on which MariaDB is listening.  You can later use
+pt-query-digest to decode the MariaDB protocol and extract a log of query traffic
 from it.
 
 =item --config
@@ -1899,12 +1890,12 @@ its output as specified in --log.
 
 short form: -F; type: string
 
-Only read mysql options from the given file.  You must give an absolute
+Only read mariadb options from the given file.  You must give an absolute
 pathname.
 
 =item --dest
 
-type: string; default: /var/lib/pt-stalk
+type: string; default: /var/lib/mariadb-stat
 
 Where to save diagnostic data from L<"--collect">.  Each time the tool
 collects data, it writes to a new set of files, which are named with the
@@ -1990,7 +1981,7 @@ might contain:
 This snippet will count the number of mutex waits inside InnoDB.  It
 illustrates the general principle: the function must output a number, which is
 then compared to L<"--threshold"> as usual.  The C<$EXT_ARGV> variable
-contains the MySQL options mentioned in the L<"SYNOPSIS"> above.
+contains the MariaDB options mentioned in the L<"SYNOPSIS"> above.
 
 The file should not alter the tool's existing global variables.  Prefix any
 file-specific global variables with "PLUGIN_" or make them local.
@@ -2023,7 +2014,7 @@ exit, for example.
 
 =item --log
 
-type: string; default: /var/log/pt-stalk.log
+type: string; default: /var/log/mariadb-stat.log
 
 Print all output to this file when daemonized.
 
@@ -2049,7 +2040,7 @@ If password contains commas they must be escaped with a backslash: "exam\,ple"
 
 =item --pid
 
-type: string; default: /var/run/pt-stalk.pid
+type: string; default: /var/run/mariadb-stat.pid
 
 Create the given PID file.  The tool won't start if the PID file already
 exists and the PID it contains is different than the current PID.  However,
@@ -2094,7 +2085,7 @@ Called after sleeping L<"--interval"> seconds after each trigger check.
 
 =item after_stalk
 
-Called after stalking.  Since pt-stalk stalks forever by default,
+Called after stalking.  Since mariadb-stat stalks forever by default,
 this hook is only called if L<"--iterations"> is specified.
 
 =back
@@ -2125,9 +2116,9 @@ Plugin writers should keep in mind that the file destination prefix currently
 in use should be accessed through the C<$prefix> variable, rather than
 C<$OPT_PREFIX>.
 
-=item --mysql-only
+=item --mariadb-only
 
-Trigger only MySQL related captures, ignoring all others. The only not MySQL related
+Trigger only MariaDB related captures, ignoring all others. The only not MariaDB related
 value being collected is the disk space, because it is needed to calculate the
 available free disk space to write the result files.
 This option is useful for RDS instances.
@@ -2175,7 +2166,7 @@ How long to L<"--collect"> diagnostic data when the trigger occurs.
 The value is in seconds and should not be longer than L<"--sleep">.  It is
 usually not necessary to change this; if the default 30 seconds doesn't
 collect enough data, running longer is not likely to help because the system
-or MySQL server is probably too busy to respond.  In fact, in many cases a
+or MariaDB server is probably too busy to respond.  In fact, in many cases a
 shorter collection period is appropriate.
 
 This value is used two other times.  After collecting, the collect subprocess
@@ -2315,16 +2306,16 @@ Specifically, the variables that can be set are:
 
 For example, during collection iostat is called with a -dx argument, but
 because you have an NFS partition, you also need the -n flag there.  Instead
-of editing the source, you can call pt-stalk as
+of editing the source, you can call mariadb-stat as
 
-    CMD_IOSTAT="iostat -n" pt-stalk ...
+    CMD_IOSTAT="iostat -n" mariadb-stat ...
 
 which will do exactly what you need.  Combined with the plugin hooks, this
 gives you a fine-grained control of what the tool does.
 
 It is possible to enable C<debug> mode in mysqladmin specifying:
 
-C<CMD_MYSQLADMIN='mysqladmin debug' pt-stalk params ...>
+C<CMD_MYSQLADMIN='mysqladmin debug' mariadb-stat params ...>
 
 =head1 SYSTEM REQUIREMENTS
 
@@ -2342,66 +2333,22 @@ This tool requires Bash v3 or newer.  Certain options require other programs:
 
 =back
 
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-stalk>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
-
 =head1 AUTHORS
 
 Baron Schwartz, Justin Swanhart, Fernando Ipar, Daniel Nichter,
 and Brian Fraser
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-stalk in August, 2019. Percona Toolkit was forked from two
 projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates,
-2010-2011 Baron Schwartz.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -2419,7 +2366,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-stalk 3.0.13
+mariadb-stat 3.0.13
 
 =cut
 
