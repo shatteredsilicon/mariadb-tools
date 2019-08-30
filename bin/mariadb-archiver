@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -13,7 +13,7 @@ use warnings FATAL => 'all';
 # documentation for a full list of dependencies.
 BEGIN {
    $INC{$_} = __FILE__ for map { (my $pkg = "$_.pm") =~ s!::!/!g; $pkg } (qw(
-      Percona::Toolkit
+      MariaDB::Tools
       Lmo::Utils
       Lmo::Meta
       Lmo::Object
@@ -30,20 +30,18 @@ BEGIN {
       FlowControlWaiter
       Cxn
       HTTP::Micro
-      VersionCheck
    ));
 }
 
 # ###########################################################################
-# Percona::Toolkit package
+# MariaDB::Tools package
 # This package is a copy without comments from the original.  The original
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Percona/Toolkit.pm
 #   t/lib/Percona/Toolkit.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
-package Percona::Toolkit;
+package MariaDB::Tools;
 
 our $VERSION = '3.0.13';
 
@@ -94,7 +92,7 @@ sub _d {
 1;
 }
 # ###########################################################################
-# End Percona::Toolkit package
+# End MariaDB::Tools package
 # ###########################################################################
 
 # ###########################################################################
@@ -103,7 +101,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Utils.pm
 #   t/lib/Lmo/Utils.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Utils;
@@ -163,7 +160,6 @@ sub _unimport_coderefs {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Meta.pm
 #   t/lib/Lmo/Meta.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Meta;
@@ -220,7 +216,6 @@ sub attributes_for_new {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Object.pm
 #   t/lib/Lmo/Object.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Object;
@@ -316,7 +311,6 @@ sub meta {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Types.pm
 #   t/lib/Lmo/Types.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Types;
@@ -417,7 +411,6 @@ sub _nested_constraints {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo.pm
 #   t/lib/Lmo.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 BEGIN {
@@ -752,7 +745,6 @@ sub override {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/OptionParser.pm
 #   t/lib/OptionParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package OptionParser;
@@ -814,9 +806,9 @@ sub new {
       defaults_to       => {},  # rule: opt defaults to value of other opt
       DSNParser         => undef,
       default_files     => [
-         "/etc/percona-toolkit/percona-toolkit.conf",
-         "/etc/percona-toolkit/$program_name.conf",
-         "$home/.percona-toolkit.conf",
+         "/etc/mariadb/mariadb-tools.conf",
+         "/etc/mariadb/$program_name.conf",
+         "$home/.mariadb-tools.conf",
          "$home/.$program_name.conf",
       ],
       types             => {
@@ -1659,13 +1651,6 @@ sub _read_config_file {
          next LINE;
       }
 
-      if (  $parse
-            && !$self->has('version-check')
-            && $line =~ /version-check/
-      ) {
-         next LINE;
-      }
-
       if ( $parse
          && (my($opt, $arg) = $line =~ m/^\s*([^=\s]+?)(?:\s*=\s*(.*?)\s*)?$/)
       ) {
@@ -1863,7 +1848,6 @@ if ( PTDEBUG ) {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TableParser.pm
 #   t/lib/TableParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TableParser;
@@ -2074,7 +2058,7 @@ sub find_possible_keys {
       my @candidates = split(',', $expl->{possible_keys});
       my %possible   = map { $_ => 1 } @candidates;
       if ( $expl->{key} ) {
-         PTDEBUG && _d('MySQL chose', $expl->{key});
+         PTDEBUG && _d('MariaDB chose', $expl->{key});
          unshift @candidates, grep { $possible{$_} } split(',', $expl->{key});
          PTDEBUG && _d('Before deduping:', join(', ', @candidates));
          my %seen;
@@ -2295,7 +2279,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/DSNParser.pm
 #   t/lib/DSNParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package DSNParser;
@@ -2507,7 +2490,7 @@ sub get_dbh {
    }
 
    if ( !$have_dbi ) {
-      die "Cannot connect to MySQL because the Perl DBI module is not "
+      die "Cannot connect to MariaDB because the Perl DBI module is not "
          . "installed or not found.  Run 'perl -MDBI' to see the directories "
          . "that Perl searches for DBI.  If DBI is not installed, try:\n"
          . "  Debian/Ubuntu  apt-get install libdbi-perl\n"
@@ -2526,7 +2509,7 @@ sub get_dbh {
 
       if ( !$dbh && $EVAL_ERROR ) {
          if ( $EVAL_ERROR =~ m/locate DBD\/mysql/i ) {
-            die "Cannot connect to MySQL because the Perl DBD::mysql module is "
+            die "Cannot connect to MariaDB because the Perl DBD::mysql module is "
                . "not installed or not found.  Run 'perl -MDBD::mysql' to see "
                . "the directories that Perl searches for DBD::mysql.  If "
                . "DBD::mysql is not installed, try:\n"
@@ -2688,7 +2671,7 @@ sub set_vars {
             $msg .= "  The current value for $var is $current_val.  "
                   . "If the variable is read only (not dynamic), specify "
                   . "--set-vars $var=$current_val to avoid this warning, "
-                  . "else manually set the variable and restart MySQL.";
+                  . "else manually set the variable and restart MariaDB.";
          }
          warn $msg . "\n\n";
       }
@@ -2717,7 +2700,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/VersionParser.pm
 #   t/lib/VersionParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package VersionParser;
@@ -2911,7 +2893,6 @@ no Lmo;
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Quoter.pm
 #   t/lib/Quoter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Quoter;
@@ -3062,7 +3043,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TableNibbler.pm
 #   t/lib/TableNibbler.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TableNibbler;
@@ -3324,7 +3304,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Daemon.pm
 #   t/lib/Daemon.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Daemon;
@@ -3526,7 +3505,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/MasterSlave.pm
 #   t/lib/MasterSlave.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package MasterSlave;
@@ -4323,7 +4301,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/FlowControlWaiter.pm
 #   t/lib/FlowControlWaiter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package FlowControlWaiter;
@@ -4374,7 +4351,7 @@ sub wait {
    my $pr_callback;
    if ( $pr ) {
       $pr_callback = sub {
-         print STDERR "Pausing because PXC Flow Control is active\n";
+         print STDERR "Pausing because Galera Flow Control is active\n";
          return;
       };
       $pr->set_callback($pr_callback);
@@ -4427,7 +4404,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Cxn.pm
 #   t/lib/Cxn.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Cxn;
@@ -4491,7 +4467,7 @@ sub connect {
    my $dbh = $self->{dbh};
    if ( !$dbh || !$dbh->ping() ) {
       if ( $self->{ask_pass} && !$self->{asked_for_pass} && !defined $dsn->{p} ) {
-         $dsn->{p} = OptionParser::prompt_noecho("Enter MySQL password: ");
+         $dsn->{p} = OptionParser::prompt_noecho("Enter MariaDB password: ");
          $self->{asked_for_pass} = 1;
       }
       $dbh = $dp->get_dbh(
@@ -4692,7 +4668,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/HTTP/Micro.pm
 #   t/lib/HTTP/Micro.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package HTTP::Micro;
@@ -5340,630 +5315,6 @@ if ( $INC{"IO/Socket/SSL.pm"} ) {
 # ###########################################################################
 
 # ###########################################################################
-# VersionCheck package
-# This package is a copy without comments from the original.  The original
-# with comments and its test file can be found in the Bazaar repository at,
-#   lib/VersionCheck.pm
-#   t/lib/VersionCheck.t
-# See https://launchpad.net/percona-toolkit for more information.
-# ###########################################################################
-{
-package VersionCheck;
-
-
-use strict;
-use warnings FATAL => 'all';
-use English qw(-no_match_vars);
-
-use constant PTDEBUG => $ENV{PTDEBUG} || 0;
-
-use Data::Dumper;
-local $Data::Dumper::Indent    = 1;
-local $Data::Dumper::Sortkeys  = 1;
-local $Data::Dumper::Quotekeys = 0;
-
-use Digest::MD5 qw(md5_hex);
-use Sys::Hostname qw(hostname);
-use File::Basename qw();
-use File::Spec;
-use FindBin qw();
-
-eval {
-   require Percona::Toolkit;
-   require HTTP::Micro;
-};
-
-my $home    = $ENV{HOME} || $ENV{HOMEPATH} || $ENV{USERPROFILE} || '.';
-my @vc_dirs = (
-   '/etc/percona',
-   '/etc/percona-toolkit',
-   '/tmp',
-   "$home",
-);
-
-{
-   my $file    = 'percona-version-check';
-
-   sub version_check_file {
-      foreach my $dir ( @vc_dirs ) {
-         if ( -d $dir && -w $dir ) {
-            PTDEBUG && _d('Version check file', $file, 'in', $dir);
-            return $dir . '/' . $file;
-         }
-      }
-      PTDEBUG && _d('Version check file', $file, 'in', $ENV{PWD});
-      return $file;  # in the CWD
-   } 
-}
-
-sub version_check_time_limit {
-   return 60 * 60 * 24;  # one day
-}
-
-
-sub version_check {
-   my (%args) = @_;
-
-   my $instances = $args{instances} || [];
-   my $instances_to_check;
-
-   PTDEBUG && _d('FindBin::Bin:', $FindBin::Bin);
-   if ( !$args{force} ) {
-      if ( $FindBin::Bin
-           && (-d "$FindBin::Bin/../.bzr"    || 
-               -d "$FindBin::Bin/../../.bzr" ||
-               -d "$FindBin::Bin/../.git"    || 
-               -d "$FindBin::Bin/../../.git" 
-              ) 
-         ) {
-         PTDEBUG && _d("$FindBin::Bin/../.bzr disables --version-check");
-         return;
-      }
-   }
-
-   eval {
-      foreach my $instance ( @$instances ) {
-         my ($name, $id) = get_instance_id($instance);
-         $instance->{name} = $name;
-         $instance->{id}   = $id;
-      }
-
-      push @$instances, { name => 'system', id => 0 };
-
-      $instances_to_check = get_instances_to_check(
-         instances => $instances,
-         vc_file   => $args{vc_file},  # testing
-         now       => $args{now},      # testing
-      );
-      PTDEBUG && _d(scalar @$instances_to_check, 'instances to check');
-      return unless @$instances_to_check;
-
-      my $protocol = 'https';  
-      eval { require IO::Socket::SSL; };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d($EVAL_ERROR);
-         PTDEBUG && _d("SSL not available, won't run version_check");
-         return;
-      }
-      PTDEBUG && _d('Using', $protocol);
-
-      my $advice = pingback(
-         instances => $instances_to_check,
-         protocol  => $protocol,
-         url       => $args{url}                       # testing
-                   || $ENV{PERCONA_VERSION_CHECK_URL}  # testing
-                   || "$protocol://v.percona.com",
-      );
-      if ( $advice ) {
-         PTDEBUG && _d('Advice:', Dumper($advice));
-         if ( scalar @$advice > 1) {
-            print "\n# " . scalar @$advice . " software updates are "
-               . "available:\n";
-         }
-         else {
-            print "\n# A software update is available:\n";
-         }
-         print join("\n", map { "#   * $_" } @$advice), "\n\n";
-      }
-   };
-   if ( $EVAL_ERROR ) {
-      PTDEBUG && _d('Version check failed:', $EVAL_ERROR);
-   }
-
-   if ( @$instances_to_check ) {
-      eval {
-         update_check_times(
-            instances => $instances_to_check,
-            vc_file   => $args{vc_file},  # testing
-            now       => $args{now},      # testing
-         );
-      };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d('Error updating version check file:', $EVAL_ERROR);
-      }
-   }
-
-   if ( $ENV{PTDEBUG_VERSION_CHECK} ) {
-      warn "Exiting because the PTDEBUG_VERSION_CHECK "
-         . "environment variable is defined.\n";
-      exit 255;
-   }
-
-   return;
-}
-
-sub get_instances_to_check {
-   my (%args) = @_;
-
-   my $instances = $args{instances};
-   my $now       = $args{now}     || int(time);
-   my $vc_file   = $args{vc_file} || version_check_file();
-
-   if ( !-f $vc_file ) {
-      PTDEBUG && _d('Version check file', $vc_file, 'does not exist;',
-         'version checking all instances');
-      return $instances;
-   }
-
-   open my $fh, '<', $vc_file or die "Cannot open $vc_file: $OS_ERROR";
-   chomp(my $file_contents = do { local $/ = undef; <$fh> });
-   PTDEBUG && _d('Version check file', $vc_file, 'contents:', $file_contents);
-   close $fh;
-   my %last_check_time_for = $file_contents =~ /^([^,]+),(.+)$/mg;
-
-   my $check_time_limit = version_check_time_limit();
-   my @instances_to_check;
-   foreach my $instance ( @$instances ) {
-      my $last_check_time = $last_check_time_for{ $instance->{id} };
-      PTDEBUG && _d('Intsance', $instance->{id}, 'last checked',
-         $last_check_time, 'now', $now, 'diff', $now - ($last_check_time || 0),
-         'hours until next check',
-         sprintf '%.2f',
-            ($check_time_limit - ($now - ($last_check_time || 0))) / 3600);
-      if ( !defined $last_check_time
-           || ($now - $last_check_time) >= $check_time_limit ) {
-         PTDEBUG && _d('Time to check', Dumper($instance));
-         push @instances_to_check, $instance;
-      }
-   }
-
-   return \@instances_to_check;
-}
-
-sub update_check_times {
-   my (%args) = @_;
-
-   my $instances = $args{instances};
-   my $now       = $args{now}     || int(time);
-   my $vc_file   = $args{vc_file} || version_check_file();
-   PTDEBUG && _d('Updating last check time:', $now);
-
-   my %all_instances = map {
-      $_->{id} => { name => $_->{name}, ts => $now }
-   } @$instances;
-
-   if ( -f $vc_file ) {
-      open my $fh, '<', $vc_file or die "Cannot read $vc_file: $OS_ERROR";
-      my $contents = do { local $/ = undef; <$fh> };
-      close $fh;
-
-      foreach my $line ( split("\n", ($contents || '')) ) {
-         my ($id, $ts) = split(',', $line);
-         if ( !exists $all_instances{$id} ) {
-            $all_instances{$id} = { ts => $ts };  # original ts, not updated
-         }
-      }
-   }
-
-   open my $fh, '>', $vc_file or die "Cannot write to $vc_file: $OS_ERROR";
-   foreach my $id ( sort keys %all_instances ) {
-      PTDEBUG && _d('Updated:', $id, Dumper($all_instances{$id}));
-      print { $fh } $id . ',' . $all_instances{$id}->{ts} . "\n";
-   }
-   close $fh;
-
-   return;
-}
-
-sub get_instance_id {
-   my ($instance) = @_;
-
-   my $dbh = $instance->{dbh};
-   my $dsn = $instance->{dsn};
-
-   my $sql = q{SELECT CONCAT(@@hostname, @@port)};
-   PTDEBUG && _d($sql);
-   my ($name) = eval { $dbh->selectrow_array($sql) };
-   if ( $EVAL_ERROR ) {
-      PTDEBUG && _d($EVAL_ERROR);
-      $sql = q{SELECT @@hostname};
-      PTDEBUG && _d($sql);
-      ($name) = eval { $dbh->selectrow_array($sql) };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d($EVAL_ERROR);
-         $name = ($dsn->{h} || 'localhost') . ($dsn->{P} || 3306);
-      }
-      else {
-         $sql = q{SHOW VARIABLES LIKE 'port'};
-         PTDEBUG && _d($sql);
-         my (undef, $port) = eval { $dbh->selectrow_array($sql) };
-         PTDEBUG && _d('port:', $port);
-         $name .= $port || '';
-      }
-   }
-   my $id = md5_hex($name);
-
-   PTDEBUG && _d('MySQL instance:', $id, $name, Dumper($dsn));
-
-   return $name, $id;
-}
-
-
-sub get_uuid {
-    my $uuid_file = '/.percona-toolkit.uuid';
-    foreach my $dir (@vc_dirs) {
-        my $filename = $dir.$uuid_file;
-        my $uuid=_read_uuid($filename);
-        return $uuid if $uuid;
-    }
-
-    my $filename = $ENV{"HOME"} . $uuid_file;
-    my $uuid = _generate_uuid();
-
-    open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
-    print $fh $uuid;
-    close $fh;
-
-    return $uuid;
-}   
-
-sub _generate_uuid {
-    return sprintf+($}="%04x")."$}-$}-$}-$}-".$}x3,map rand 65537,0..7;
-}
-
-sub _read_uuid {
-    my $filename = shift;
-    my $fh;
-
-    eval {
-        open($fh, '<:encoding(UTF-8)', $filename);
-    };
-    return if ($EVAL_ERROR);
-
-    my $uuid;
-    eval { $uuid = <$fh>; };
-    return if ($EVAL_ERROR);
-
-    chomp $uuid;
-    return $uuid;
-}
-
-
-sub pingback {
-   my (%args) = @_;
-   my @required_args = qw(url instances);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my $url       = $args{url};
-   my $instances = $args{instances};
-
-   my $ua = $args{ua} || HTTP::Micro->new( timeout => 3 );
-
-   my $response = $ua->request('GET', $url);
-   PTDEBUG && _d('Server response:', Dumper($response));
-   die "No response from GET $url"
-      if !$response;
-   die("GET on $url returned HTTP status $response->{status}; expected 200\n",
-       ($response->{content} || '')) if $response->{status} != 200;
-   die("GET on $url did not return any programs to check")
-      if !$response->{content};
-
-   my $items = parse_server_response(
-      response => $response->{content}
-   );
-   die "Failed to parse server requested programs: $response->{content}"
-      if !scalar keys %$items;
-      
-   my $versions = get_versions(
-      items     => $items,
-      instances => $instances,
-   );
-   die "Failed to get any program versions; should have at least gotten Perl"
-      if !scalar keys %$versions;
-
-   my $client_content = encode_client_response(
-      items      => $items,
-      versions   => $versions,
-      general_id => get_uuid(),
-   );
-
-   my $client_response = {
-      headers => { "X-Percona-Toolkit-Tool" => File::Basename::basename($0) },
-      content => $client_content,
-   };
-   PTDEBUG && _d('Client response:', Dumper($client_response));
-
-   $response = $ua->request('POST', $url, $client_response);
-   PTDEBUG && _d('Server suggestions:', Dumper($response));
-   die "No response from POST $url $client_response"
-      if !$response;
-   die "POST $url returned HTTP status $response->{status}; expected 200"
-      if $response->{status} != 200;
-
-   return unless $response->{content};
-
-   $items = parse_server_response(
-      response   => $response->{content},
-      split_vars => 0,
-   );
-   die "Failed to parse server suggestions: $response->{content}"
-      if !scalar keys %$items;
-   my @suggestions = map { $_->{vars} }
-                     sort { $a->{item} cmp $b->{item} }
-                     values %$items;
-
-   return \@suggestions;
-}
-
-sub encode_client_response {
-   my (%args) = @_;
-   my @required_args = qw(items versions general_id);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($items, $versions, $general_id) = @args{@required_args};
-
-   my @lines;
-   foreach my $item ( sort keys %$items ) {
-      next unless exists $versions->{$item};
-      if ( ref($versions->{$item}) eq 'HASH' ) {
-         my $mysql_versions = $versions->{$item};
-         for my $id ( sort keys %$mysql_versions ) {
-            push @lines, join(';', $id, $item, $mysql_versions->{$id});
-         }
-      }
-      else {
-         push @lines, join(';', $general_id, $item, $versions->{$item});
-      }
-   }
-
-   my $client_response = join("\n", @lines) . "\n";
-   return $client_response;
-}
-
-sub parse_server_response {
-   my (%args) = @_;
-   my @required_args = qw(response);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($response) = @args{@required_args};
-
-   my %items = map {
-      my ($item, $type, $vars) = split(";", $_);
-      if ( !defined $args{split_vars} || $args{split_vars} ) {
-         $vars = [ split(",", ($vars || '')) ];
-      }
-      $item => {
-         item => $item,
-         type => $type,
-         vars => $vars,
-      };
-   } split("\n", $response);
-
-   PTDEBUG && _d('Items:', Dumper(\%items));
-
-   return \%items;
-}
-
-my %sub_for_type = (
-   os_version          => \&get_os_version,
-   perl_version        => \&get_perl_version,
-   perl_module_version => \&get_perl_module_version,
-   mysql_variable      => \&get_mysql_variable,
-);
-
-sub valid_item {
-   my ($item) = @_;
-   return unless $item;
-   if ( !exists $sub_for_type{ $item->{type} } ) {
-      PTDEBUG && _d('Invalid type:', $item->{type});
-      return 0;
-   }
-   return 1;
-}
-
-sub get_versions {
-   my (%args) = @_;
-   my @required_args = qw(items);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($items) = @args{@required_args};
-
-   my %versions;
-   foreach my $item ( values %$items ) {
-      next unless valid_item($item);
-      eval {
-         my $version = $sub_for_type{ $item->{type} }->(
-            item      => $item,
-            instances => $args{instances},
-         );
-         if ( $version ) {
-            chomp $version unless ref($version);
-            $versions{$item->{item}} = $version;
-         }
-      };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d('Error getting version for', Dumper($item), $EVAL_ERROR);
-      }
-   }
-
-   return \%versions;
-}
-
-
-sub get_os_version {
-   if ( $OSNAME eq 'MSWin32' ) {
-      require Win32;
-      return Win32::GetOSDisplayName();
-   }
-
-  chomp(my $platform = `uname -s`);
-  PTDEBUG && _d('platform:', $platform);
-  return $OSNAME unless $platform;
-
-   chomp(my $lsb_release
-            = `which lsb_release 2>/dev/null | awk '{print \$1}'` || '');
-   PTDEBUG && _d('lsb_release:', $lsb_release);
-
-   my $release = "";
-
-   if ( $platform eq 'Linux' ) {
-      if ( -f "/etc/fedora-release" ) {
-         $release = `cat /etc/fedora-release`;
-      }
-      elsif ( -f "/etc/redhat-release" ) {
-         $release = `cat /etc/redhat-release`;
-      }
-      elsif ( -f "/etc/system-release" ) {
-         $release = `cat /etc/system-release`;
-      }
-      elsif ( $lsb_release ) {
-         $release = `$lsb_release -ds`;
-      }
-      elsif ( -f "/etc/lsb-release" ) {
-         $release = `grep DISTRIB_DESCRIPTION /etc/lsb-release`;
-         $release =~ s/^\w+="([^"]+)".+/$1/;
-      }
-      elsif ( -f "/etc/debian_version" ) {
-         chomp(my $rel = `cat /etc/debian_version`);
-         $release = "Debian $rel";
-         if ( -f "/etc/apt/sources.list" ) {
-             chomp(my $code_name = `awk '/^deb/ {print \$3}' /etc/apt/sources.list | awk -F/ '{print \$1}'| awk 'BEGIN {FS="|"} {print \$1}' | sort | uniq -c | sort -rn | head -n1 | awk '{print \$2}'`);
-             $release .= " ($code_name)" if $code_name;
-         }
-      }
-      elsif ( -f "/etc/os-release" ) { # openSUSE
-         chomp($release = `grep PRETTY_NAME /etc/os-release`);
-         $release =~ s/^PRETTY_NAME="(.+)"$/$1/;
-      }
-      elsif ( `ls /etc/*release 2>/dev/null` ) {
-         if ( `grep DISTRIB_DESCRIPTION /etc/*release 2>/dev/null` ) {
-            $release = `grep DISTRIB_DESCRIPTION /etc/*release | head -n1`;
-         }
-         else {
-            $release = `cat /etc/*release | head -n1`;
-         }
-      }
-   }
-   elsif ( $platform =~ m/(?:BSD|^Darwin)$/ ) {
-      my $rel = `uname -r`;
-      $release = "$platform $rel";
-   }
-   elsif ( $platform eq "SunOS" ) {
-      my $rel = `head -n1 /etc/release` || `uname -r`;
-      $release = "$platform $rel";
-   }
-
-   if ( !$release ) {
-      PTDEBUG && _d('Failed to get the release, using platform');
-      $release = $platform;
-   }
-   chomp($release);
-
-   $release =~ s/^"|"$//g;
-
-   PTDEBUG && _d('OS version =', $release);
-   return $release;
-}
-
-sub get_perl_version {
-   my (%args) = @_;
-   my $item = $args{item};
-   return unless $item;
-
-   my $version = sprintf '%vd', $PERL_VERSION;
-   PTDEBUG && _d('Perl version', $version);
-   return $version;
-}
-
-sub get_perl_module_version {
-   my (%args) = @_;
-   my $item = $args{item};
-   return unless $item;
-
-   my $var     = '$' . $item->{item} . '::VERSION';
-   my $version = eval "use $item->{item}; $var;";
-   PTDEBUG && _d('Perl version for', $var, '=', $version);
-   return $version;
-}
-
-sub get_mysql_variable {
-   return get_from_mysql(
-      show => 'VARIABLES',
-      @_,
-   );
-}
-
-sub get_from_mysql {
-   my (%args) = @_;
-   my $show      = $args{show};
-   my $item      = $args{item};
-   my $instances = $args{instances};
-   return unless $show && $item;
-
-   if ( !$instances || !@$instances ) {
-      PTDEBUG && _d('Cannot check', $item,
-         'because there are no MySQL instances');
-      return;
-   }
-
-   if ($item->{item} eq 'MySQL' && $item->{type} eq 'mysql_variable') {
-      @{$item->{vars}} = grep { $_ eq 'version' || $_ eq 'version_comment' } @{$item->{vars}};
-   }
- 
-
-   my @versions;
-   my %version_for;
-   foreach my $instance ( @$instances ) {
-      next unless $instance->{id};  # special system instance has id=0
-      my $dbh = $instance->{dbh};
-      local $dbh->{FetchHashKeyName} = 'NAME_lc';
-      my $sql = qq/SHOW $show/;
-      PTDEBUG && _d($sql);
-      my $rows = $dbh->selectall_hashref($sql, 'variable_name');
-
-      my @versions;
-      foreach my $var ( @{$item->{vars}} ) {
-         $var = lc($var);
-         my $version = $rows->{$var}->{value};
-         PTDEBUG && _d('MySQL version for', $item->{item}, '=', $version,
-            'on', $instance->{name});
-         push @versions, $version;
-      }
-      $version_for{ $instance->{id} } = join(' ', @versions);
-   }
-
-   return \%version_for;
-}
-
-sub _d {
-   my ($package, undef, $line) = caller 0;
-   @_ = map { (my $temp = $_) =~ s/\n/\n# /g; $temp; }
-        map { defined $_ ? $_ : 'undef' }
-        @_;
-   print STDERR "# $package:$line $PID ", join(' ', @_), "\n";
-}
-
-1;
-}
-# ###########################################################################
-# End VersionCheck package
-# ###########################################################################
-
-# ###########################################################################
 # This is a combination of modules and programs in one -- a runnable module.
 # http://www.perl.com/pub/a/2006/07/13/lightning-articles.html?page=last
 # Or, look it up in the Camel book on pages 642 and 643 in the 3rd edition.
@@ -5983,7 +5334,7 @@ use Data::Dumper;
 $Data::Dumper::Indent    = 1;
 $Data::Dumper::Quotekeys = 0;
 
-use Percona::Toolkit;
+use MariaDB::Tools;
 use constant PTDEBUG => $ENV{PTDEBUG} || 0;
 
 # Global variables; as few as possible.
@@ -6047,7 +5398,7 @@ sub main {
    if ( $o->get('stop') ) {
       my $sentinel_fh = IO::File->new($sentinel, ">>")
          or die "Cannot open $sentinel: $OS_ERROR\n";
-      print $sentinel_fh "Remove this file to permit pt-archiver to run\n"
+      print $sentinel_fh "Remove this file to permit mariadb-archiver to run\n"
          or die "Cannot write to $sentinel: $OS_ERROR\n";
       close $sentinel_fh
          or die "Cannot close $sentinel: $OS_ERROR\n";
@@ -6298,7 +5649,7 @@ sub main {
          $pxc_version = VersionParser->new($src->{'dbh'});
          if ( $o->got('max-flow-ctl') ) {
             if ( $pxc_version < '5.6' ) {
-               die "Option '--max-flow-ctl' is only available for PXC version 5.6 "
+               die "Option '--max-flow-ctl' is only available for Galera version 5.6 "
                   . "or higher."
             } else {
                $flow_ctl = new FlowControlWaiter(
@@ -6313,7 +5664,7 @@ sub main {
     }
 
    if ( $src && $src->{dbh} && !Cxn::is_cluster_node($src->{dbh}) && $o->got('max-flow-ctl') ) {
-         die "Option '--max-flow-ctl' is for use with PXC clusters."
+         die "Option '--max-flow-ctl' is for use with Galera clusters."
     }
 
    # ########################################################################
@@ -6557,15 +5908,15 @@ sub main {
    # ########################################################################
    # Do the version-check
    # ########################################################################
-   if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
-      VersionCheck::version_check(
-         force     => $o->got('version-check'),
-         instances => [
-            { dbh => $src->{dbh}, dsn => $src->{dsn} },
-            ( $dst ? { dbh => $dst->{dbh}, dsn => $dst->{dsn} } : () ),
-         ],
-      );
-   }
+   # if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
+   #    VersionCheck::version_check(
+   #       force     => $o->got('version-check'),
+   #       instances => [
+   #          { dbh => $src->{dbh}, dsn => $src->{dsn} },
+   #          ( $dst ? { dbh => $dst->{dbh}, dsn => $dst->{dsn} } : () ),
+   #       ],
+   #    );
+   # }
 
    # ########################################################################
    # Start archiving.
@@ -6661,7 +6012,7 @@ sub main {
    my $bulkins_file;
    if ( $o->get('bulk-insert') ) {
       require File::Temp;
-      $bulkins_file = File::Temp->new( SUFFIX => 'pt-archiver' )
+      $bulkins_file = File::Temp->new( SUFFIX => 'mariadb-archiver' )
          or die "Cannot open temp file: $OS_ERROR\n";
       binmode($bulkins_file, $charset)
          or die "Cannot set $charset as an encoding for the bulk-insert "
@@ -6828,7 +6179,7 @@ sub main {
             $ins_sth ||= $ins_row; # Default to the sth decided before.
             my $success = do_with_retries($o, 'bulk_inserting', sub {
                $ins_sth->execute($bulkins_file->filename());
-               $src->{dbh}->do("SELECT 'pt-archiver keepalive'") if $src; 
+               $src->{dbh}->do("SELECT 'mariadb-archiver keepalive'") if $src; 
                PTDEBUG && _d('Bulk inserted', $del_row->rows, 'rows');
                $statistics{INSERT} += $ins_sth->rows;
             });
@@ -6894,7 +6245,7 @@ sub main {
          $first_row        = $row ? [ @$row ] : undef;
 
          if ( $o->get('bulk-insert') ) {
-            $bulkins_file = File::Temp->new( SUFFIX => 'pt-archiver' )
+            $bulkins_file = File::Temp->new( SUFFIX => 'mariadb-archiver' )
                or die "Cannot open temp file: $OS_ERROR\n";
             binmode($bulkins_file, $charset)
                or die "Cannot set $charset as an encoding for the bulk-insert "
@@ -6905,7 +6256,7 @@ sub main {
          # keep alive every 100 rows saved to file 
          # https://bugs.launchpad.net/percona-toolkit/+bug/1452895
          if ( $bulk_count++ % 100 == 0 ) {
-            $src->{dbh}->do("SELECT 'pt-archiver keepalive'") if $src;
+            $src->{dbh}->do("SELECT 'mariadb-archiver keepalive'") if $src;
          }
          PTDEBUG && _d('Got another row in this chunk');
       }
@@ -6925,8 +6276,8 @@ sub main {
                   }  
                   sleep($o->get('check-interval'));
                   $lag = $ms->get_slave_lag($lag_dbh);
-                  $src->{dbh}->do("SELECT 'pt-archiver keepalive'") if $src;
-                  $dst->{dbh}->do("SELECT 'pt-archiver keepalive'") if $dst;
+                  $src->{dbh}->do("SELECT 'mariadb-archiver keepalive'") if $src;
+                  $dst->{dbh}->do("SELECT 'mariadb-archiver keepalive'") if $dst;
                }
             }
          }
@@ -7049,7 +6400,7 @@ sub main {
 # Subroutines.
 # ############################################################################
 
-# Catches signals so pt-archiver can exit gracefully.
+# Catches signals so mariadb-archiver can exit gracefully.
 sub finish {
    my ($signal) = @_;
    print STDERR "Exiting on SIG$signal.\n";
@@ -7217,13 +6568,13 @@ if ( !caller ) { exit main(@ARGV); }
 
 =head1 NAME
 
-pt-archiver - Archive rows from a MySQL table into another table or a file.
+mariadb-archiver - Archive rows from a MariaDB table into another table or a file.
 
 =head1 SYNOPSIS
 
-Usage: pt-archiver [OPTIONS] --source DSN --where WHERE
+Usage: mariadb-archiver [OPTIONS] --source DSN --where WHERE
 
-pt-archiver nibbles records from a MySQL table.  The --source and --dest
+mariadb-archiver nibbles records from a MariaDB table.  The --source and --dest
 arguments use DSN syntax; if COPY is yes, --dest defaults to the key's value
 from --source.
 
@@ -7231,18 +6582,18 @@ Examples:
 
 Archive all rows from oltp_server to olap_server and to a file:
 
-  pt-archiver --source h=oltp_server,D=test,t=tbl --dest h=olap_server \
+  mariadb-archiver --source h=oltp_server,D=test,t=tbl --dest h=olap_server \
     --file '/var/log/archive/%Y-%m-%d-%D.%t'                           \
     --where "1=1" --limit 1000 --commit-each
 
 Purge (delete) orphan rows from child table:
 
-  pt-archiver --source h=host,D=db,t=child --purge \
+  mariadb-archiver --source h=host,D=db,t=child --purge \
     --where 'NOT EXISTS(SELECT * FROM parent WHERE col=child.col)'
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+mariadb-archiver is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -7260,14 +6611,14 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-archiver is the tool I use to archive tables as described in
+mariadb-archiver is the tool I use to archive tables as described in
 L<http://tinyurl.com/mysql-archiving>.  The goal is a low-impact, forward-only
 job to nibble old data out of the table without impacting OLTP queries much.
 You can insert the data into another table, which need not be on the same
 server.  You can also write it to a file in a format suitable for LOAD DATA
 INFILE.  Or you can do neither, in which case it's just an incremental DELETE.
 
-pt-archiver is extensible via a plugin mechanism.  You can inject your own
+mariadb-archiver is extensible via a plugin mechanism.  You can inject your own
 code to add advanced archiving logic that could be useful for archiving
 dependent data, applying complex business rules, or building a data warehouse
 during the archiving process.
@@ -7287,15 +6638,15 @@ and make sure it is not scanning the whole table every query.
 
 You can disable the seek-then-scan optimizations partially or wholly with
 L<"--no-ascend"> and L<"--ascend-first">.  Sometimes this may be more efficient
-for multi-column keys.  Be aware that pt-archiver is built to start at the
+for multi-column keys.  Be aware that mariadb-archiver is built to start at the
 beginning of the index it chooses and scan it forward-only.  This might result
 in long table scans if you're trying to nibble from the end of the table by an
 index other than the one it prefers.  See L<"--source"> and read the
 documentation on the C<i> part if this applies to you.
 
-=head1 Percona XtraDB Cluster
+=head1 MariaDB Galera Cluster
 
-pt-archiver works with Percona XtraDB Cluster (PXC) 5.5.28-23.7 and newer,
+mariadb-archiver works with MariaDB Galera Cluster 10.1 and newer,
 but there are three limitations you should consider before archiving on
 a cluster:
 
@@ -7303,15 +6654,15 @@ a cluster:
 
 =item Error on commit
 
-pt-archiver does not check for error when it commits transactions.
-Commits on PXC can fail, but the tool does not yet check for or retry the
+mariadb-archiver does not check for error when it commits transactions.
+Commits on Galera can fail, but the tool does not yet check for or retry the
 transaction when this happens.  If it happens, the tool will die.
 
 =item MyISAM tables
 
-Archiving MyISAM tables works, but MyISAM support in PXC is still
+Archiving MyISAM tables works, but MyISAM support in Galera is still
 experimental at the time of this release.  There are several known bugs with
-PXC, MyISAM tables, and C<AUTO_INCREMENT> columns.  Therefore, you must ensure
+Galera, MyISAM tables, and C<AUTO_INCREMENT> columns.  Therefore, you must ensure
 that archiving will not directly or indirectly result in the use of default
 C<AUTO_INCREMENT> values for a MyISAM table.  For example, this happens with
 L<"--dest"> if L<"--columns"> is used and the C<AUTO_INCREMENT> column is not
@@ -7320,7 +6671,7 @@ included.  The tool does not check for this!
 =item Non-cluster options
 
 Certain options may or may not work.  For example, if a cluster node
-is not also a slave, then L<"--check-slave-lag"> does not work.  And since PXC
+is not also a slave, then L<"--check-slave-lag"> does not work.  And since Galera
 tables are usually InnoDB, but InnoDB doesn't support C<INSERT DELAYED>, then
 L<"--delayed-insert"> does not work.  Other options may also not work, but
 the tool does not check them, therefore you should test archiving on a test
@@ -7332,16 +6683,16 @@ cluster before archiving on your real cluster.
 
 If you specify L<"--progress">, the output is a header row, plus status output
 at intervals.  Each row in the status output lists the current date and time,
-how many seconds pt-archiver has been running, and how many rows it has
+how many seconds mariadb-archiver has been running, and how many rows it has
 archived.
 
-If you specify L<"--statistics">, C<pt-archiver> outputs timing and other
+If you specify L<"--statistics">, C<mariadb-archiver> outputs timing and other
 information to help you identify which part of your archiving process takes the
 most time.
 
 =head1 ERROR-HANDLING
 
-pt-archiver tries to catch signals and exit gracefully; for example, if you
+mariadb-archiver tries to catch signals and exit gracefully; for example, if you
 send it SIGTERM (Ctrl-C on UNIX-ish systems), it will catch the signal, print a
 message about the signal, and exit fairly normally.  It will not execute
 L<"--analyze"> or L<"--optimize">, because these may take a long time to finish.
@@ -7384,7 +6735,7 @@ following will analyze both:
 
   --analyze=ds
 
-See L<http://dev.mysql.com/doc/en/analyze-table.html> for details on ANALYZE
+See L<https://mariadb.com/kb/en/library/analyze-table/> for details on ANALYZE
 TABLE.
 
 =item --ascend-first
@@ -7393,7 +6744,7 @@ Ascend only first column of index.
 
 If you do want to use the ascending index optimization (see L<"--no-ascend">),
 but do not want to incur the overhead of ascending a large multi-column index,
-you can use this option to tell pt-archiver to ascend only the leftmost column
+you can use this option to tell mariadb-archiver to ascend only the leftmost column
 of the index.  This can provide a significant performance boost over not
 ascending the index at all, while avoiding the cost of ascending the whole
 index.
@@ -7402,7 +6753,7 @@ See L<"EXTENDING"> for a discussion of how this interacts with plugins.
 
 =item --ask-pass
 
-Prompt for a password when connecting to MySQL.
+Prompt for a password when connecting to MariaDB.
 
 =item --buffer
 
@@ -7437,7 +6788,7 @@ will not be called.  Instead, its C<before_bulk_delete> method is called later.
 
 B<WARNING>: if you have a plugin on the source that sometimes doesn't return
 true from C<is_archivable()>, you should use this option only if you understand
-what it does.  If the plugin instructs C<pt-archiver> not to archive a row,
+what it does.  If the plugin instructs C<mariadb-archiver> not to archive a row,
 it will still be deleted by the bulk delete!
 
 =item --[no]bulk-delete-limit
@@ -7471,7 +6822,7 @@ The L<"--low-priority-insert">, L<"--replace">, and L<"--ignore"> options work
 with this option, but L<"--delayed-insert"> does not.
 
 If C<LOAD DATA LOCAL INFILE> throws an error in the lines of C<The used
-command is not allowed with this MySQL version>, refer to the documentation
+command is not allowed with this MariaDB version>, refer to the documentation
 for the C<L> DSN option.
 
 =item --channel
@@ -7481,7 +6832,7 @@ type: string
 Channel name used when connected to a server using replication channels.
 Suppose you have two masters, master_a at port 12345, master_b at port 1236 and
 a slave connected to both masters using channels chan_master_a and chan_master_b.
-If you want to run pt-archiver to syncronize the slave against master_a, pt-archiver
+If you want to run mariadb-archiver to syncronize the slave against master_a, mariadb-archiver
 won't be able to determine what's the correct master since SHOW SLAVE STATUS
 will return 2 rows. In this case, you can use --channel=chan_master_a to specify
 the channel name to use in the SHOW SLAVE STATUS command.
@@ -7492,10 +6843,10 @@ short form: -A; type: string
 
 Default character set.  If the value is utf8, sets Perl's binmode on
 STDOUT to utf8, passes the mysql_enable_utf8 option to DBD::mysql, and runs SET
-NAMES UTF8 after connecting to MySQL.  Any other value sets binmode on STDOUT
-without the utf8 layer, and runs SET NAMES after connecting to MySQL.
+NAMES UTF8 after connecting to MariaDB.  Any other value sets binmode on STDOUT
+without the utf8 layer, and runs SET NAMES after connecting to MariaDB.
 
-Note that only charsets as known by MySQL are recognized; So for example,
+Note that only charsets as known by MariaDB are recognized; So for example,
 "UTF8" will work, but "UTF-8" will not.
 
 See also L<"--[no]check-charset">.
@@ -7516,10 +6867,10 @@ default: yes
 
 Ensure L<"--source"> and L<"--dest"> have same columns.
 
-Enabled by default; causes pt-archiver to check that the source and destination
+Enabled by default; causes mariadb-archiver to check that the source and destination
 tables have the same columns.  It does not check column order, data type, etc.
 It just checks that all columns in the source exist in the destination and
-vice versa.  If there are any differences, pt-archiver will exit with an
+vice versa.  If there are any differences, mariadb-archiver will exit with an
 error.
 
 To disable this check, specify --no-check-columns.
@@ -7546,7 +6897,7 @@ short form: -c; type: array
 Comma-separated list of columns to archive.
 
 Specify a comma-separated list of columns to fetch, write to the file, and
-insert into the destination table.  If specified, pt-archiver ignores other
+insert into the destination table.  If specified, mariadb-archiver ignores other
 columns unless it needs to add them to the C<SELECT> statement for ascending an
 index or deleting rows.  It fetches and uses these extra columns internally, but
 does not write them to the file or to the destination table.  It I<does> pass
@@ -7568,7 +6919,7 @@ same value, but more importantly it avoids transactions being held open while
 searching for more rows.  For example, imagine you are archiving old rows from
 the beginning of a very large table, with L<"--limit"> 1000 and L<"--txn-size">
 1000.  After some period of finding and archiving 1000 rows at a time,
-pt-archiver finds the last 999 rows and archives them, then executes the next
+mariadb-archiver finds the last 999 rows and archives them, then executes the next
 SELECT to find more rows.  This scans the rest of the table, but never finds any
 more rows.  It has held open a transaction for a very long time, only to
 determine it is finished anyway.  You can use L<"--commit-each"> to avoid this.
@@ -7591,7 +6942,7 @@ Connect to this database.
 Add the DELAYED modifier to INSERT statements.
 
 Adds the DELAYED modifier to INSERT or REPLACE statements.  See
-L<http://dev.mysql.com/doc/en/insert.html> for details.
+L<https://mariadb.com/kb/en/library/insert/> for details.
 
 =item --dest
 
@@ -7599,7 +6950,7 @@ type: DSN
 
 DSN specifying the table to archive to.
 
-This item specifies a table into which pt-archiver will insert rows
+This item specifies a table into which mariadb-archiver will insert rows
 archived from L<"--source">.  It uses the same key=val argument format as
 L<"--source">.  Most missing values default to the same values as
 L<"--source">, so you don't have to repeat options that are the same in
@@ -7607,21 +6958,21 @@ L<"--source"> and L<"--dest">.  Use the L<"--help"> option to see which values
 are copied from L<"--source">.
 
 B<WARNING>: Using a default options file (F) DSN option that defines a
-socket for L<"--source"> causes pt-archiver to connect to L<"--dest"> using
+socket for L<"--source"> causes mariadb-archiver to connect to L<"--dest"> using
 that socket unless another socket for L<"--dest"> is specified.  This
-means that pt-archiver may incorrectly connect to L<"--source"> when it
+means that mariadb-archiver may incorrectly connect to L<"--source"> when it
 connects to L<"--dest">.  For example:
 
   --source F=host1.cnf,D=db,t=tbl --dest h=host2
 
-When pt-archiver connects to L<"--dest">, host2, it will connect via the
+When mariadb-archiver connects to L<"--dest">, host2, it will connect via the
 L<"--source">, host1, socket defined in host1.cnf.
 
 =item --dry-run
 
 Print queries and exit without doing anything.
 
-Causes pt-archiver to exit after printing the filename and SQL statements
+Causes mariadb-archiver to exit after printing the filename and SQL statements
 it will use.
 
 =item --file
@@ -7630,7 +6981,7 @@ type: string
 
 File to archive to, with DATE_FORMAT()-like formatting.
 
-Filename to write archived rows to.  A subset of MySQL's DATE_FORMAT()
+Filename to write archived rows to.  A subset of MariaDB's DATE_FORMAT()
 formatting codes are allowed in the filename, as follows:
 
    %d    Day of the month, numeric (01..31)
@@ -7650,7 +7001,7 @@ Example:
    --file '/var/log/archive/%Y-%m-%d-%D.%t'
 
 The file's contents are in the same format used by SELECT INTO OUTFILE, as
-documented in the MySQL manual: rows terminated by newlines, columns
+documented in the MariaDB manual: rows terminated by newlines, columns
 terminated by tabs, NULL characters are represented by \N, and special
 characters are escaped by \.  This lets you reload a file with LOAD DATA
 INFILE's default settings.
@@ -7680,7 +7031,7 @@ Show help and exit.
 
 Adds the HIGH_PRIORITY modifier to SELECT statements.
 
-See L<http://dev.mysql.com/doc/en/select.html> for details.
+See L<https://mariadb.com/kb/en/library/select/> for details.
 
 =item --host
 
@@ -7718,23 +7069,23 @@ L<"--analyze"> for details.
 
 Adds the LOW_PRIORITY modifier to DELETE statements.
 
-See L<http://dev.mysql.com/doc/en/delete.html> for details.
+See L<https://mariadb.com/kb/en/library/delete/> for details.
 
 =item --low-priority-insert
 
 Adds the LOW_PRIORITY modifier to INSERT or REPLACE statements.
 
-See L<http://dev.mysql.com/doc/en/insert.html> for details.
+See L<https://mariadb.com/kb/en/library/insert/> for details.
 
 =item --max-flow-ctl
 
 type: float
 
-Somewhat similar to --max-lag but for PXC clusters.
+Somewhat similar to --max-lag but for Galera clusters.
 Check average time cluster spent pausing for Flow Control and make tool pause if 
 it goes over the percentage indicated in the option.
 Default is no Flow Control checking.
-This option is available for PXC versions 5.6 or higher.
+This option is available for Galera versions 5.6 or higher.
 
 =item --max-lag
 
@@ -7742,7 +7093,7 @@ type: time; default: 1s
 
 Pause archiving if the slave given by L<"--check-slave-lag"> lags.
 
-This option causes pt-archiver to look at the slave every time it's about
+This option causes mariadb-archiver to look at the slave every time it's about
 to fetch another row.  If the slave's lag is greater than the option's value,
 or if the slave isn't running (so its lag is NULL), pt-table-checksum sleeps
 for L<"--check-interval"> seconds and then looks at the lag again.  It repeats
@@ -7754,7 +7105,7 @@ This option may eliminate the need for L<"--sleep"> or L<"--sleep-coef">.
 
 Do not use ascending index optimization.
 
-The default ascending-index optimization causes C<pt-archiver> to optimize
+The default ascending-index optimization causes C<mariadb-archiver> to optimize
 repeated C<SELECT> queries so they seek into the index where the previous query
 ended, then scan along it, rather than scanning from the beginning of the table
 every time.  This is enabled by default because it is generally a good strategy
@@ -7771,7 +7122,7 @@ ended is as follows:
       OR (a = ? AND b = ? AND c = ? AND d >= ?)
 
 Populating the placeholders with values uses memory and CPU, adds network
-traffic and parsing overhead, and may make the query harder for MySQL to
+traffic and parsing overhead, and may make the query harder for MariaDB to
 optimize.  A four-column key isn't a big deal, but a ten-column key in which
 every column allows C<NULL> might be.
 
@@ -7787,11 +7138,11 @@ interacts with plugins.
 
 Do not delete archived rows.
 
-Causes C<pt-archiver> not to delete rows after processing them.  This disallows
+Causes C<mariadb-archiver> not to delete rows after processing them.  This disallows
 L<"--no-ascend">, because enabling them both would cause an infinite loop.
 
 If there is a plugin on the source DSN, its C<before_delete> method is called
-anyway, even though C<pt-archiver> will not execute the delete.  See
+anyway, even though C<mariadb-archiver> will not execute the delete.  See
 L<"EXTENDING"> for more on plugins.
 
 =item --optimize
@@ -7801,7 +7152,7 @@ type: string
 Run OPTIMIZE TABLE afterwards on L<"--source"> and/or L<"--dest">.
 
 Runs OPTIMIZE TABLE after finishing.  See L<"--analyze"> for the option syntax
-and L<http://dev.mysql.com/doc/en/optimize-table.html> for details on OPTIMIZE
+and L<https://mariadb.com/kb/en/library/optimize-table/> for details on OPTIMIZE
 TABLE.
 
 =item --output-format
@@ -7811,7 +7162,7 @@ type: string
 Used with L<"--file"> to specify the output format.
 
 Valid formats are:
-  dump: MySQL dump format using tabs as field separator (default)
+  dump: MariaDB dump format using tabs as field separator (default)
   csv : Dump rows using ',' as separator and optionally enclosing fields by '"'.
         This format is equivalent to FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'.
 
@@ -7888,7 +7239,7 @@ from the server for no reason.
 
 Adds the QUICK modifier to DELETE statements.
 
-See L<http://dev.mysql.com/doc/en/delete.html> for details.  As stated in the
+See L<https://mariadb.com/kb/en/library/delete/> for details.  As stated in the
 documentation, in some cases it may be faster to use DELETE QUICK followed by
 OPTIMIZE TABLE.  You can use L<"--optimize"> for this.
 
@@ -7911,15 +7262,15 @@ type: int; default: 1
 
 Number of retries per timeout or deadlock.
 
-Specifies the number of times pt-archiver should retry when there is an
+Specifies the number of times mariadb-archiver should retry when there is an
 InnoDB lock wait timeout or deadlock.  When retries are exhausted,
-pt-archiver will exit with an error.
+mariadb-archiver will exit with an error.
 
 Consider carefully what you want to happen when you are archiving between a
 mixture of transactional and non-transactional storage engines.  The INSERT to
 L<"--dest"> and DELETE from L<"--source"> are on separate connections, so they
 do not actually participate in the same transaction even if they're on the same
-server.  However, pt-archiver implements simple distributed transactions in
+server.  However, mariadb-archiver implements simple distributed transactions in
 code, so commits and rollbacks should happen as desired across the two
 connections.
 
@@ -7940,23 +7291,23 @@ default: yes
 
 Do not archive row with max AUTO_INCREMENT.
 
-Adds an extra WHERE clause to prevent pt-archiver from removing the newest
+Adds an extra WHERE clause to prevent mariadb-archiver from removing the newest
 row when ascending a single-column AUTO_INCREMENT key.  This guards against
 re-using AUTO_INCREMENT values if the server restarts, and is enabled by
 default.
 
 The extra WHERE clause contains the maximum value of the auto-increment column
 as of the beginning of the archive or purge job.  If new rows are inserted while
-pt-archiver is running, it will not see them.
+mariadb-archiver is running, it will not see them.
 
 =item --sentinel
 
-type: string; default: /tmp/pt-archiver-sentinel
+type: string; default: /tmp/mariadb-archiver-sentinel
 
 Exit if this file exists.
 
-The presence of the file specified by L<"--sentinel"> will cause pt-archiver to
-stop archiving and exit.  The default is /tmp/pt-archiver-sentinel.  You
+The presence of the file specified by L<"--sentinel"> will cause mariadb-archiver to
+stop archiving and exit.  The default is /tmp/mariadb-archiver-sentinel.  You
 might find this handy to stop cron jobs gracefully if necessary.  See also
 L<"--stop">.
 
@@ -7980,7 +7331,7 @@ on all slaves.
 
 type: Array
 
-Set the MySQL variables in this comma-separated list of C<variable=value> pairs.
+Set the MariaDB variables in this comma-separated list of C<variable=value> pairs.
 
 By default, the tool sets:
 
@@ -8024,7 +7375,7 @@ type: float
 
 Calculate L<"--sleep"> as a multiple of the last SELECT time.
 
-If this option is specified, pt-archiver will sleep for the query time of the
+If this option is specified, mariadb-archiver will sleep for the query time of the
 last SELECT multiplied by the specified coefficient.
 
 This is a slightly more sophisticated way to throttle the SELECTs: sleep a
@@ -8042,8 +7393,8 @@ Socket file to use for connection.
 type: DSN
 
 DSN specifying the table to archive from (required).  This argument is a DSN.
-See L<DSN OPTIONS> for the syntax.  Most options control how pt-archiver
-connects to MySQL, but there are some extended DSN options in this tool's
+See L<DSN OPTIONS> for the syntax.  Most options control how mariadb-archiver
+connects to MariaDB, but there are some extended DSN options in this tool's
 syntax.  The D, t, and i options select a table to archive:
 
   --source h=my_server,D=my_database,t=my_tbl
@@ -8054,17 +7405,17 @@ option specifies pluggable actions, which an external Perl module can provide.
 The only required part is the table; other parts may be read from various
 places in the environment (such as options files).
 
-The 'i' part deserves special mention.  This tells pt-archiver which index
+The 'i' part deserves special mention.  This tells mariadb-archiver which index
 it should scan to archive.  This appears in a FORCE INDEX or USE INDEX hint in
 the SELECT statements used to fetch archivable rows.  If you don't specify
-anything, pt-archiver will auto-discover a good index, preferring a C<PRIMARY
+anything, mariadb-archiver will auto-discover a good index, preferring a C<PRIMARY
 KEY> if one exists.  In my experience this usually works well, so most of the
 time you can probably just omit the 'i' part.
 
-The index is used to optimize repeated accesses to the table; pt-archiver
+The index is used to optimize repeated accesses to the table; mariadb-archiver
 remembers the last row it retrieves from each SELECT statement, and uses it to
 construct a WHERE clause, using the columns in the specified index, that should
-allow MySQL to start the next SELECT where the last one ended, rather than
+allow MariaDB to start the next SELECT where the last one ended, rather than
 potentially scanning from the beginning of the table with each successive
 SELECT.  If you are using external plugins, please see L<"EXTENDING"> for a
 discussion of how they interact with ascending indexes.
@@ -8080,24 +7431,24 @@ purge job on the master and prevent it from happening on the slave using your
 method of choice.
 
 B<WARNING>: Using a default options file (F) DSN option that defines a
-socket for L<"--source"> causes pt-archiver to connect to L<"--dest"> using
+socket for L<"--source"> causes mariadb-archiver to connect to L<"--dest"> using
 that socket unless another socket for L<"--dest"> is specified.  This
-means that pt-archiver may incorrectly connect to L<"--source"> when it
+means that mariadb-archiver may incorrectly connect to L<"--source"> when it
 is meant to connect to L<"--dest">.  For example:
 
   --source F=host1.cnf,D=db,t=tbl --dest h=host2
 
-When pt-archiver connects to L<"--dest">, host2, it will connect via the
+When mariadb-archiver connects to L<"--dest">, host2, it will connect via the
 L<"--source">, host1, socket defined in host1.cnf.
 
 =item --statistics
 
 Collect and print timing statistics.
 
-Causes pt-archiver to collect timing statistics about what it does.  These
+Causes mariadb-archiver to collect timing statistics about what it does.  These
 statistics are available to the plugin specified by L<"--plugin">
 
-Unless you specify L<"--quiet">, C<pt-archiver> prints the statistics when it
+Unless you specify L<"--quiet">, C<mariadb-archiver> prints the statistics when it
 exits.  The statistics look like this:
 
  Started at 2008-07-18T07:18:53, ended at 2008-07-18T07:18:53
@@ -8132,7 +7483,7 @@ on reasonably new Perl releases.
 
 Stop running instances by creating the sentinel file.
 
-Causes pt-archiver to create the sentinel file specified by L<"--sentinel"> and
+Causes mariadb-archiver to create the sentinel file specified by L<"--sentinel"> and
 exit.  This should have the effect of stopping all running instances which are
 watching the same sentinel file.
 
@@ -8143,7 +7494,7 @@ type: int; default: 1
 Number of rows per transaction.
 
 Specifies the size, in number of rows, of each transaction. Zero disables
-transactions altogether.  After pt-archiver processes this many rows, it
+transactions altogether.  After mariadb-archiver processes this many rows, it
 commits both the L<"--source"> and the L<"--dest"> if given, and flushes the
 file given by L<"--file">.
 
@@ -8152,14 +7503,14 @@ server, which for example is doing heavy OLTP work, you need to choose a good
 balance between transaction size and commit overhead.  Larger transactions
 create the possibility of more lock contention and deadlocks, but smaller
 transactions cause more frequent commit overhead, which can be significant.  To
-give an idea, on a small test set I worked with while writing pt-archiver, a
+give an idea, on a small test set I worked with while writing mariadb-archiver, a
 value of 500 caused archiving to take about 2 seconds per 1000 rows on an
-otherwise quiet MySQL instance on my desktop machine, archiving to disk and to
+otherwise quiet MariaDB instance on my desktop machine, archiving to disk and to
 another table.  Disabling transactions with a value of zero, which turns on
 autocommit, dropped performance to 38 seconds per thousand rows.
 
 If you are not archiving from or to a transactional storage engine, you may
-want to disable transactions so pt-archiver doesn't try to commit.
+want to disable transactions so mariadb-archiver doesn't try to commit.
 
 =item --user
 
@@ -8170,32 +7521,6 @@ User for login if not current user.
 =item --version
 
 Show version and exit.
-
-=item --[no]version-check
-
-default: yes
-
-Check for the latest version of Percona Toolkit, MySQL, and other programs.
-
-This is a standard "check for updates automatically" feature, with two
-additional features.  First, the tool checks its own version and also the
-versions of the following software: operating system, Percona Monitoring and
-Management (PMM), MySQL, Perl, MySQL driver for Perl (DBD::mysql), and
-Percona Toolkit. Second, it checks for and warns about versions with known
-problems. For example, MySQL 5.5.25 had a critical bug and was re-released
-as 5.5.25a.
-
-A secure connection to Percona’s Version Check database server is done to
-perform these checks. Each request is logged by the server, including software
-version numbers and unique ID of the checked system. The ID is generated by the
-Percona Toolkit installation script or when the Version Check database call is
-done for the first time.
-
-Any updates or known problems are printed to STDOUT before the tool's normal
-output.  This feature should never interfere with the normal operation of the
-tool.  
-
-For more information, visit L<https://www.percona.com/doc/percona-toolkit/LATEST/version-check.html>.
 
 =item --where
 
@@ -8216,16 +7541,16 @@ L<"--where"> 1=1.
 
 Print reason for exiting unless rows exhausted.
 
-Causes pt-archiver to print a message if it exits for any reason other than
+Causes mariadb-archiver to print a message if it exits for any reason other than
 running out of rows to archive.  This can be useful if you have a cron job with
-L<"--run-time"> specified, for example, and you want to be sure pt-archiver is
+L<"--run-time"> specified, for example, and you want to be sure mariadb-archiver is
 finishing before running out of time.
 
 If L<"--statistics"> is given, the behavior is changed slightly.  It will print
 the reason for exiting even when it's just because there are no more rows.
 
 This output prints even if L<"--quiet"> is given.  That's so you can put
-C<pt-archiver> in a C<cron> job and get an email if there's an abnormal exit.
+C<mariadb-archiver> in a C<cron> job and get an email if there's an abnormal exit.
 
 =back
 
@@ -8235,7 +7560,7 @@ These DSN options are used to create a DSN.  Each option is given like
 C<option=value>.  The options are case-sensitive, so P and p are not the
 same option.  There cannot be whitespace before or after the C<=> and
 if the value contains whitespace it must be quoted.  DSN options are
-comma-separated.  See the L<percona-toolkit> manpage for full details.
+comma-separated.  See the L<mariadb-tools> manpage for full details.
 
 =over
 
@@ -8293,7 +7618,7 @@ lead to weird situations, like the server allowing LOCAL INFILE, but
 the client throwing exceptions if it's used.
 
 However, as long as the server allows LOAD DATA, clients can easily
-re-enable it; See L<https://dev.mysql.com/doc/refman/5.0/en/load-data-local.html>
+re-enable it; See L<https://mariadb.com/kb/en/library/load-data-infile/>
 and L<http://search.cpan.org/~capttofu/DBD-mysql/lib/DBD/mysql.pm>.
 This option does exactly that.
 
@@ -8342,13 +7667,13 @@ User for login if not current user.
 
 =head1 EXTENDING
 
-pt-archiver is extensible by plugging in external Perl modules to handle some
+mariadb-archiver is extensible by plugging in external Perl modules to handle some
 logic and/or actions.  You can specify a module for both the L<"--source"> and
 the L<"--dest">, with the 'm' part of the specification.  For example:
 
    --source D=test,t=test1,m=My::Module1 --dest m=My::Module2,t=test2
 
-This will cause pt-archiver to load the My::Module1 and My::Module2 packages,
+This will cause mariadb-archiver to load the My::Module1 and My::Module2 packages,
 create instances of them, and then make calls to them during the archiving
 process.
 
@@ -8361,22 +7686,22 @@ The module must provide this interface:
 =item new(dbh => $dbh, db => $db_name, tbl => $tbl_name)
 
 The plugin's constructor is passed a reference to the database handle, the
-database name, and table name.  The plugin is created just after pt-archiver
+database name, and table name.  The plugin is created just after mariadb-archiver
 opens the connection, and before it examines the table given in the arguments.
 This gives the plugin a chance to create and populate temporary tables, or do
 other setup work.
 
 =item before_begin(cols => \@cols, allcols => \@allcols)
 
-This method is called just before pt-archiver begins iterating through rows
+This method is called just before mariadb-archiver begins iterating through rows
 and archiving them, but after it does all other setup work (examining table
 structures, designing SQL queries, and so on).  This is the only time
-pt-archiver tells the plugin column names for the rows it will pass the
+mariadb-archiver tells the plugin column names for the rows it will pass the
 plugin while archiving.
 
 The C<cols> argument is the column names the user requested to be archived,
 either by default or by the L<"--columns"> option.  The C<allcols> argument is
-the list of column names for every row pt-archiver will fetch from the source
+the list of column names for every row mariadb-archiver will fetch from the source
 table.  It may fetch more columns than the user requested, because it needs some
 columns for its own use.  When subsequent plugin functions receive a row, it is
 the full row containing all the extra columns, if any, added to the end.
@@ -8389,21 +7714,21 @@ If the method returns true, the row will be archived; otherwise it will be
 skipped.
 
 Skipping a row adds complications for non-unique indexes.  Normally
-pt-archiver uses a WHERE clause designed to target the last processed row as
+mariadb-archiver uses a WHERE clause designed to target the last processed row as
 the place to start the scan for the next SELECT statement.  If you have skipped
-the row by returning false from is_archivable(), pt-archiver could get into
+the row by returning false from is_archivable(), mariadb-archiver could get into
 an infinite loop because the row still exists.  Therefore, when you specify a
-plugin for the L<"--source"> argument, pt-archiver will change its WHERE clause
+plugin for the L<"--source"> argument, mariadb-archiver will change its WHERE clause
 slightly.  Instead of starting at "greater than or equal to" the last processed
 row, it will start "strictly greater than."  This will work fine on unique
 indexes such as primary keys, but it may skip rows (leave holes) on non-unique
 indexes or when ascending only the first column of an index.
 
-C<pt-archiver> will change the clause in the same way if you specify
+C<mariadb-archiver> will change the clause in the same way if you specify
 L<"--no-delete">, because again an infinite loop is possible.
 
 If you specify the L<"--bulk-delete"> option and return false from this method,
-C<pt-archiver> may not do what you want.  The row won't be archived, but it will
+C<mariadb-archiver> may not do what you want.  The row won't be archived, but it will
 be deleted, since bulk deletes operate on ranges of rows and don't know which
 rows the plugin selected to keep.
 
@@ -8468,20 +7793,20 @@ This method's return value etc is similar to the L<"custom_sth()"> method.
 
 =item after_finish()
 
-This method is called after pt-archiver exits the archiving loop, commits all
+This method is called after mariadb-archiver exits the archiving loop, commits all
 database handles, closes L<"--file">, and prints the final statistics, but
-before pt-archiver runs ANALYZE or OPTIMIZE (see L<"--analyze"> and
+before mariadb-archiver runs ANALYZE or OPTIMIZE (see L<"--analyze"> and
 L<"--optimize">).
 
 =back
 
-If you specify a plugin for both L<"--source"> and L<"--dest">, pt-archiver
+If you specify a plugin for both L<"--source"> and L<"--dest">, mariadb-archiver
 constructs, calls before_begin(), and calls after_finish() on the two plugins in
 the order L<"--source">, L<"--dest">.
 
-pt-archiver assumes it controls transactions, and that the plugin will NOT
+mariadb-archiver assumes it controls transactions, and that the plugin will NOT
 commit or roll back the database handle.  The database handle passed to the
-plugin's constructor is the same handle pt-archiver uses itself.  Remember
+plugin's constructor is the same handle mariadb-archiver uses itself.  Remember
 that L<"--source"> and L<"--dest"> are separate handles.
 
 A sample module might look like this:
@@ -8517,7 +7842,7 @@ A sample module might look like this:
 The environment variable C<PTDEBUG> enables verbose debugging output to STDERR.
 To enable debugging and capture all output to a file, run the tool like:
 
-   PTDEBUG=1 pt-archiver ... > FILE 2>&1
+   PTDEBUG=1 mariadb-archiver ... > FILE 2>&1
 
 Be careful: debugging output is voluminous and can generate several megabytes
 of output.
@@ -8527,48 +7852,6 @@ of output.
 You need Perl, DBI, DBD::mysql, and some core packages that ought to be
 installed in any reasonably new version of Perl.
 
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-archiver>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
-
 =head1 AUTHORS
 
 Baron Schwartz
@@ -8577,19 +7860,17 @@ Baron Schwartz
 
 Andrew O'Brien
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-archiver in August, 2019. Percona Toolkit was forked from two
 projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates,
-2007-2011 Baron Schwartz.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -8607,6 +7888,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-archiver 3.0.13
+mariadb-archiver 3.0.13
 
 =cut

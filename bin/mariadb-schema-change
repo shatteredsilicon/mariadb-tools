@@ -3966,8 +3966,8 @@ sub set_dbh {
 sub lost_connection {
    my ($self, $e) = @_;
    return 0 unless $e;
-   return $e =~ m/MariaDB server has gone away/
-       || $e =~ m/Lost connection to MariaDB server/
+   return $e =~ m/MySQL server has gone away/
+       || $e =~ m/Lost connection to MySQL server/
        || $e =~ m/Server shutdown in progress/;
 }
 
@@ -10752,8 +10752,8 @@ sub osc_retry {
             $stats->{ error_event($error) }++;
             return 1;  # try again
          }
-         elsif (   $error =~ m/MariaDB server has gone away/
-                || $error =~ m/Lost connection to MariaDB server/
+         elsif (   $error =~ m/MySQL server has gone away/
+                || $error =~ m/Lost connection to MySQL server/
          ) {
             # The 1st pattern means that MySQL itself died or was stopped.
             # The 2nd pattern means that our cxn was killed (KILL <id>).
