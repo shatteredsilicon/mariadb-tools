@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -13,7 +13,7 @@ use warnings FATAL => 'all';
 # documentation for a full list of dependencies.
 BEGIN {
    $INC{$_} = __FILE__ for map { (my $pkg = "$_.pm") =~ s!::!/!g; $pkg } (qw(
-      Percona::Toolkit
+      MariaDB::Tools
       VersionCompare
       OptionParser
       Lmo::Utils
@@ -40,21 +40,19 @@ BEGIN {
       CleanupTask
       IndexLength
       HTTP::Micro
-      VersionCheck
-      Percona::XtraDB::Cluster
+      MariaDB::Galera::Cluster
    ));
 }
 
 # ###########################################################################
-# Percona::Toolkit package
+# MariaDB::Tools package
 # This package is a copy without comments from the original.  The original
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Percona/Toolkit.pm
 #   t/lib/Percona/Toolkit.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
-package Percona::Toolkit;
+package MariaDB::Tools;
 
 our $VERSION = '3.0.13';
 
@@ -105,7 +103,7 @@ sub _d {
 1;
 }
 # ###########################################################################
-# End Percona::Toolkit package
+# End MariaDB::Tools package
 # ###########################################################################
 #
 
@@ -115,7 +113,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/VersionCompare.pm
 #   t/lib/VersionCompare.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package VersionCompare;
@@ -162,7 +159,6 @@ sub cmp {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/OptionParser.pm
 #   t/lib/OptionParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package OptionParser;
@@ -224,9 +220,9 @@ sub new {
       defaults_to       => {},  # rule: opt defaults to value of other opt
       DSNParser         => undef,
       default_files     => [
-         "/etc/percona-toolkit/percona-toolkit.conf",
-         "/etc/percona-toolkit/$program_name.conf",
-         "$home/.percona-toolkit.conf",
+         "/etc/mariadb/mariadb-tools.conf",
+         "/etc/mariadb/$program_name.conf",
+         "$home/.mariadb-tools.conf",
          "$home/.$program_name.conf",
       ],
       types             => {
@@ -1069,13 +1065,6 @@ sub _read_config_file {
          next LINE;
       }
 
-      if (  $parse
-            && !$self->has('version-check')
-            && $line =~ /version-check/
-      ) {
-         next LINE;
-      }
-
       if ( $parse
          && (my($opt, $arg) = $line =~ m/^\s*([^=\s]+?)(?:\s*=\s*(.*?)\s*)?$/)
       ) {
@@ -1274,7 +1263,6 @@ if ( PTDEBUG ) {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Utils.pm
 #   t/lib/Lmo/Utils.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Utils;
@@ -1334,7 +1322,6 @@ sub _unimport_coderefs {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Meta.pm
 #   t/lib/Lmo/Meta.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Meta;
@@ -1391,7 +1378,6 @@ sub attributes_for_new {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Object.pm
 #   t/lib/Lmo/Object.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Object;
@@ -1487,7 +1473,6 @@ sub meta {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Types.pm
 #   t/lib/Lmo/Types.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Types;
@@ -1588,7 +1573,6 @@ sub _nested_constraints {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo.pm
 #   t/lib/Lmo.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 BEGIN {
@@ -1923,7 +1907,6 @@ sub override {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/VersionParser.pm
 #   t/lib/VersionParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package VersionParser;
@@ -2115,7 +2098,6 @@ no Lmo;
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/DSNParser.pm
 #   t/lib/DSNParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package DSNParser;
@@ -2327,7 +2309,7 @@ sub get_dbh {
    }
 
    if ( !$have_dbi ) {
-      die "Cannot connect to MySQL because the Perl DBI module is not "
+      die "Cannot connect to MariaDB because the Perl DBI module is not "
          . "installed or not found.  Run 'perl -MDBI' to see the directories "
          . "that Perl searches for DBI.  If DBI is not installed, try:\n"
          . "  Debian/Ubuntu  apt-get install libdbi-perl\n"
@@ -2346,7 +2328,7 @@ sub get_dbh {
 
       if ( !$dbh && $EVAL_ERROR ) {
          if ( $EVAL_ERROR =~ m/locate DBD\/mysql/i ) {
-            die "Cannot connect to MySQL because the Perl DBD::mysql module is "
+            die "Cannot connect to MariaDB because the Perl DBD::mysql module is "
                . "not installed or not found.  Run 'perl -MDBD::mysql' to see "
                . "the directories that Perl searches for DBD::mysql.  If "
                . "DBD::mysql is not installed, try:\n"
@@ -2509,7 +2491,7 @@ sub set_vars {
             $msg .= "  The current value for $var is $current_val.  "
                   . "If the variable is read only (not dynamic), specify "
                   . "--set-vars $var=$current_val to avoid this warning, "
-                  . "else manually set the variable and restart MySQL.";
+                  . "else manually set the variable and restart MariaDB.";
          }
          warn $msg . "\n\n";
       }
@@ -2538,7 +2520,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Daemon.pm
 #   t/lib/Daemon.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Daemon;
@@ -2792,7 +2773,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Quoter.pm
 #   t/lib/Quoter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Quoter;
@@ -2945,7 +2925,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TableNibbler.pm
 #   t/lib/TableNibbler.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TableNibbler;
@@ -3207,7 +3186,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TableParser.pm
 #   t/lib/TableParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TableParser;
@@ -3418,7 +3396,7 @@ sub find_possible_keys {
       my @candidates = split(',', $expl->{possible_keys});
       my %possible   = map { $_ => 1 } @candidates;
       if ( $expl->{key} ) {
-         PTDEBUG && _d('MySQL chose', $expl->{key});
+         PTDEBUG && _d('MariaDB chose', $expl->{key});
          unshift @candidates, grep { $possible{$_} } split(',', $expl->{key});
          PTDEBUG && _d('Before deduping:', join(', ', @candidates));
          my %seen;
@@ -3639,7 +3617,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Progress.pm
 #   t/lib/Progress.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Progress;
@@ -3786,7 +3763,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Retry.pm
 #   t/lib/Retry.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Retry;
@@ -3866,7 +3842,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Cxn.pm
 #   t/lib/Cxn.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Cxn;
@@ -3930,7 +3905,7 @@ sub connect {
    my $dbh = $self->{dbh};
    if ( !$dbh || !$dbh->ping() ) {
       if ( $self->{ask_pass} && !$self->{asked_for_pass} && !defined $dsn->{p} ) {
-         $dsn->{p} = OptionParser::prompt_noecho("Enter MySQL password: ");
+         $dsn->{p} = OptionParser::prompt_noecho("Enter MariaDB password: ");
          $self->{asked_for_pass} = 1;
       }
       $dbh = $dp->get_dbh(
@@ -3991,8 +3966,8 @@ sub set_dbh {
 sub lost_connection {
    my ($self, $e) = @_;
    return 0 unless $e;
-   return $e =~ m/MySQL server has gone away/
-       || $e =~ m/Lost connection to MySQL server/
+   return $e =~ m/MariaDB server has gone away/
+       || $e =~ m/Lost connection to MariaDB server/
        || $e =~ m/Server shutdown in progress/;
 }
 
@@ -4130,7 +4105,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/MasterSlave.pm
 #   t/lib/MasterSlave.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package MasterSlave;
@@ -4927,7 +4901,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/ReplicaLagWaiter.pm
 #   t/lib/ReplicaLagWaiter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package ReplicaLagWaiter;
@@ -5064,7 +5037,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/FlowControlWaiter.pm
 #   t/lib/FlowControlWaiter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package FlowControlWaiter;
@@ -5169,7 +5141,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/MySQLStatusWaiter.pm
 #   t/lib/MySQLStatusWaiter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package MySQLStatusWaiter;
@@ -5369,7 +5340,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/WeightedAvgRate.pm
 #   t/lib/WeightedAvgRate.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package WeightedAvgRate;
@@ -5438,7 +5408,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/NibbleIterator.pm
 #   t/lib/NibbleIterator.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package NibbleIterator;
@@ -5912,7 +5881,7 @@ sub _find_best_index {
    }
 
    if ( !$best_index && !$want_index && $args{mysql_index} ) {
-      PTDEBUG && _d('MySQL wants to use index', $args{mysql_index});
+      PTDEBUG && _d('MariaDB wants to use index', $args{mysql_index});
       $want_index = $args{mysql_index};
    }
 
@@ -6199,7 +6168,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Transformers.pm
 #   t/lib/Transformers.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Transformers;
@@ -6402,7 +6370,7 @@ sub any_unix_timestamp {
       return $val;
    }
    elsif ( my ($ymd, $hms) = $val =~ m/^(\d{6})(?:\s+(\d+:\d+:\d+))?/ ) {
-      PTDEBUG && _d('ts is MySQL slow log timestamp');
+      PTDEBUG && _d('ts is MariaDB slow log timestamp');
       $val .= ' 00:00:00' unless $hms;
       return unix_timestamp(parse_timestamp($val));
    }
@@ -6412,7 +6380,7 @@ sub any_unix_timestamp {
       return unix_timestamp($val);
    }
    else {
-      PTDEBUG && _d('ts is MySQL expression');
+      PTDEBUG && _d('ts is MariaDB expression');
       return $callback->($val) if $callback && ref $callback eq 'CODE';
    }
 
@@ -6552,7 +6520,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/CleanupTask.pm
 #   t/lib/CleanupTask.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package CleanupTask;
@@ -6614,7 +6581,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/IndexLength.pm
 #   t/lib/IndexLength.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 
@@ -6766,7 +6732,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/HTTP/Micro.pm
 #   t/lib/HTTP/Micro.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package HTTP::Micro;
@@ -7414,639 +7379,14 @@ if ( $INC{"IO/Socket/SSL.pm"} ) {
 # ###########################################################################
 
 # ###########################################################################
-# VersionCheck package
-# This package is a copy without comments from the original.  The original
-# with comments and its test file can be found in the Bazaar repository at,
-#   lib/VersionCheck.pm
-#   t/lib/VersionCheck.t
-# See https://launchpad.net/percona-toolkit for more information.
-# ###########################################################################
-{
-package VersionCheck;
-
-
-use strict;
-use warnings FATAL => 'all';
-use English qw(-no_match_vars);
-
-use constant PTDEBUG => $ENV{PTDEBUG} || 0;
-
-use Data::Dumper;
-local $Data::Dumper::Indent    = 1;
-local $Data::Dumper::Sortkeys  = 1;
-local $Data::Dumper::Quotekeys = 0;
-
-use Digest::MD5 qw(md5_hex);
-use Sys::Hostname qw(hostname);
-use File::Basename qw();
-use File::Spec;
-use FindBin qw();
-
-eval {
-   require Percona::Toolkit;
-   require HTTP::Micro;
-};
-
-my $home    = $ENV{HOME} || $ENV{HOMEPATH} || $ENV{USERPROFILE} || '.';
-my @vc_dirs = (
-   '/etc/percona',
-   '/etc/percona-toolkit',
-   '/tmp',
-   "$home",
-);
-
-{
-   my $file    = 'percona-version-check';
-
-   sub version_check_file {
-      foreach my $dir ( @vc_dirs ) {
-         if ( -d $dir && -w $dir ) {
-            PTDEBUG && _d('Version check file', $file, 'in', $dir);
-            return $dir . '/' . $file;
-         }
-      }
-      PTDEBUG && _d('Version check file', $file, 'in', $ENV{PWD});
-      return $file;  # in the CWD
-   } 
-}
-
-sub version_check_time_limit {
-   return 60 * 60 * 24;  # one day
-}
-
-
-sub version_check {
-   my (%args) = @_;
-
-   my $instances = $args{instances} || [];
-   my $instances_to_check;
-
-   PTDEBUG && _d('FindBin::Bin:', $FindBin::Bin);
-   if ( !$args{force} ) {
-      if ( $FindBin::Bin
-           && (-d "$FindBin::Bin/../.bzr"    || 
-               -d "$FindBin::Bin/../../.bzr" ||
-               -d "$FindBin::Bin/../.git"    || 
-               -d "$FindBin::Bin/../../.git" 
-              ) 
-         ) {
-         PTDEBUG && _d("$FindBin::Bin/../.bzr disables --version-check");
-         return;
-      }
-   }
-
-   eval {
-      foreach my $instance ( @$instances ) {
-         my ($name, $id) = get_instance_id($instance);
-         $instance->{name} = $name;
-         $instance->{id}   = $id;
-      }
-
-      push @$instances, { name => 'system', id => 0 };
-
-      $instances_to_check = get_instances_to_check(
-         instances => $instances,
-         vc_file   => $args{vc_file},  # testing
-         now       => $args{now},      # testing
-      );
-      PTDEBUG && _d(scalar @$instances_to_check, 'instances to check');
-      return unless @$instances_to_check;
-
-      my $protocol = 'https';  
-      eval { require IO::Socket::SSL; };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d($EVAL_ERROR);
-         PTDEBUG && _d("SSL not available, won't run version_check");
-         return;
-      }
-      PTDEBUG && _d('Using', $protocol);
-
-      my $advice = pingback(
-         instances => $instances_to_check,
-         protocol  => $protocol,
-         url       => $args{url}                       # testing
-                   || $ENV{PERCONA_VERSION_CHECK_URL}  # testing
-                   || "$protocol://v.percona.com",
-      );
-      if ( $advice ) {
-         PTDEBUG && _d('Advice:', Dumper($advice));
-         if ( scalar @$advice > 1) {
-            print "\n# " . scalar @$advice . " software updates are "
-               . "available:\n";
-         }
-         else {
-            print "\n# A software update is available:\n";
-         }
-         print join("\n", map { "#   * $_" } @$advice), "\n\n";
-      }
-   };
-   if ( $EVAL_ERROR ) {
-      PTDEBUG && _d('Version check failed:', $EVAL_ERROR);
-   }
-
-   if ( @$instances_to_check ) {
-      eval {
-         update_check_times(
-            instances => $instances_to_check,
-            vc_file   => $args{vc_file},  # testing
-            now       => $args{now},      # testing
-         );
-      };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d('Error updating version check file:', $EVAL_ERROR);
-      }
-   }
-
-   if ( $ENV{PTDEBUG_VERSION_CHECK} ) {
-      warn "Exiting because the PTDEBUG_VERSION_CHECK "
-         . "environment variable is defined.\n";
-      exit 255;
-   }
-
-   return;
-}
-
-sub get_instances_to_check {
-   my (%args) = @_;
-
-   my $instances = $args{instances};
-   my $now       = $args{now}     || int(time);
-   my $vc_file   = $args{vc_file} || version_check_file();
-
-   if ( !-f $vc_file ) {
-      PTDEBUG && _d('Version check file', $vc_file, 'does not exist;',
-         'version checking all instances');
-      return $instances;
-   }
-
-   open my $fh, '<', $vc_file or die "Cannot open $vc_file: $OS_ERROR";
-   chomp(my $file_contents = do { local $/ = undef; <$fh> });
-   PTDEBUG && _d('Version check file', $vc_file, 'contents:', $file_contents);
-   close $fh;
-   my %last_check_time_for = $file_contents =~ /^([^,]+),(.+)$/mg;
-
-   my $check_time_limit = version_check_time_limit();
-   my @instances_to_check;
-   foreach my $instance ( @$instances ) {
-      my $last_check_time = $last_check_time_for{ $instance->{id} };
-      PTDEBUG && _d('Intsance', $instance->{id}, 'last checked',
-         $last_check_time, 'now', $now, 'diff', $now - ($last_check_time || 0),
-         'hours until next check',
-         sprintf '%.2f',
-            ($check_time_limit - ($now - ($last_check_time || 0))) / 3600);
-      if ( !defined $last_check_time
-           || ($now - $last_check_time) >= $check_time_limit ) {
-         PTDEBUG && _d('Time to check', Dumper($instance));
-         push @instances_to_check, $instance;
-      }
-   }
-
-   return \@instances_to_check;
-}
-
-sub update_check_times {
-   my (%args) = @_;
-
-   my $instances = $args{instances};
-   my $now       = $args{now}     || int(time);
-   my $vc_file   = $args{vc_file} || version_check_file();
-   PTDEBUG && _d('Updating last check time:', $now);
-
-   my %all_instances = map {
-      $_->{id} => { name => $_->{name}, ts => $now }
-   } @$instances;
-
-   if ( -f $vc_file ) {
-      open my $fh, '<', $vc_file or die "Cannot read $vc_file: $OS_ERROR";
-      my $contents = do { local $/ = undef; <$fh> };
-      close $fh;
-
-      foreach my $line ( split("\n", ($contents || '')) ) {
-         my ($id, $ts) = split(',', $line);
-         if ( !exists $all_instances{$id} ) {
-            $all_instances{$id} = { ts => $ts };  # original ts, not updated
-         }
-      }
-   }
-
-   open my $fh, '>', $vc_file or die "Cannot write to $vc_file: $OS_ERROR";
-   foreach my $id ( sort keys %all_instances ) {
-      PTDEBUG && _d('Updated:', $id, Dumper($all_instances{$id}));
-      print { $fh } $id . ',' . $all_instances{$id}->{ts} . "\n";
-   }
-   close $fh;
-
-   return;
-}
-
-sub get_instance_id {
-   my ($instance) = @_;
-
-   my $dbh = $instance->{dbh};
-   my $dsn = $instance->{dsn};
-
-   my $sql = q{SELECT CONCAT(@@hostname, @@port)};
-   PTDEBUG && _d($sql);
-   my ($name) = eval { $dbh->selectrow_array($sql) };
-   if ( $EVAL_ERROR ) {
-      PTDEBUG && _d($EVAL_ERROR);
-      $sql = q{SELECT @@hostname};
-      PTDEBUG && _d($sql);
-      ($name) = eval { $dbh->selectrow_array($sql) };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d($EVAL_ERROR);
-         $name = ($dsn->{h} || 'localhost') . ($dsn->{P} || 3306);
-      }
-      else {
-         $sql = q{SHOW VARIABLES LIKE 'port'};
-         PTDEBUG && _d($sql);
-         my (undef, $port) = eval { $dbh->selectrow_array($sql) };
-         PTDEBUG && _d('port:', $port);
-         $name .= $port || '';
-      }
-   }
-   my $id = md5_hex($name);
-
-   PTDEBUG && _d('MySQL instance:', $id, $name, Dumper($dsn));
-
-   return $name, $id;
-}
-
-
-sub get_uuid {
-    my $uuid_file = '/.percona-toolkit.uuid';
-    foreach my $dir (@vc_dirs) {
-        my $filename = $dir.$uuid_file;
-        my $uuid=_read_uuid($filename);
-        return $uuid if $uuid;
-    }
-
-    my $filename = $ENV{"HOME"} . $uuid_file;
-    my $uuid = _generate_uuid();
-
-    open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
-    print $fh $uuid;
-    close $fh;
-
-    return $uuid;
-}   
-
-sub _generate_uuid {
-    return sprintf+($}="%04x")."$}-$}-$}-$}-".$}x3,map rand 65537,0..7;
-}
-
-sub _read_uuid {
-    my $filename = shift;
-    my $fh;
-
-    eval {
-        open($fh, '<:encoding(UTF-8)', $filename);
-    };
-    return if ($EVAL_ERROR);
-
-    my $uuid;
-    eval { $uuid = <$fh>; };
-    return if ($EVAL_ERROR);
-
-    chomp $uuid;
-    return $uuid;
-}
-
-
-sub pingback {
-   my (%args) = @_;
-   my @required_args = qw(url instances);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my $url       = $args{url};
-   my $instances = $args{instances};
-
-   my $ua = $args{ua} || HTTP::Micro->new( timeout => 3 );
-
-   my $response = $ua->request('GET', $url);
-   PTDEBUG && _d('Server response:', Dumper($response));
-   die "No response from GET $url"
-      if !$response;
-   die("GET on $url returned HTTP status $response->{status}; expected 200\n",
-       ($response->{content} || '')) if $response->{status} != 200;
-   die("GET on $url did not return any programs to check")
-      if !$response->{content};
-
-   my $items = parse_server_response(
-      response => $response->{content}
-   );
-   die "Failed to parse server requested programs: $response->{content}"
-      if !scalar keys %$items;
-      
-   my $versions = get_versions(
-      items     => $items,
-      instances => $instances,
-   );
-   die "Failed to get any program versions; should have at least gotten Perl"
-      if !scalar keys %$versions;
-
-   my $client_content = encode_client_response(
-      items      => $items,
-      versions   => $versions,
-      general_id => get_uuid(),
-   );
-
-   my $client_response = {
-      headers => { "X-Percona-Toolkit-Tool" => File::Basename::basename($0) },
-      content => $client_content,
-   };
-   PTDEBUG && _d('Client response:', Dumper($client_response));
-
-   $response = $ua->request('POST', $url, $client_response);
-   PTDEBUG && _d('Server suggestions:', Dumper($response));
-   die "No response from POST $url $client_response"
-      if !$response;
-   die "POST $url returned HTTP status $response->{status}; expected 200"
-      if $response->{status} != 200;
-
-   return unless $response->{content};
-
-   $items = parse_server_response(
-      response   => $response->{content},
-      split_vars => 0,
-   );
-   die "Failed to parse server suggestions: $response->{content}"
-      if !scalar keys %$items;
-   my @suggestions = map { $_->{vars} }
-                     sort { $a->{item} cmp $b->{item} }
-                     values %$items;
-
-   return \@suggestions;
-}
-
-sub encode_client_response {
-   my (%args) = @_;
-   my @required_args = qw(items versions general_id);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($items, $versions, $general_id) = @args{@required_args};
-
-   my @lines;
-   foreach my $item ( sort keys %$items ) {
-      next unless exists $versions->{$item};
-      if ( ref($versions->{$item}) eq 'HASH' ) {
-         my $mysql_versions = $versions->{$item};
-         for my $id ( sort keys %$mysql_versions ) {
-            push @lines, join(';', $id, $item, $mysql_versions->{$id});
-         }
-      }
-      else {
-         push @lines, join(';', $general_id, $item, $versions->{$item});
-      }
-   }
-
-   my $client_response = join("\n", @lines) . "\n";
-   return $client_response;
-}
-
-sub parse_server_response {
-   my (%args) = @_;
-   my @required_args = qw(response);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($response) = @args{@required_args};
-
-   my %items = map {
-      my ($item, $type, $vars) = split(";", $_);
-      if ( !defined $args{split_vars} || $args{split_vars} ) {
-         $vars = [ split(",", ($vars || '')) ];
-      }
-      $item => {
-         item => $item,
-         type => $type,
-         vars => $vars,
-      };
-   } split("\n", $response);
-
-   PTDEBUG && _d('Items:', Dumper(\%items));
-
-   return \%items;
-}
-
-my %sub_for_type = (
-   os_version          => \&get_os_version,
-   perl_version        => \&get_perl_version,
-   perl_module_version => \&get_perl_module_version,
-   mysql_variable      => \&get_mysql_variable,
-);
-
-sub valid_item {
-   my ($item) = @_;
-   return unless $item;
-   if ( !exists $sub_for_type{ $item->{type} } ) {
-      PTDEBUG && _d('Invalid type:', $item->{type});
-      return 0;
-   }
-   return 1;
-}
-
-sub get_versions {
-   my (%args) = @_;
-   my @required_args = qw(items);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($items) = @args{@required_args};
-
-   my %versions;
-   foreach my $item ( values %$items ) {
-      next unless valid_item($item);
-      eval {
-         my $version = $sub_for_type{ $item->{type} }->(
-            item      => $item,
-            instances => $args{instances},
-         );
-         if ( $version ) {
-            chomp $version unless ref($version);
-            $versions{$item->{item}} = $version;
-         }
-      };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d('Error getting version for', Dumper($item), $EVAL_ERROR);
-      }
-   }
-
-   return \%versions;
-}
-
-
-sub get_os_version {
-   if ( $OSNAME eq 'MSWin32' ) {
-      require Win32;
-      return Win32::GetOSDisplayName();
-   }
-
-  chomp(my $platform = `uname -s`);
-  PTDEBUG && _d('platform:', $platform);
-  return $OSNAME unless $platform;
-
-   chomp(my $lsb_release
-            = `which lsb_release 2>/dev/null | awk '{print \$1}'` || '');
-   PTDEBUG && _d('lsb_release:', $lsb_release);
-
-   my $release = "";
-
-   if ( $platform eq 'Linux' ) {
-      if ( -f "/etc/fedora-release" ) {
-         $release = `cat /etc/fedora-release`;
-      }
-      elsif ( -f "/etc/redhat-release" ) {
-         $release = `cat /etc/redhat-release`;
-      }
-      elsif ( -f "/etc/system-release" ) {
-         $release = `cat /etc/system-release`;
-      }
-      elsif ( $lsb_release ) {
-         $release = `$lsb_release -ds`;
-      }
-      elsif ( -f "/etc/lsb-release" ) {
-         $release = `grep DISTRIB_DESCRIPTION /etc/lsb-release`;
-         $release =~ s/^\w+="([^"]+)".+/$1/;
-      }
-      elsif ( -f "/etc/debian_version" ) {
-         chomp(my $rel = `cat /etc/debian_version`);
-         $release = "Debian $rel";
-         if ( -f "/etc/apt/sources.list" ) {
-             chomp(my $code_name = `awk '/^deb/ {print \$3}' /etc/apt/sources.list | awk -F/ '{print \$1}'| awk 'BEGIN {FS="|"} {print \$1}' | sort | uniq -c | sort -rn | head -n1 | awk '{print \$2}'`);
-             $release .= " ($code_name)" if $code_name;
-         }
-      }
-      elsif ( -f "/etc/os-release" ) { # openSUSE
-         chomp($release = `grep PRETTY_NAME /etc/os-release`);
-         $release =~ s/^PRETTY_NAME="(.+)"$/$1/;
-      }
-      elsif ( `ls /etc/*release 2>/dev/null` ) {
-         if ( `grep DISTRIB_DESCRIPTION /etc/*release 2>/dev/null` ) {
-            $release = `grep DISTRIB_DESCRIPTION /etc/*release | head -n1`;
-         }
-         else {
-            $release = `cat /etc/*release | head -n1`;
-         }
-      }
-   }
-   elsif ( $platform =~ m/(?:BSD|^Darwin)$/ ) {
-      my $rel = `uname -r`;
-      $release = "$platform $rel";
-   }
-   elsif ( $platform eq "SunOS" ) {
-      my $rel = `head -n1 /etc/release` || `uname -r`;
-      $release = "$platform $rel";
-   }
-
-   if ( !$release ) {
-      PTDEBUG && _d('Failed to get the release, using platform');
-      $release = $platform;
-   }
-   chomp($release);
-
-   $release =~ s/^"|"$//g;
-
-   PTDEBUG && _d('OS version =', $release);
-   return $release;
-}
-
-sub get_perl_version {
-   my (%args) = @_;
-   my $item = $args{item};
-   return unless $item;
-
-   my $version = sprintf '%vd', $PERL_VERSION;
-   PTDEBUG && _d('Perl version', $version);
-   return $version;
-}
-
-sub get_perl_module_version {
-   my (%args) = @_;
-   my $item = $args{item};
-   return unless $item;
-
-   my $var     = '$' . $item->{item} . '::VERSION';
-   my $version = eval "use $item->{item}; $var;";
-   PTDEBUG && _d('Perl version for', $var, '=', $version);
-   return $version;
-}
-
-sub get_mysql_variable {
-   return get_from_mysql(
-      show => 'VARIABLES',
-      @_,
-   );
-}
-
-sub get_from_mysql {
-   my (%args) = @_;
-   my $show      = $args{show};
-   my $item      = $args{item};
-   my $instances = $args{instances};
-   return unless $show && $item;
-
-   if ( !$instances || !@$instances ) {
-      PTDEBUG && _d('Cannot check', $item,
-         'because there are no MySQL instances');
-      return;
-   }
-
-   if ($item->{item} eq 'MySQL' && $item->{type} eq 'mysql_variable') {
-      @{$item->{vars}} = grep { $_ eq 'version' || $_ eq 'version_comment' } @{$item->{vars}};
-   }
- 
-
-   my @versions;
-   my %version_for;
-   foreach my $instance ( @$instances ) {
-      next unless $instance->{id};  # special system instance has id=0
-      my $dbh = $instance->{dbh};
-      local $dbh->{FetchHashKeyName} = 'NAME_lc';
-      my $sql = qq/SHOW $show/;
-      PTDEBUG && _d($sql);
-      my $rows = $dbh->selectall_hashref($sql, 'variable_name');
-
-      my @versions;
-      foreach my $var ( @{$item->{vars}} ) {
-         $var = lc($var);
-         my $version = $rows->{$var}->{value};
-         PTDEBUG && _d('MySQL version for', $item->{item}, '=', $version,
-            'on', $instance->{name});
-         push @versions, $version;
-      }
-      $version_for{ $instance->{id} } = join(' ', @versions);
-   }
-
-   return \%version_for;
-}
-
-sub _d {
-   my ($package, undef, $line) = caller 0;
-   @_ = map { (my $temp = $_) =~ s/\n/\n# /g; $temp; }
-        map { defined $_ ? $_ : 'undef' }
-        @_;
-   print STDERR "# $package:$line $PID ", join(' ', @_), "\n";
-}
-
-1;
-}
-# ###########################################################################
-# End VersionCheck package
-# ###########################################################################
-
-# ###########################################################################
-# Percona::XtraDB::Cluster package
+# MariaDB::Galera::Cluster package
 # This package is a copy without comments from the original.  The original
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Percona/XtraDB/Cluster.pm
 #   t/lib/Percona/XtraDB/Cluster.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
-package Percona::XtraDB::Cluster;
+package MariaDB::Galera::Cluster;
 
 use strict;
 use warnings FATAL => 'all';
@@ -8235,7 +7575,7 @@ sub _d {
 1;
 }
 # ###########################################################################
-# End Percona::XtraDB::Cluster package
+# End MariaDB::Galera::Cluster package
 # ###########################################################################
 
 
@@ -8253,7 +7593,7 @@ use strict;
 use warnings FATAL => 'all';
 use English qw(-no_match_vars);
 
-use Percona::Toolkit;
+use MariaDB::Tools;
 use constant PTDEBUG => $ENV{PTDEBUG} || 0;
 
 use List::Util qw(max);
@@ -8520,7 +7860,7 @@ sub main {
       );
       eval { $cxn->connect() };  # connect or die trying
       if ( $EVAL_ERROR ) {
-         _die("Cannot connect to MySQL: $EVAL_ERROR", MYSQL_CONNECTION_ERROR);
+         _die("Cannot connect to MariaDB: $EVAL_ERROR", MYSQL_CONNECTION_ERROR);
       }
       return $cxn;
    };
@@ -8528,7 +7868,7 @@ sub main {
    my $cxn     = $make_cxn->(dsn => $dsn);
    my $aux_cxn = $make_cxn->(dsn => $dsn, prev_dsn => $dsn);
 
-   my $cluster = Percona::XtraDB::Cluster->new;
+   my $cluster = MariaDB::Galera::Cluster->new;
    if ( $cluster->is_cluster_node($cxn) ) {
       # Because of https://bugs.launchpad.net/codership-mysql/+bug/1040108
       # ptc and pt-osc check Threads_running by default for --max-load.
@@ -8536,11 +7876,11 @@ sub main {
       # manifest itself.  If it does, however, then the tools will wait forever.
       $pxc_version = VersionParser->new($cxn->dbh);
       if ( $pxc_version < '5.5.28' ) {
-         _die("Percona XtraDB Cluster 5.5.28 or newer is required to run "
+         _die("MariaDB Galera Cluster 5.5.28 or newer is required to run "
             . "this tool on a cluster, but node " . $cxn->name
             . " is running version " . $pxc_version->version
             . ".  Please upgrade the node, or run the tool on a newer node, "
-            . "or contact Percona for support.", UNSUPORTED_MYSQL_VERSION);
+            . "or contact MariaDB for support.", UNSUPORTED_MYSQL_VERSION);
       }
       if ( $pxc_version < '5.6' && $o->got('max-flow-ctl') ) {
         _die("Option '--max-flow-ctl is only available for PXC version 5.6 "
@@ -8557,7 +7897,7 @@ sub main {
         _die("wsrep_OSU_method=TOI is required because "
             . $cxn->name . " is a cluster node.  wsrep_OSU_method is "
             . "currently set to " . ($wsrep_osu_method || '') . ".  "
-            . "Set it to TOI, or contact Percona for support.", NO_MINIMUM_REQUIREMENTS);
+            . "Set it to TOI, or contact MariaDB for support.", NO_MINIMUM_REQUIREMENTS);
       }
    } elsif ( $o->got('max-flow-ctl') ) {
       _die("Option '--max-flow-ctl' is meant to be used on PXC clusters. "
@@ -8572,7 +7912,7 @@ sub main {
    # ########################################################################   
    my $server_version = VersionParser->new($cxn->dbh());
    if ( $server_version < '5.0.10' ) {
-      _die("This tool requires MySQL 5.0.10 or newer.", UNSUPORTED_MYSQL_VERSION);
+      _die("This tool requires MariaDB 5.0.10 or newer.", UNSUPORTED_MYSQL_VERSION);
    }
 
    # Use LOCK IN SHARE mode unless MySQL 5.0 because there's a bug like
@@ -8606,7 +7946,7 @@ sub main {
             $analyze_table = 0;
          }
       } else {
-         PTDEBUG && _d('MySQL < 5.6, disabling --analyze-before-swap');
+         PTDEBUG && _d('MariaDB < 5.6, disabling --analyze-before-swap');
          $analyze_table = 0;
       }
    }
@@ -8777,7 +8117,7 @@ sub main {
                   . "replica lag ($EVAL_ERROR)", LOST_MYSQL_CONNECTION);
             }
          }
-         $dbh->do("SELECT 'pt-online-schema-change keepalive'");
+         $dbh->do("SELECT 'mariadb-schema-change keepalive'");
          sleep $o->get('check-interval');
          return;
       };
@@ -8896,17 +8236,17 @@ sub main {
    # ########################################################################
    # Do the version-check
    # ########################################################################
-   if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
-      VersionCheck::version_check(
-         force     => $o->got('version-check'),
-         instances => [
-            map (
-               { +{ dbh => $_->dbh(), dsn => $_->dsn() } }
-               $cxn, ($slaves ? @$slaves : ())
-            )
-         ],
-      );
-   }
+   # if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
+   #    VersionCheck::version_check(
+   #       force     => $o->got('version-check'),
+   #       instances => [
+   #          map (
+   #             { +{ dbh => $_->dbh(), dsn => $_->dsn() } }
+   #             $cxn, ($slaves ? @$slaves : ())
+   #          )
+   #       ],
+   #    );
+   # }
 
    # ########################################################################
    # Setup and check the original table.
@@ -9224,7 +8564,7 @@ sub main {
             . join("\n", map { "  $_" } @triggers_not_dropped)
             . "\nThese triggers must be dropped before dropping "
             . "$new_tbl->{name}, else writing to $orig_tbl->{name} will "
-            . "cause MySQL error 1146 (42S02): \"Table $new_tbl->{name} "
+            . "cause MariaDB error 1146 (42S02): \"Table $new_tbl->{name} "
             . " doesn't exist\".\n";
       }
       else {
@@ -9582,7 +8922,7 @@ sub main {
                );
                if ( !$key || lc($key) ne lc($nibble_iter->nibble_index()) ) {
                   _die(ts("Cannot determine the key_len of the chunk index "
-                     . "because MySQL chose "
+                     . "because MariaDB chose "
                      . ($key ? "the $key" : "no") . " index "
                      . "instead of the " . $nibble_iter->nibble_index()
                      . " index for the first lower boundary statement.  "
@@ -9630,7 +8970,7 @@ sub main {
                   . " because it is not safe to ascend.  Chunking should "
                   . "use the "
                   . ($nibble_iter->nibble_index() || '?')
-                  . " index, but MySQL EXPLAIN reports that "
+                  . " index, but MariaDB EXPLAIN reports that "
                   . ($expl->{key} ? "the $expl->{key}" : "no")
                   . " index will be used for "
                   . $sth->{upper_boundary}->{Statement}
@@ -9791,8 +9131,8 @@ sub main {
       TableParser        => $tp,
       TableNibbler       => new TableNibbler(TableParser => $tp, Quoter => $q),
       comments           => {
-         bite   => "pt-online-schema-change $PID copy table",
-         nibble => "pt-online-schema-change $PID copy nibble",
+         bite   => "mariadb-schema-change $PID copy table",
+         nibble => "mariadb-schema-change $PID copy nibble",
       },
    );
  
@@ -10242,7 +9582,7 @@ sub check_alter {
    # ########################################################################
    # If it's a cluster node, check for MyISAM which does not work.
    # ########################################################################
-   my $cluster = Percona::XtraDB::Cluster->new;
+   my $cluster = MariaDB::Galera::Cluster->new;
    if ( $cluster->is_cluster_node($cxn) ) {
       if ( ($tbl->{tbl_struct}->{engine} || '') =~ m/MyISAM/i ) {
          $ok = 0;
@@ -10393,7 +9733,7 @@ sub nibble_is_safe {
            && $o->get('check-plan') )
       {
          die ts("Error copying rows at chunk " . $nibble_iter->nibble_number()
-            . " of $tbl->{db}.$tbl->{tbl} because MySQL chose "
+            . " of $tbl->{db}.$tbl->{tbl} because MariaDB chose "
             . ($expl->{key} ? "the $expl->{key}" : "no") . " index "
             . " instead of the " . $nibble_iter->nibble_index() . "index.\n");
       }
@@ -10415,7 +9755,7 @@ sub nibble_is_safe {
             . "The current chunk size limit is "
             . ($tbl->{chunk_size} * $limit)
             . " rows (chunk size=$tbl->{chunk_size}"
-            . " * chunk size limit=$limit), but MySQL estimates "
+            . " * chunk size limit=$limit), but MariaDB estimates "
             . "that there are " . ($expl->{rows} || 0)
             . " rows in the chunk.\n");
       }
@@ -10430,7 +9770,7 @@ sub nibble_is_safe {
         && $o->get('check-plan') )
    {
       die ts("Error copying rows at chunk " . $nibble_iter->nibble_number()
-         . " of $tbl->{db}.$tbl->{tbl} because MySQL used "
+         . " of $tbl->{db}.$tbl->{tbl} because MariaDB used "
          . "only " . ($expl->{key_len} || 0) . " bytes "
          . "of the " . ($expl->{key} || '?') . " index instead of "
          . $tbl->{key_len} . ".  See the --[no]check-plan documentation "
@@ -10607,7 +9947,7 @@ sub swap_tables {
       # https://bugs.launchpad.net/percona-toolkit/+bug/1491261
       if ( $args{analyze_table} ) {
          print ts("Analyzing new table...\n");
-         my $sql_analyze = "ANALYZE TABLE $new_tbl->{name} /* pt-online-schema-change */";
+         my $sql_analyze = "ANALYZE TABLE $new_tbl->{name} /* mariadb-schema-change */";
          osc_retry(
             Cxn     => $cxn,
             Retry   => $retry,
@@ -10984,7 +10324,7 @@ sub drop_swap {
    # https://bugs.launchpad.net/percona-toolkit/+bug/1491261
    if ( $args{analyze_table} ) {
       print ts("Analyzing new table...\n");
-      my $sql_analyze = "ANALYZE TABLE $new_tbl->{name} /* pt-online-schema-change */";
+      my $sql_analyze = "ANALYZE TABLE $new_tbl->{name} /* mariadb-schema-change */";
       osc_retry(
          Cxn     => $cxn,
          Retry   => $retry,
@@ -11412,8 +10752,8 @@ sub osc_retry {
             $stats->{ error_event($error) }++;
             return 1;  # try again
          }
-         elsif (   $error =~ m/MySQL server has gone away/
-                || $error =~ m/Lost connection to MySQL server/
+         elsif (   $error =~ m/MariaDB server has gone away/
+                || $error =~ m/Lost connection to MariaDB server/
          ) {
             # The 1st pattern means that MySQL itself died or was stopped.
             # The 2nd pattern means that our cxn was killed (KILL <id>).
@@ -11516,21 +10856,21 @@ sub exec_nibble {
                         || $message =~ m/$warn_code{$code}->{pattern}/) )
             {
                if ( !$stats->{"mysql_warning_$code"}++ ) {  # warn once
-                  warn "Copying rows caused a MySQL error $code: "
+                  warn "Copying rows caused a MariaDB error $code: "
                      . ($warn_code{$code}->{message}
                         ? $warn_code{$code}->{message}
                         : $message)
-                     . "\nNo more warnings about this MySQL error will be "
+                     . "\nNo more warnings about this MariaDB error will be "
                      . "reported.  If --statistics was specified, "
                      . "mysql_warning_$code will list the total count of "
-                     . "this MySQL error.\n";
+                     . "this MariaDB error.\n";
                }
             }
             else {
                # This die will propagate to fail which will return 0
                # and propagate it to final_fail which will die with
                # this error message.
-               die "Copying rows caused a MySQL error $code:\n"
+               die "Copying rows caused a MariaDB error $code:\n"
                   . "    Level: " . ($warning->{level}   || '') . "\n"
                   . "     Code: " . ($warning->{code}    || '') . "\n"
                   . "  Message: " . ($warning->{message} || '') . "\n"
@@ -11657,28 +10997,28 @@ if ( !caller ) { exit main(@ARGV); }
 
 =head1 NAME
 
-pt-online-schema-change - ALTER tables without locking them.
+mariadb-schema-change - ALTER tables without locking them.
 
 =head1 SYNOPSIS
 
-Usage: pt-online-schema-change [OPTIONS] DSN
+Usage: mariadb-schema-change [OPTIONS] DSN
 
-pt-online-schema-change alters a table's structure without blocking reads or
+mariadb-schema-change alters a table's structure without blocking reads or
 writes.  Specify the database and table in the DSN. Do not use this tool before
 reading its documentation and checking your backups carefully.
 
 Add a column to sakila.actor:
 
-  pt-online-schema-change --alter "ADD COLUMN c1 INT" D=sakila,t=actor
+  mariadb-schema-change --alter "ADD COLUMN c1 INT" D=sakila,t=actor
 
 Change sakila.actor to InnoDB, effectively performing OPTIMIZE TABLE in a
 non-blocking fashion because it is already an InnoDB table:
 
-  pt-online-schema-change --alter "ENGINE=InnoDB" D=sakila,t=actor
+  mariadb-schema-change --alter "ENGINE=InnoDB" D=sakila,t=actor
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+mariadb-schema-change is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -11696,12 +11036,12 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-online-schema-change emulates the way that MySQL alters tables internally,
+mariadb-schema-change emulates the way that MariaDB alters tables internally,
 but it works on a copy of the table you wish to alter. This means that the
 original table is not locked, and clients may continue to read and change data
 in it.
 
-pt-online-schema-change works by creating an empty copy of the table to alter,
+mariadb-schema-change works by creating an empty copy of the table to alter,
 modifying it as desired, and then copying rows from the original table into the
 new table. When the copy is complete, it moves away the original table and
 replaces it with the new one.  By default, it also drops the original table.
@@ -11729,7 +11069,7 @@ L<"--alter-foreign-keys-method">.
 Foreign keys also cause some side effects. The final table will have the same
 foreign keys and indexes as the original table (unless you specify differently
 in your ALTER statement), but the names of the objects may be changed slightly
-to avoid object name collisions in MySQL and InnoDB.
+to avoid object name collisions in MariaDB and InnoDB.
 
 For safety, the tool does not modify the table unless you specify the
 L<"--execute"> option, which is not enabled by default.  The tool supports a
@@ -11762,7 +11102,7 @@ server. See L<"--max-load"> and L<"--critical-load"> for details.
 
 =item *
 
-The tool sets C<innodb_lock_wait_timeout=1> and (for MySQL 5.5 and newer)
+The tool sets C<innodb_lock_wait_timeout=1> and (for MariaDB 5.5 and newer)
 C<lock_wait_timeout=60> so that it is more likely to be the victim of any
 lock contention, and less likely to disrupt other transactions.  These
 values can be changed by specifying L<"--set-vars">.
@@ -11774,22 +11114,22 @@ unless you specify L<"--alter-foreign-keys-method">.
 
 =item *
 
-The tool cannot alter MyISAM tables on L<"Percona XtraDB Cluster"> nodes.
+The tool cannot alter MyISAM tables on L<"Galera"> nodes.
 
 =back
 
-=head1 Percona XtraDB Cluster
+=head1 MariaDB Galera Cluster
 
-pt-online-schema-change works with Percona XtraDB Cluster (PXC) 5.5.28-23.7
+mariadb-schema-change works with Galera Cluster 5.5.28
 and newer, but there are two limitations: only InnoDB tables can be altered,
 and C<wsrep_OSU_method> must be set to C<TOI> (total order isolation).
 The tool exits with an error if the host is a cluster node and the table
 is MyISAM or is being converted to MyISAM (C<ENGINE=MyISAM>), or if
 C<wsrep_OSU_method> is not C<TOI>.  There is no way to disable these checks.
 
-=head1 MySQL 5.7+ Generated columns
+=head1 MariaDB 10.2+ Generated columns
 
-The tools ignores MySQL 5.7+ C<GENERATED> columns since the value for those columns
+The tools ignores MariaDB 10.2+ C<GENERATED> columns since the value for those columns
 is generated according to the expresion used to compute column values.
 
 =head1 OUTPUT
@@ -11821,7 +11161,7 @@ type: string
 
 The schema modification, without the ALTER TABLE keywords. You can perform
 multiple modifications to the table by specifying them with commas. Please refer
-to the MySQL manual for the syntax of ALTER TABLE.
+to the MariaDB manual for the syntax of ALTER TABLE.
 
 The following limitations apply which, if attempted, will cause the tool
 to fail in unpredictable ways:
@@ -11856,8 +11196,8 @@ specify the default.
 =item *
 
 C<DROP FOREIGN KEY constraint_name> requires specifying C<_constraint_name>
-rather than the real C<constraint_name>.  Due to a limitation in MySQL,
-pt-online-schema-change adds a leading underscore to foreign key constraint
+rather than the real C<constraint_name>.  Due to a limitation in MariaDB,
+mariadb-schema-change adds a leading underscore to foreign key constraint
 names when creating the new table.  For example, to drop this constraint:
 
   CONSTRAINT `fk_foo` FOREIGN KEY (`foo_id`) REFERENCES `bar` (`foo_id`)
@@ -11866,7 +11206,7 @@ You must specify C<--alter "DROP FOREIGN KEY _fk_foo">.
 
 =item *
 
-The tool does not use C<LOCK IN SHARE MODE> with MySQL 5.0 because it can
+The tool does not use C<LOCK IN SHARE MODE> with MariaDB 5.0 because it can
 cause a slave error which breaks replication:
 
    Query caused different errors on master and slave. Error on master:
@@ -11875,16 +11215,16 @@ cause a slave error which breaks replication:
    Query: 'INSERT INTO pt_osc.t (id, c) VALUES ('730', 'new row')'
 
 The error happens when converting a MyISAM table to InnoDB because MyISAM
-is non-transactional but InnoDB is transactional.  MySQL 5.1 and newer
+is non-transactional but InnoDB is transactional.  MariaDB 5.1 and newer
 handle this case correctly, but testing reproduces the error 5% of the time
-with MySQL 5.0.
+with MariaDB 5.0.
 
-This is a MySQL bug, similar to L<http://bugs.mysql.com/bug.php?id=45694>,
-but there is no fix or workaround in MySQL 5.0.  Without C<LOCK IN SHARE MODE>,
+This is a MariaDB bug, similar to L<http://bugs.mysql.com/bug.php?id=45694>,
+but there is no fix or workaround in MariaDB 5.0.  Without C<LOCK IN SHARE MODE>,
 tests pass 100% of the time, so the risk of data loss or breaking replication
 should be negligible.
 
-B<Be sure to verify the new table if using MySQL 5.0 and converting
+B<Be sure to verify the new table if using MariaDB 5.0 and converting
 from MyISAM to InnoDB!>
 
 =back
@@ -11920,13 +11260,13 @@ at which the tool is able to copy rows from the old table to the new table. If
 the tool estimates that the child table can be altered in less time than the
 L<"--chunk-time">, then it will use this technique.  For purposes of estimating
 the time required to alter the child table, the tool multiplies the row-copying
-rate by L<"--chunk-size-limit">, because MySQL's C<ALTER TABLE> is typically
+rate by L<"--chunk-size-limit">, because MariaDB's C<ALTER TABLE> is typically
 much faster than the external process of copying rows.
 
-Due to a limitation in MySQL, foreign keys will not have the same names after
+Due to a limitation in MariaDB, foreign keys will not have the same names after
 the ALTER that they did prior to it. The tool has to rename the foreign key
 when it redefines it, which adds a leading underscore to the name. In some
-cases, MySQL also automatically renames indexes required for the foreign key.
+cases, MariaDB also automatically renames indexes required for the foreign key.
 
 =item drop_swap
 
@@ -11970,9 +11310,9 @@ tool's built-in functionality if desired.
 default: yes
 
 Execute ANALYZE TABLE on the new table before swapping with the old one.
-By default, this happens only when running MySQL 5.6 and newer, and
+By default, this happens only when running MariaDB 5.6 and newer, and
 C<innodb_stats_persistent> is enabled. Specify the option explicitly to enable
-or disable it regardless of MySQL version and C<innodb_stats_persistent>.
+or disable it regardless of MariaDB version and C<innodb_stats_persistent>.
 
 This circumvents a potentially serious issue related to InnoDB optimizer
 statistics. If the table being alerted is busy and the tool completes quickly,
@@ -11983,7 +11323,7 @@ the server very busy, this can cause an outage.
 
 =item --ask-pass
 
-Prompt for a password when connecting to MySQL.
+Prompt for a password when connecting to MariaDB.
 
 =item --charset
 
@@ -11991,8 +11331,8 @@ short form: -A; type: string
 
 Default character set.  If the value is utf8, sets Perl's binmode on
 STDOUT to utf8, passes the mysql_enable_utf8 option to DBD::mysql, and runs SET
-NAMES UTF8 after connecting to MySQL.  Any other value sets binmode on STDOUT
-without the utf8 layer, and runs SET NAMES after connecting to MySQL.
+NAMES UTF8 after connecting to MariaDB.  Any other value sets binmode on STDOUT
+without the utf8 layer, and runs SET NAMES after connecting to MariaDB.
 
 =item --[no]check-alter
 
@@ -12037,19 +11377,19 @@ default: yes
 
 Check query execution plans for safety. By default, this option causes
 the tool to run EXPLAIN before running queries that are meant to access
-a small amount of data, but which could access many rows if MySQL chooses a bad
+a small amount of data, but which could access many rows if MariaDB chooses a bad
 execution plan. These include the queries to determine chunk boundaries and the
-chunk queries themselves. If it appears that MySQL will use a bad query
+chunk queries themselves. If it appears that MariaDB will use a bad query
 execution plan, the tool will skip the chunk of the table.
 
 The tool uses several heuristics to determine whether an execution plan is bad.
-The first is whether EXPLAIN reports that MySQL intends to use the desired index
-to access the rows. If MySQL chooses a different index, the tool considers the
+The first is whether EXPLAIN reports that MariaDB intends to use the desired index
+to access the rows. If MariaDB chooses a different index, the tool considers the
 query unsafe.
 
-The tool also checks how much of the index MySQL reports that it will use for
+The tool also checks how much of the index MariaDB reports that it will use for
 the query. The EXPLAIN output shows this in the key_len column. The tool
-remembers the largest key_len seen, and skips chunks where MySQL reports that it
+remembers the largest key_len seen, and skips chunks where MariaDB reports that it
 will use a smaller prefix of the index. This heuristic can be understood as
 skipping chunks that have a worse execution plan than other chunks.
 
@@ -12059,7 +11399,7 @@ although you can see the count of skipped chunks in the SKIPPED column in
 the tool's output.
 
 This option adds some setup work to each table and chunk. Although the work is
-not intrusive for MySQL, it results in more round-trips to the server, which
+not intrusive for MariaDB, it results in more round-trips to the server, which
 consumes time. Making chunks too small will cause the overhead to become
 relatively larger. It is therefore recommended that you not make chunks too
 small, because the tool may take a very long time to complete if you do.
@@ -12105,7 +11445,7 @@ index could cause bad performance.
 type: int
 
 Use only this many left-most columns of a L<"--chunk-index">.  This works
-only for compound indexes, and is useful in cases where a bug in the MySQL
+only for compound indexes, and is useful in cases where a bug in the MariaDB
 query optimizer (planner) causes it to scan a large range of rows instead
 of using the index to locate starting and ending points precisely.  This
 problem sometimes occurs on indexes with many columns, such as 4 or more.
@@ -12183,7 +11523,7 @@ first option on the command line.
 type: Array; default: Threads_running=50
 
 Examine SHOW GLOBAL STATUS after every chunk, and abort if the load is too high.
-The option accepts a comma-separated list of MySQL status variables and
+The option accepts a comma-separated list of MariaDB status variables and
 thresholds.  An optional C<=MAX_VALUE> (or C<:MAX_VALUE>) can follow each
 variable.  If not given, the tool determines a threshold by examining the
 current value at startup and doubling it.
@@ -12227,7 +11567,7 @@ than remove-data-dir.
 default: no
 
 If the original table was created using the DATA DIRECTORY feature, remove it and create 
-the new table in MySQL default directory without creating a new isl file.
+the new table in MariaDB default directory without creating a new isl file.
 
 =item --defaults-file
 
@@ -12284,9 +11624,9 @@ documentation, then do not specify this option.
 
 default: yes
 
-Avoid C<pt-online-schema-change> to run if the specified statement for L<"--alter"> is 
+Avoid C<mariadb-schema-change> to run if the specified statement for L<"--alter"> is 
 trying to add an unique index. 
-Since C<pt-online-schema-change> uses C<INSERT IGNORE> to copy rows to the new table, if
+Since C<mariadb-schema-change> uses C<INSERT IGNORE> to copy rows to the new table, if
 the row being written produces a duplicate key, it will fail silently and data will
 be lost.
 
@@ -12307,9 +11647,9 @@ Example:
     insert into a values (5, NULL);
     insert into a values (6, NULL);
 
-Using C<pt-online-schema-change> to add an unique index on the C<unique_id> field, will cause some rows to
+Using C<mariadb-schema-change> to add an unique index on the C<unique_id> field, will cause some rows to
 be lost due to the use of C<INSERT IGNORE> to copy rows from the source table.
-For this reason, C<pt-online-schema-change> will fail if it detects that the L<"--alter"> parameter is trying
+For this reason, C<mariadb-schema-change> will fail if it detects that the L<"--alter"> parameter is trying
 to add an unique key and it will show an example query to run to detect if there are 
 rows that will produce duplicated indexes.
 
@@ -12323,9 +11663,9 @@ This options bypasses confirmation in case of using alter-foreign-keys-method = 
 
 =item --force-concat-enums
 
-The NibbleIterator in Percona Toolkit can detect indexes having ENUM fields and 
-if the items it has are sorted or not. According to MySQL documentation at 
-L<https://dev.mysql.com/doc/refman/8.0/en/enum.html>:
+The NibbleIterator in mariadb-schema-change can detect indexes having ENUM fields and 
+if the items it has are sorted or not. According to documentation at 
+L<https://dev.mysql.com/doc/refman/5.7/en/enum.html>:
 
 ENUM values are sorted based on their index numbers, which depend on the order in 
 which the enumeration members were listed in the column specification. 
@@ -12339,8 +11679,8 @@ use one of these techniques:
 - Make sure that the column is sorted lexically rather than by index number by coding 
 ORDER BY CAST(col AS CHAR) or ORDER BY CONCAT(col).
 
-The NibbleIterator in Percona Toolkit uses CONCAT(col) but, doing that, adds overhead
-since MySQL cannot use the column directly and has to calculate the result of CONCAT
+The NibbleIterator in mariadb-schema-change uses CONCAT(col) but, doing that, adds overhead
+since MariaDB cannot use the column directly and has to calculate the result of CONCAT
 for every row.
 To make this scenario vissible to the user, if there are indexes having ENUM fields 
 with usorted items, it is necessary to specify the C<--force-concat-enums> parameter.
@@ -12394,7 +11734,7 @@ type: Array; default: Threads_running=25
 
 Examine SHOW GLOBAL STATUS after every chunk, and pause if any status variables
 are higher than their thresholds.  The option accepts a comma-separated list of
-MySQL status variables.  An optional C<=MAX_VALUE> (or C<:MAX_VALUE>) can follow
+MariaDB status variables.  An optional C<=MAX_VALUE> (or C<:MAX_VALUE>) can follow
 each variable.  If not given, the tool determines a threshold by examining the
 current value and increasing it by 20%.
 
@@ -12418,11 +11758,11 @@ you notice queueing, it is best to decrease the chunk time.
 =item --preserve-triggers
 
 Preserves old triggers when specified. 
-As of MySQL 5.7.2, it is possible to define multiple triggers for a given 
+As of MariaDB 10.2.3, it is possible to define multiple triggers for a given 
 table that have the same trigger event and action time. This allows us to
-add the triggers needed for C<pt-online-schema-change> even if the table
+add the triggers needed for C<mariadb-schema-change> even if the table
 already has its own triggers.
-If this option is enabled, C<pt-online-schema-change> will try to copy all the
+If this option is enabled, C<mariadb-schema-change> will try to copy all the
 existing triggers to the new table BEFORE start copying rows from the original
 table to ensure the old triggers can be applied after altering the table.
 
@@ -12482,7 +11822,7 @@ exist.
 
 Allows MODIFYing a column that allows NULL values to one that doesn't allow
 them. The rows which contain NULL values will be converted to the defined
-default value. If no explicit DEFAULT value is given MySQL will assign a default
+default value. If no explicit DEFAULT value is given MariaDB will assign a default
 value based on datatype, e.g. 0 for number datatypes, '' for string datatypes.
 
 =item --only-same-schema-fks
@@ -12521,9 +11861,9 @@ type: string
 
 Perl module file that defines a C<pt_online_schema_change_plugin> class.
 A plugin allows you to write a Perl module that can hook into many parts
-of pt-online-schema-change.  This requires a good knowledge of Perl and
-Percona Toolkit conventions, which are beyond this scope of this
-documentation.  Please contact Percona if you have questions or need help.
+of mariadb-schema-change.  This requires a good knowledge of Perl and
+MariaDB tools conventions, which are beyond this scope of this
+documentation.  Please contact MariaDB if you have questions or need help.
 
 See L<"PLUGIN"> for more information.
 
@@ -12609,7 +11949,7 @@ type: DSN; repeatable: yes
 
 DSN to skip when checking slave lag. It can be used multiple times.
 Example: --skip-check-slave-lag h=127.0.0.1,P=12345 --skip-check-slave-lag h=127.0.0.1,P=12346
-Plase take into consideration that even when for the MySQL driver h=127.1 is equal to h=127.0.0.1,
+Plase take into consideration that even when for the MariaDB driver h=127.1 is equal to h=127.0.0.1,
 for this parameter you need to specify the full IP address.
 
 =item --slave-user
@@ -12632,7 +11972,7 @@ on all slaves.
 
 type: Array
 
-Set the MySQL variables in this comma-separated list of C<variable=value> pairs.
+Set the MariaDB variables in this comma-separated list of C<variable=value> pairs.
 
 By default, the tool sets:
 
@@ -12723,9 +12063,9 @@ with a 0.5 second wait between tries.  So the format is:
 
 All three values must be specified.
 
-Note that most operations are affected only in MySQL 5.5 and newer by
+Note that most operations are affected only in MariaDB 5.5 and newer by
 C<lock_wait_timeout> (see L<"--set-vars">) because of metadata locks.
-The C<copy_rows> operation is affected in any version of MySQL by
+The C<copy_rows> operation is affected in any version of MariaDB by
 C<innodb_lock_wait_timeout>.
 
 For creating and dropping triggers, the number of tries applies to each
@@ -12744,7 +12084,7 @@ The tool retries each operation if these errors occur:
    Deadlock found
    Query is killed (KILL QUERY <thread_id>)
    Connection is killed (KILL CONNECTION <thread_id>)
-   Lost connection to MySQL
+   Lost connection to MariaDB
 
 In the case of lost and killed connections, the tool will automatically
 reconnect.
@@ -12760,32 +12100,6 @@ User for login if not current user.
 =item --version
 
 Show version and exit.
-
-=item --[no]version-check
-
-default: yes
-
-Check for the latest version of Percona Toolkit, MySQL, and other programs.
-
-This is a standard "check for updates automatically" feature, with two
-additional features.  First, the tool checks its own version and also the
-versions of the following software: operating system, Percona Monitoring and
-Management (PMM), MySQL, Perl, MySQL driver for Perl (DBD::mysql), and
-Percona Toolkit. Second, it checks for and warns about versions with known
-problems. For example, MySQL 5.5.25 had a critical bug and was re-released
-as 5.5.25a.
-
-A secure connection to Percona’s Version Check database server is done to
-perform these checks. Each request is logged by the server, including software
-version numbers and unique ID of the checked system. The ID is generated by the
-Percona Toolkit installation script or when the Version Check database call is
-done for the first time.
-
-Any updates or known problems are printed to STDOUT before the tool's normal
-output.  This feature should never interfere with the normal operation of the
-tool.  
-
-For more information, visit L<https://www.percona.com/doc/percona-toolkit/LATEST/version-check.html>.
 
 =back
 
@@ -12975,7 +12289,7 @@ Here's an example that actually does something:
 
 You could use this with L<"--dry-run"> to check how the table will look before and after.
 
-Please contact Percona if you have questions or need help.
+Please contact MariaDB if you have questions or need help.
 
 =head1 DSN OPTIONS
 
@@ -12983,7 +12297,7 @@ These DSN options are used to create a DSN.  Each option is given like
 C<option=value>.  The options are case-sensitive, so P and p are not the
 same option.  There cannot be whitespace before or after the C<=> and
 if the value contains whitespace it must be quoted.  DSN options are
-comma-separated.  See the L<percona-toolkit> manpage for full details.
+comma-separated.  See the L<mariadb-tools> manpage for full details.
 
 =over
 
@@ -13049,7 +12363,7 @@ User for login if not current user.
 The environment variable C<PTDEBUG> enables verbose debugging output to STDERR.
 To enable debugging and capture all output to a file, run the tool like:
 
-   PTDEBUG=1 pt-online-schema-change ... > FILE 2>&1
+   PTDEBUG=1 mariadb-schema-change ... > FILE 2>&1
 
 Be careful: debugging output is voluminous and can generate several megabytes
 of output.
@@ -13081,54 +12395,12 @@ of output.
 You need Perl, DBI, DBD::mysql, and some core packages that ought to be
 installed in any reasonably new version of Perl.
 
-This tool works only on MySQL 5.0.2 and newer versions, because earlier versions
-do not support triggers. Also a number of permissions should be set on MySQL 
-to make pt-online-schema-change operate as expected. PROCESS, SUPER, REPLICATION SLAVE
+This tool works only on MariaDB 5.0.2 and newer versions, because earlier versions
+do not support triggers. Also a number of permissions should be set on MariaDB 
+to make mariadb-schema-change operate as expected. PROCESS, SUPER, REPLICATION SLAVE
 global privileges, as well as SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER,
 and TRIGGER table privileges should be granted on server. Slave needs only
 REPLICATION SLAVE and REPLICATION CLIENT privileges.
-
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-online-schema-change>.
-
-Please report bugs at L<https://bugs.launchpad.net/percona-toolkit>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
 
 =head1 AUTHORS
 
@@ -13143,18 +12415,17 @@ another version called C<OnlineSchemaChange.php> as explained by their blog
 post: L<http://tinyurl.com/32zeb86>. This tool is a hybrid of both approaches,
 with additional features and functionality not present in either.
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
-projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-online-schema-change in August, 2019. Percona Toolkit was
+forked from two projects in June, 2011: Maatkit and Aspersa.  Those projects
+were created by Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -13172,6 +12443,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-online-schema-change 3.0.13
+mariadb-schema-change 3.0.13
 
 =cut
