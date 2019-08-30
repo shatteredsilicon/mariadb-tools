@@ -528,7 +528,7 @@ print_help() {
       1  Default action: summarize files
       0  Minimal action: list files
       *  View all the files in less
-      d  Invoke 'diskstats' on the disk performance data
+      d  Invoke 'mariadb-iostat' on the disk performance data
       i  View the first INNODB STATUS sample in 'less'
       m  Invoke 'mariadb-status-diff' to show the SHOW STATUS counters side by side
       n  Summarize the 'netstat -antp' status data

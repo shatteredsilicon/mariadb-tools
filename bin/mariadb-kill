@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -13,7 +13,7 @@ use warnings FATAL => 'all';
 # documentation for a full list of dependencies.
 BEGIN {
    $INC{$_} = __FILE__ for map { (my $pkg = "$_.pm") =~ s!::!/!g; $pkg } (qw(
-      Percona::Toolkit
+      MariaDB::Tools
       OptionParser
       Lmo::Utils
       Lmo::Meta
@@ -32,20 +32,18 @@ BEGIN {
       Retry
       Cxn
       HTTP::Micro
-      VersionCheck
    ));
 }
 
 # ###########################################################################
-# Percona::Toolkit package
+# MariaDB::Tools package
 # This package is a copy without comments from the original.  The original
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Percona/Toolkit.pm
 #   t/lib/Percona/Toolkit.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
-package Percona::Toolkit;
+package MariaDB::Tools;
 
 our $VERSION = '3.0.13';
 
@@ -96,7 +94,7 @@ sub _d {
 1;
 }
 # ###########################################################################
-# End Percona::Toolkit package
+# End MariaDB::Tools package
 # ###########################################################################
 
 # ###########################################################################
@@ -105,7 +103,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/OptionParser.pm
 #   t/lib/OptionParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package OptionParser;
@@ -167,9 +164,9 @@ sub new {
       defaults_to       => {},  # rule: opt defaults to value of other opt
       DSNParser         => undef,
       default_files     => [
-         "/etc/percona-toolkit/percona-toolkit.conf",
-         "/etc/percona-toolkit/$program_name.conf",
-         "$home/.percona-toolkit.conf",
+         "/etc/mariadb/mariadb-tools.conf",
+         "/etc/mariadb/$program_name.conf",
+         "$home/.mariadb-tools.conf",
          "$home/.$program_name.conf",
       ],
       types             => {
@@ -1012,12 +1009,12 @@ sub _read_config_file {
          next LINE;
       }
 
-      if (  $parse
-            && !$self->has('version-check')
-            && $line =~ /version-check/
-      ) {
-         next LINE;
-      }
+      # if (  $parse
+      #       && !$self->has('version-check')
+      #       && $line =~ /version-check/
+      # ) {
+      #    next LINE;
+      # }
 
       if ( $parse
          && (my($opt, $arg) = $line =~ m/^\s*([^=\s]+?)(?:\s*=\s*(.*?)\s*)?$/)
@@ -1216,7 +1213,6 @@ if ( PTDEBUG ) {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Utils.pm
 #   t/lib/Lmo/Utils.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Utils;
@@ -1276,7 +1272,6 @@ sub _unimport_coderefs {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Meta.pm
 #   t/lib/Lmo/Meta.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Meta;
@@ -1333,7 +1328,6 @@ sub attributes_for_new {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Object.pm
 #   t/lib/Lmo/Object.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Object;
@@ -1429,7 +1423,6 @@ sub meta {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Types.pm
 #   t/lib/Lmo/Types.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Types;
@@ -1530,7 +1523,6 @@ sub _nested_constraints {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo.pm
 #   t/lib/Lmo.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 BEGIN {
@@ -1865,7 +1857,6 @@ sub override {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/DSNParser.pm
 #   t/lib/DSNParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package DSNParser;
@@ -2077,7 +2068,7 @@ sub get_dbh {
    }
 
    if ( !$have_dbi ) {
-      die "Cannot connect to MySQL because the Perl DBI module is not "
+      die "Cannot connect to MariaDB because the Perl DBI module is not "
          . "installed or not found.  Run 'perl -MDBI' to see the directories "
          . "that Perl searches for DBI.  If DBI is not installed, try:\n"
          . "  Debian/Ubuntu  apt-get install libdbi-perl\n"
@@ -2096,12 +2087,12 @@ sub get_dbh {
 
       if ( !$dbh && $EVAL_ERROR ) {
          if ( $EVAL_ERROR =~ m/locate DBD\/mysql/i ) {
-            die "Cannot connect to MySQL because the Perl DBD::mysql module is "
+            die "Cannot connect to MariaDB because the Perl DBD::mysql module is "
                . "not installed or not found.  Run 'perl -MDBD::mysql' to see "
                . "the directories that Perl searches for DBD::mysql.  If "
                . "DBD::mysql is not installed, try:\n"
                . "  Debian/Ubuntu  apt-get install libdbd-mysql-perl\n"
-               . "  RHEL/CentOS    yum install perl-DBD-MySQL\n"
+               . "  RHEL/CentOS    yum install perl-DBD-MariaDB\n"
                . "  OpenSolaris    pgk install pkg:/SUNWapu13dbd-mysql\n";
          }
          elsif ( $EVAL_ERROR =~ m/not a compiled character set|character set utf8/ ) {
@@ -2259,7 +2250,7 @@ sub set_vars {
             $msg .= "  The current value for $var is $current_val.  "
                   . "If the variable is read only (not dynamic), specify "
                   . "--set-vars $var=$current_val to avoid this warning, "
-                  . "else manually set the variable and restart MySQL.";
+                  . "else manually set the variable and restart MariaDB.";
          }
          warn $msg . "\n\n";
       }
@@ -2288,7 +2279,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Daemon.pm
 #   t/lib/Daemon.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Daemon;
@@ -2490,7 +2480,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Transformers.pm
 #   t/lib/Transformers.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Transformers;
@@ -2693,7 +2682,7 @@ sub any_unix_timestamp {
       return $val;
    }
    elsif ( my ($ymd, $hms) = $val =~ m/^(\d{6})(?:\s+(\d+:\d+:\d+))?/ ) {
-      PTDEBUG && _d('ts is MySQL slow log timestamp');
+      PTDEBUG && _d('ts is MariaDB slow log timestamp');
       $val .= ' 00:00:00' unless $hms;
       return unix_timestamp(parse_timestamp($val));
    }
@@ -2703,7 +2692,7 @@ sub any_unix_timestamp {
       return unix_timestamp($val);
    }
    else {
-      PTDEBUG && _d('ts is MySQL expression');
+      PTDEBUG && _d('ts is MariaDB expression');
       return $callback->($val) if $callback && ref $callback eq 'CODE';
    }
 
@@ -2843,7 +2832,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TableParser.pm
 #   t/lib/TableParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TableParser;
@@ -3054,7 +3042,7 @@ sub find_possible_keys {
       my @candidates = split(',', $expl->{possible_keys});
       my %possible   = map { $_ => 1 } @candidates;
       if ( $expl->{key} ) {
-         PTDEBUG && _d('MySQL chose', $expl->{key});
+         PTDEBUG && _d('MariaDB chose', $expl->{key});
          unshift @candidates, grep { $possible{$_} } split(',', $expl->{key});
          PTDEBUG && _d('Before deduping:', join(', ', @candidates));
          my %seen;
@@ -3275,7 +3263,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Processlist.pm
 #   t/lib/Processlist.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Processlist;
@@ -3664,7 +3651,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TextResultSetParser.pm
 #   t/lib/TextResultSetParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TextResultSetParser;
@@ -3808,7 +3794,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/MasterSlave.pm
 #   t/lib/MasterSlave.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package MasterSlave;
@@ -4605,7 +4590,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Quoter.pm
 #   t/lib/Quoter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Quoter;
@@ -4756,7 +4740,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/QueryRewriter.pm
 #   t/lib/QueryRewriter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package QueryRewriter;
@@ -5161,7 +5144,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Retry.pm
 #   t/lib/Retry.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Retry;
@@ -5241,7 +5223,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Cxn.pm
 #   t/lib/Cxn.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Cxn;
@@ -5305,7 +5286,7 @@ sub connect {
    my $dbh = $self->{dbh};
    if ( !$dbh || !$dbh->ping() ) {
       if ( $self->{ask_pass} && !$self->{asked_for_pass} && !defined $dsn->{p} ) {
-         $dsn->{p} = OptionParser::prompt_noecho("Enter MySQL password: ");
+         $dsn->{p} = OptionParser::prompt_noecho("Enter MariaDB password: ");
          $self->{asked_for_pass} = 1;
       }
       $dbh = $dp->get_dbh(
@@ -5366,8 +5347,8 @@ sub set_dbh {
 sub lost_connection {
    my ($self, $e) = @_;
    return 0 unless $e;
-   return $e =~ m/MySQL server has gone away/
-       || $e =~ m/Lost connection to MySQL server/
+   return $e =~ m/MariaDB server has gone away/
+       || $e =~ m/Lost connection to MariaDB server/
        || $e =~ m/Server shutdown in progress/;
 }
 
@@ -5505,7 +5486,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/HTTP/Micro.pm
 #   t/lib/HTTP/Micro.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package HTTP::Micro;
@@ -6153,630 +6133,6 @@ if ( $INC{"IO/Socket/SSL.pm"} ) {
 # ###########################################################################
 
 # ###########################################################################
-# VersionCheck package
-# This package is a copy without comments from the original.  The original
-# with comments and its test file can be found in the Bazaar repository at,
-#   lib/VersionCheck.pm
-#   t/lib/VersionCheck.t
-# See https://launchpad.net/percona-toolkit for more information.
-# ###########################################################################
-{
-package VersionCheck;
-
-
-use strict;
-use warnings FATAL => 'all';
-use English qw(-no_match_vars);
-
-use constant PTDEBUG => $ENV{PTDEBUG} || 0;
-
-use Data::Dumper;
-local $Data::Dumper::Indent    = 1;
-local $Data::Dumper::Sortkeys  = 1;
-local $Data::Dumper::Quotekeys = 0;
-
-use Digest::MD5 qw(md5_hex);
-use Sys::Hostname qw(hostname);
-use File::Basename qw();
-use File::Spec;
-use FindBin qw();
-
-eval {
-   require Percona::Toolkit;
-   require HTTP::Micro;
-};
-
-my $home    = $ENV{HOME} || $ENV{HOMEPATH} || $ENV{USERPROFILE} || '.';
-my @vc_dirs = (
-   '/etc/percona',
-   '/etc/percona-toolkit',
-   '/tmp',
-   "$home",
-);
-
-{
-   my $file    = 'percona-version-check';
-
-   sub version_check_file {
-      foreach my $dir ( @vc_dirs ) {
-         if ( -d $dir && -w $dir ) {
-            PTDEBUG && _d('Version check file', $file, 'in', $dir);
-            return $dir . '/' . $file;
-         }
-      }
-      PTDEBUG && _d('Version check file', $file, 'in', $ENV{PWD});
-      return $file;  # in the CWD
-   } 
-}
-
-sub version_check_time_limit {
-   return 60 * 60 * 24;  # one day
-}
-
-
-sub version_check {
-   my (%args) = @_;
-
-   my $instances = $args{instances} || [];
-   my $instances_to_check;
-
-   PTDEBUG && _d('FindBin::Bin:', $FindBin::Bin);
-   if ( !$args{force} ) {
-      if ( $FindBin::Bin
-           && (-d "$FindBin::Bin/../.bzr"    || 
-               -d "$FindBin::Bin/../../.bzr" ||
-               -d "$FindBin::Bin/../.git"    || 
-               -d "$FindBin::Bin/../../.git" 
-              ) 
-         ) {
-         PTDEBUG && _d("$FindBin::Bin/../.bzr disables --version-check");
-         return;
-      }
-   }
-
-   eval {
-      foreach my $instance ( @$instances ) {
-         my ($name, $id) = get_instance_id($instance);
-         $instance->{name} = $name;
-         $instance->{id}   = $id;
-      }
-
-      push @$instances, { name => 'system', id => 0 };
-
-      $instances_to_check = get_instances_to_check(
-         instances => $instances,
-         vc_file   => $args{vc_file},  # testing
-         now       => $args{now},      # testing
-      );
-      PTDEBUG && _d(scalar @$instances_to_check, 'instances to check');
-      return unless @$instances_to_check;
-
-      my $protocol = 'https';  
-      eval { require IO::Socket::SSL; };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d($EVAL_ERROR);
-         PTDEBUG && _d("SSL not available, won't run version_check");
-         return;
-      }
-      PTDEBUG && _d('Using', $protocol);
-
-      my $advice = pingback(
-         instances => $instances_to_check,
-         protocol  => $protocol,
-         url       => $args{url}                       # testing
-                   || $ENV{PERCONA_VERSION_CHECK_URL}  # testing
-                   || "$protocol://v.percona.com",
-      );
-      if ( $advice ) {
-         PTDEBUG && _d('Advice:', Dumper($advice));
-         if ( scalar @$advice > 1) {
-            print "\n# " . scalar @$advice . " software updates are "
-               . "available:\n";
-         }
-         else {
-            print "\n# A software update is available:\n";
-         }
-         print join("\n", map { "#   * $_" } @$advice), "\n\n";
-      }
-   };
-   if ( $EVAL_ERROR ) {
-      PTDEBUG && _d('Version check failed:', $EVAL_ERROR);
-   }
-
-   if ( @$instances_to_check ) {
-      eval {
-         update_check_times(
-            instances => $instances_to_check,
-            vc_file   => $args{vc_file},  # testing
-            now       => $args{now},      # testing
-         );
-      };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d('Error updating version check file:', $EVAL_ERROR);
-      }
-   }
-
-   if ( $ENV{PTDEBUG_VERSION_CHECK} ) {
-      warn "Exiting because the PTDEBUG_VERSION_CHECK "
-         . "environment variable is defined.\n";
-      exit 255;
-   }
-
-   return;
-}
-
-sub get_instances_to_check {
-   my (%args) = @_;
-
-   my $instances = $args{instances};
-   my $now       = $args{now}     || int(time);
-   my $vc_file   = $args{vc_file} || version_check_file();
-
-   if ( !-f $vc_file ) {
-      PTDEBUG && _d('Version check file', $vc_file, 'does not exist;',
-         'version checking all instances');
-      return $instances;
-   }
-
-   open my $fh, '<', $vc_file or die "Cannot open $vc_file: $OS_ERROR";
-   chomp(my $file_contents = do { local $/ = undef; <$fh> });
-   PTDEBUG && _d('Version check file', $vc_file, 'contents:', $file_contents);
-   close $fh;
-   my %last_check_time_for = $file_contents =~ /^([^,]+),(.+)$/mg;
-
-   my $check_time_limit = version_check_time_limit();
-   my @instances_to_check;
-   foreach my $instance ( @$instances ) {
-      my $last_check_time = $last_check_time_for{ $instance->{id} };
-      PTDEBUG && _d('Intsance', $instance->{id}, 'last checked',
-         $last_check_time, 'now', $now, 'diff', $now - ($last_check_time || 0),
-         'hours until next check',
-         sprintf '%.2f',
-            ($check_time_limit - ($now - ($last_check_time || 0))) / 3600);
-      if ( !defined $last_check_time
-           || ($now - $last_check_time) >= $check_time_limit ) {
-         PTDEBUG && _d('Time to check', Dumper($instance));
-         push @instances_to_check, $instance;
-      }
-   }
-
-   return \@instances_to_check;
-}
-
-sub update_check_times {
-   my (%args) = @_;
-
-   my $instances = $args{instances};
-   my $now       = $args{now}     || int(time);
-   my $vc_file   = $args{vc_file} || version_check_file();
-   PTDEBUG && _d('Updating last check time:', $now);
-
-   my %all_instances = map {
-      $_->{id} => { name => $_->{name}, ts => $now }
-   } @$instances;
-
-   if ( -f $vc_file ) {
-      open my $fh, '<', $vc_file or die "Cannot read $vc_file: $OS_ERROR";
-      my $contents = do { local $/ = undef; <$fh> };
-      close $fh;
-
-      foreach my $line ( split("\n", ($contents || '')) ) {
-         my ($id, $ts) = split(',', $line);
-         if ( !exists $all_instances{$id} ) {
-            $all_instances{$id} = { ts => $ts };  # original ts, not updated
-         }
-      }
-   }
-
-   open my $fh, '>', $vc_file or die "Cannot write to $vc_file: $OS_ERROR";
-   foreach my $id ( sort keys %all_instances ) {
-      PTDEBUG && _d('Updated:', $id, Dumper($all_instances{$id}));
-      print { $fh } $id . ',' . $all_instances{$id}->{ts} . "\n";
-   }
-   close $fh;
-
-   return;
-}
-
-sub get_instance_id {
-   my ($instance) = @_;
-
-   my $dbh = $instance->{dbh};
-   my $dsn = $instance->{dsn};
-
-   my $sql = q{SELECT CONCAT(@@hostname, @@port)};
-   PTDEBUG && _d($sql);
-   my ($name) = eval { $dbh->selectrow_array($sql) };
-   if ( $EVAL_ERROR ) {
-      PTDEBUG && _d($EVAL_ERROR);
-      $sql = q{SELECT @@hostname};
-      PTDEBUG && _d($sql);
-      ($name) = eval { $dbh->selectrow_array($sql) };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d($EVAL_ERROR);
-         $name = ($dsn->{h} || 'localhost') . ($dsn->{P} || 3306);
-      }
-      else {
-         $sql = q{SHOW VARIABLES LIKE 'port'};
-         PTDEBUG && _d($sql);
-         my (undef, $port) = eval { $dbh->selectrow_array($sql) };
-         PTDEBUG && _d('port:', $port);
-         $name .= $port || '';
-      }
-   }
-   my $id = md5_hex($name);
-
-   PTDEBUG && _d('MySQL instance:', $id, $name, Dumper($dsn));
-
-   return $name, $id;
-}
-
-
-sub get_uuid {
-    my $uuid_file = '/.percona-toolkit.uuid';
-    foreach my $dir (@vc_dirs) {
-        my $filename = $dir.$uuid_file;
-        my $uuid=_read_uuid($filename);
-        return $uuid if $uuid;
-    }
-
-    my $filename = $ENV{"HOME"} . $uuid_file;
-    my $uuid = _generate_uuid();
-
-    open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
-    print $fh $uuid;
-    close $fh;
-
-    return $uuid;
-}   
-
-sub _generate_uuid {
-    return sprintf+($}="%04x")."$}-$}-$}-$}-".$}x3,map rand 65537,0..7;
-}
-
-sub _read_uuid {
-    my $filename = shift;
-    my $fh;
-
-    eval {
-        open($fh, '<:encoding(UTF-8)', $filename);
-    };
-    return if ($EVAL_ERROR);
-
-    my $uuid;
-    eval { $uuid = <$fh>; };
-    return if ($EVAL_ERROR);
-
-    chomp $uuid;
-    return $uuid;
-}
-
-
-sub pingback {
-   my (%args) = @_;
-   my @required_args = qw(url instances);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my $url       = $args{url};
-   my $instances = $args{instances};
-
-   my $ua = $args{ua} || HTTP::Micro->new( timeout => 3 );
-
-   my $response = $ua->request('GET', $url);
-   PTDEBUG && _d('Server response:', Dumper($response));
-   die "No response from GET $url"
-      if !$response;
-   die("GET on $url returned HTTP status $response->{status}; expected 200\n",
-       ($response->{content} || '')) if $response->{status} != 200;
-   die("GET on $url did not return any programs to check")
-      if !$response->{content};
-
-   my $items = parse_server_response(
-      response => $response->{content}
-   );
-   die "Failed to parse server requested programs: $response->{content}"
-      if !scalar keys %$items;
-      
-   my $versions = get_versions(
-      items     => $items,
-      instances => $instances,
-   );
-   die "Failed to get any program versions; should have at least gotten Perl"
-      if !scalar keys %$versions;
-
-   my $client_content = encode_client_response(
-      items      => $items,
-      versions   => $versions,
-      general_id => get_uuid(),
-   );
-
-   my $client_response = {
-      headers => { "X-Percona-Toolkit-Tool" => File::Basename::basename($0) },
-      content => $client_content,
-   };
-   PTDEBUG && _d('Client response:', Dumper($client_response));
-
-   $response = $ua->request('POST', $url, $client_response);
-   PTDEBUG && _d('Server suggestions:', Dumper($response));
-   die "No response from POST $url $client_response"
-      if !$response;
-   die "POST $url returned HTTP status $response->{status}; expected 200"
-      if $response->{status} != 200;
-
-   return unless $response->{content};
-
-   $items = parse_server_response(
-      response   => $response->{content},
-      split_vars => 0,
-   );
-   die "Failed to parse server suggestions: $response->{content}"
-      if !scalar keys %$items;
-   my @suggestions = map { $_->{vars} }
-                     sort { $a->{item} cmp $b->{item} }
-                     values %$items;
-
-   return \@suggestions;
-}
-
-sub encode_client_response {
-   my (%args) = @_;
-   my @required_args = qw(items versions general_id);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($items, $versions, $general_id) = @args{@required_args};
-
-   my @lines;
-   foreach my $item ( sort keys %$items ) {
-      next unless exists $versions->{$item};
-      if ( ref($versions->{$item}) eq 'HASH' ) {
-         my $mysql_versions = $versions->{$item};
-         for my $id ( sort keys %$mysql_versions ) {
-            push @lines, join(';', $id, $item, $mysql_versions->{$id});
-         }
-      }
-      else {
-         push @lines, join(';', $general_id, $item, $versions->{$item});
-      }
-   }
-
-   my $client_response = join("\n", @lines) . "\n";
-   return $client_response;
-}
-
-sub parse_server_response {
-   my (%args) = @_;
-   my @required_args = qw(response);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($response) = @args{@required_args};
-
-   my %items = map {
-      my ($item, $type, $vars) = split(";", $_);
-      if ( !defined $args{split_vars} || $args{split_vars} ) {
-         $vars = [ split(",", ($vars || '')) ];
-      }
-      $item => {
-         item => $item,
-         type => $type,
-         vars => $vars,
-      };
-   } split("\n", $response);
-
-   PTDEBUG && _d('Items:', Dumper(\%items));
-
-   return \%items;
-}
-
-my %sub_for_type = (
-   os_version          => \&get_os_version,
-   perl_version        => \&get_perl_version,
-   perl_module_version => \&get_perl_module_version,
-   mysql_variable      => \&get_mysql_variable,
-);
-
-sub valid_item {
-   my ($item) = @_;
-   return unless $item;
-   if ( !exists $sub_for_type{ $item->{type} } ) {
-      PTDEBUG && _d('Invalid type:', $item->{type});
-      return 0;
-   }
-   return 1;
-}
-
-sub get_versions {
-   my (%args) = @_;
-   my @required_args = qw(items);
-   foreach my $arg ( @required_args ) {
-      die "I need a $arg arugment" unless $args{$arg};
-   }
-   my ($items) = @args{@required_args};
-
-   my %versions;
-   foreach my $item ( values %$items ) {
-      next unless valid_item($item);
-      eval {
-         my $version = $sub_for_type{ $item->{type} }->(
-            item      => $item,
-            instances => $args{instances},
-         );
-         if ( $version ) {
-            chomp $version unless ref($version);
-            $versions{$item->{item}} = $version;
-         }
-      };
-      if ( $EVAL_ERROR ) {
-         PTDEBUG && _d('Error getting version for', Dumper($item), $EVAL_ERROR);
-      }
-   }
-
-   return \%versions;
-}
-
-
-sub get_os_version {
-   if ( $OSNAME eq 'MSWin32' ) {
-      require Win32;
-      return Win32::GetOSDisplayName();
-   }
-
-  chomp(my $platform = `uname -s`);
-  PTDEBUG && _d('platform:', $platform);
-  return $OSNAME unless $platform;
-
-   chomp(my $lsb_release
-            = `which lsb_release 2>/dev/null | awk '{print \$1}'` || '');
-   PTDEBUG && _d('lsb_release:', $lsb_release);
-
-   my $release = "";
-
-   if ( $platform eq 'Linux' ) {
-      if ( -f "/etc/fedora-release" ) {
-         $release = `cat /etc/fedora-release`;
-      }
-      elsif ( -f "/etc/redhat-release" ) {
-         $release = `cat /etc/redhat-release`;
-      }
-      elsif ( -f "/etc/system-release" ) {
-         $release = `cat /etc/system-release`;
-      }
-      elsif ( $lsb_release ) {
-         $release = `$lsb_release -ds`;
-      }
-      elsif ( -f "/etc/lsb-release" ) {
-         $release = `grep DISTRIB_DESCRIPTION /etc/lsb-release`;
-         $release =~ s/^\w+="([^"]+)".+/$1/;
-      }
-      elsif ( -f "/etc/debian_version" ) {
-         chomp(my $rel = `cat /etc/debian_version`);
-         $release = "Debian $rel";
-         if ( -f "/etc/apt/sources.list" ) {
-             chomp(my $code_name = `awk '/^deb/ {print \$3}' /etc/apt/sources.list | awk -F/ '{print \$1}'| awk 'BEGIN {FS="|"} {print \$1}' | sort | uniq -c | sort -rn | head -n1 | awk '{print \$2}'`);
-             $release .= " ($code_name)" if $code_name;
-         }
-      }
-      elsif ( -f "/etc/os-release" ) { # openSUSE
-         chomp($release = `grep PRETTY_NAME /etc/os-release`);
-         $release =~ s/^PRETTY_NAME="(.+)"$/$1/;
-      }
-      elsif ( `ls /etc/*release 2>/dev/null` ) {
-         if ( `grep DISTRIB_DESCRIPTION /etc/*release 2>/dev/null` ) {
-            $release = `grep DISTRIB_DESCRIPTION /etc/*release | head -n1`;
-         }
-         else {
-            $release = `cat /etc/*release | head -n1`;
-         }
-      }
-   }
-   elsif ( $platform =~ m/(?:BSD|^Darwin)$/ ) {
-      my $rel = `uname -r`;
-      $release = "$platform $rel";
-   }
-   elsif ( $platform eq "SunOS" ) {
-      my $rel = `head -n1 /etc/release` || `uname -r`;
-      $release = "$platform $rel";
-   }
-
-   if ( !$release ) {
-      PTDEBUG && _d('Failed to get the release, using platform');
-      $release = $platform;
-   }
-   chomp($release);
-
-   $release =~ s/^"|"$//g;
-
-   PTDEBUG && _d('OS version =', $release);
-   return $release;
-}
-
-sub get_perl_version {
-   my (%args) = @_;
-   my $item = $args{item};
-   return unless $item;
-
-   my $version = sprintf '%vd', $PERL_VERSION;
-   PTDEBUG && _d('Perl version', $version);
-   return $version;
-}
-
-sub get_perl_module_version {
-   my (%args) = @_;
-   my $item = $args{item};
-   return unless $item;
-
-   my $var     = '$' . $item->{item} . '::VERSION';
-   my $version = eval "use $item->{item}; $var;";
-   PTDEBUG && _d('Perl version for', $var, '=', $version);
-   return $version;
-}
-
-sub get_mysql_variable {
-   return get_from_mysql(
-      show => 'VARIABLES',
-      @_,
-   );
-}
-
-sub get_from_mysql {
-   my (%args) = @_;
-   my $show      = $args{show};
-   my $item      = $args{item};
-   my $instances = $args{instances};
-   return unless $show && $item;
-
-   if ( !$instances || !@$instances ) {
-      PTDEBUG && _d('Cannot check', $item,
-         'because there are no MySQL instances');
-      return;
-   }
-
-   if ($item->{item} eq 'MySQL' && $item->{type} eq 'mysql_variable') {
-      @{$item->{vars}} = grep { $_ eq 'version' || $_ eq 'version_comment' } @{$item->{vars}};
-   }
- 
-
-   my @versions;
-   my %version_for;
-   foreach my $instance ( @$instances ) {
-      next unless $instance->{id};  # special system instance has id=0
-      my $dbh = $instance->{dbh};
-      local $dbh->{FetchHashKeyName} = 'NAME_lc';
-      my $sql = qq/SHOW $show/;
-      PTDEBUG && _d($sql);
-      my $rows = $dbh->selectall_hashref($sql, 'variable_name');
-
-      my @versions;
-      foreach my $var ( @{$item->{vars}} ) {
-         $var = lc($var);
-         my $version = $rows->{$var}->{value};
-         PTDEBUG && _d('MySQL version for', $item->{item}, '=', $version,
-            'on', $instance->{name});
-         push @versions, $version;
-      }
-      $version_for{ $instance->{id} } = join(' ', @versions);
-   }
-
-   return \%version_for;
-}
-
-sub _d {
-   my ($package, undef, $line) = caller 0;
-   @_ = map { (my $temp = $_) =~ s/\n/\n# /g; $temp; }
-        map { defined $_ ? $_ : 'undef' }
-        @_;
-   print STDERR "# $package:$line $PID ", join(' ', @_), "\n";
-}
-
-1;
-}
-# ###########################################################################
-# End VersionCheck package
-# ###########################################################################
-
-# ###########################################################################
 # This is a combination of modules and programs in one -- a runnable module.
 # http://www.perl.com/pub/a/2006/07/13/lightning-articles.html?page=last
 # Or, look it up in the Camel book on pages 642 and 643 in the 3rd edition.
@@ -6800,7 +6156,7 @@ $Data::Dumper::Quotekeys = 0;
 
 Transformers->import(qw(ts));
 
-use Percona::Toolkit;
+use MariaDB::Tools;
 use constant PTDEBUG => $ENV{PTDEBUG} || 0;
 
 $OUTPUT_AUTOFLUSH = 1;
@@ -6856,7 +6212,7 @@ sub main {
       PTDEBUG && _d('Creating sentinel file', $sentinel);
       open my $fh, '>', $sentinel
          or die "Cannot open $sentinel: $OS_ERROR\n";
-      print $fh "Remove this file to permit pt-kill to run.\n"
+      print $fh "Remove this file to permit mariadb-kill to run.\n"
          or die "Cannot write to $sentinel: $OS_ERROR\n";
       close $fh
          or die "Cannot close $sentinel: $OS_ERROR\n";
@@ -6886,7 +6242,7 @@ sub main {
    }
 
    # ########################################################################
-   # Make input sub that will either get processlist from MySQL or a file.
+   # Make input sub that will either get processlist from MariaDB or a file.
    # ########################################################################
    my $ms = new MasterSlave(
       OptionParser => $o,
@@ -6946,7 +6302,7 @@ sub main {
       };
    }
    else {
-      PTDEBUG && _d('Getting processlist from MySQL');
+      PTDEBUG && _d('Getting processlist from MariaDB');
       $cxn = Cxn->new(
          dsn_string   => shift @ARGV,
          NAME_lc      => 0,
@@ -6957,7 +6313,7 @@ sub main {
       $dbh = $cxn->connect();
 
       # Make the get_proclist and kill callbacks.  Use Retry in case
-      # the connection to MySQL is lost, then the dbh and the sths
+      # the connection to MariaDB is lost, then the dbh and the sths
       # will need to be re-initialized.
       my $retry = Retry->new();
 
@@ -6974,10 +6330,10 @@ sub main {
             fail => sub {
                my (%args) = @_;
                my $error = $args{error};
-               # The 1st pattern means that MySQL itself died or was stopped.
+               # The 1st pattern means that MariaDB itself died or was stopped.
                # The 2nd pattern means that our cxn was killed (KILL <id>).
-               if (    $error =~ m/MySQL server has gone away/
-                    || $error =~ m/Lost connection to MySQL server/ ) {
+               if (    $error =~ m/MariaDB server has gone away/
+                    || $error =~ m/Lost connection to MariaDB server/ ) {
                   eval {
                      $dbh      = $cxn->connect();
                      $proc_sth = $dbh->prepare('SHOW FULL PROCESSLIST');
@@ -7007,10 +6363,10 @@ sub main {
             fail => sub {
                my (%args) = @_;
                my $error = $args{error};
-               # The 1st pattern means that MySQL itself died or was stopped.
+               # The 1st pattern means that MariaDB itself died or was stopped.
                # The 2nd pattern means that our cxn was killed (KILL <id>).
-               if (    $error =~ m/MySQL server has gone away/
-                    || $error =~ m/Lost connection to MySQL server/ ) {
+               if (    $error =~ m/MariaDB server has gone away/
+                    || $error =~ m/Lost connection to MariaDB server/ ) {
                   eval {
                      $dbh      = $cxn->connect();
                      $kill_sth = $dbh->prepare($kill_sql);
@@ -7096,10 +6452,10 @@ sub main {
             fail  => sub {
                my (%args) = @_;
                my $error = $args{error};
-               # The 1st pattern means that MySQL itself died or was stopped.
+               # The 1st pattern means that MariaDB itself died or was stopped.
                # The 2nd pattern means that our cxn was killed (KILL <id>).
-               if (    $error =~ m/MySQL server has gone away/
-                    || $error =~ m/Lost connection to MySQL server/ ) {
+               if (    $error =~ m/MariaDB server has gone away/
+                    || $error =~ m/Lost connection to MariaDB server/ ) {
                   eval {
                      $log_dbh = $log_cxn->connect();
                      $log_sth = $log_dbh->prepare($log_sql);
@@ -7147,12 +6503,12 @@ sub main {
    # ########################################################################
    # Do the version-check
    # ########################################################################
-   if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
-      VersionCheck::version_check(
-         force     => $o->got('version-check'),
-         instances => [ ($dbh ? { dbh => $dbh, dsn => $cxn->dsn() } : ()) ],
-      );
-   }
+   # if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
+   #    VersionCheck::version_check(
+   #       force     => $o->got('version-check'),
+   #       instances => [ ($dbh ? { dbh => $dbh, dsn => $cxn->dsn() } : ()) ],
+   #    );
+   # }
 
    # ########################################################################
    # Start working.
@@ -7493,41 +6849,41 @@ if ( !caller ) { exit main(@ARGV); }
 
 =head1 NAME
 
-pt-kill - Kill MySQL queries that match certain criteria.
+mariadb-kill - Kill MariaDB queries that match certain criteria.
 
 =head1 SYNOPSIS
 
-Usage: pt-kill [OPTIONS] [DSN]
+Usage: mariadb-kill [OPTIONS] [DSN]
 
-pt-kill kills MySQL connections.  pt-kill connects to MySQL and gets queries
+mariadb-kill kills MariaDB connections.  mariadb-kill connects to MariaDB and gets queries
 from SHOW PROCESSLIST if no FILE is given.  Else, it reads queries from one
 or more FILE which contains the output of SHOW PROCESSLIST.  If FILE is -,
-pt-kill reads from STDIN.
+mariadb-kill reads from STDIN.
 
 Kill queries running longer than 60s:
 
-  pt-kill --busy-time 60 --kill
+  mariadb-kill --busy-time 60 --kill
 
 Print, do not kill, queries running longer than 60s:
 
-  pt-kill --busy-time 60 --print
+  mariadb-kill --busy-time 60 --print
 
 Check for sleeping processes and kill them all every 10s:
 
-  pt-kill --match-command Sleep --kill --victims all --interval 10
+  mariadb-kill --match-command Sleep --kill --victims all --interval 10
 
 Print all login processes:
 
-  pt-kill --match-state login --print --victims all
+  mariadb-kill --match-state login --print --victims all
 
 See which queries in the processlist right now would match:
 
-   mysql -e "SHOW PROCESSLIST" > proclist.txt
-   pt-kill --test-matching proclist.txt --busy-time 60 --print
+   mariadb -e "SHOW PROCESSLIST" > proclist.txt
+   mariadb-kill --test-matching proclist.txt --busy-time 60 --print
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+mariadb-kill is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -7545,7 +6901,7 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-kill captures queries from SHOW PROCESSLIST, filters them, and then either
+mariadb-kill captures queries from SHOW PROCESSLIST, filters them, and then either
 kills or prints them.  This is also known as a "slow query sniper" in some
 circles.  The idea is to watch for queries that might be consuming too many
 resources, and kill them.
@@ -7553,12 +6909,12 @@ resources, and kill them.
 For brevity, we talk about killing queries, but they may just be printed
 (or some other future action) depending on what options are given.
 
-Normally pt-kill connects to MySQL to get queries from SHOW PROCESSLIST.
+Normally mariadb-kill connects to MariaDB to get queries from SHOW PROCESSLIST.
 Alternatively, it can read SHOW PROCESSLIST output from files.  In this case,
-pt-kill does not connect to MySQL and L<"--kill"> has no effect.  You should
+mariadb-kill does not connect to MariaDB and L<"--kill"> has no effect.  You should
 use L<"--print"> instead when reading files.  The ability to read a file
 with L<"--test-matching"> allows you to capture SHOW PROCESSLIST and test it
-later with pt-kill to make sure that your matches kill the proper queries.
+later with mariadb-kill to make sure that your matches kill the proper queries.
 There are a lot of special rules to follow, such as "don't kill replication
 threads," so be careful not to kill something important!
 
@@ -7605,7 +6961,7 @@ from all classes.  The C<Actions> options specify which actions will be
 taken.  At this step, there are no more classes, just a single list of
 queries to kill, print, etc.
 
-pt-kill will kill all the queries matching ANY of the specified criteria (logical OR).
+mariadb-kill will kill all the queries matching ANY of the specified criteria (logical OR).
 For example, using:
 
   --busy-time 114 --match-command 'Query|Execute'
@@ -7632,7 +6988,7 @@ If both L<"--kill"> and L<"--print"> are given, then matching queries are
 killed and a line for each like the one above is printed.
 
 Any command executed by L<"--execute-command"> is responsible for its own
-output and logging.  After being executed, pt-kill has no control or interaction
+output and logging.  After being executed, mariadb-kill has no control or interaction
 with the command.
 
 =head1 OPTIONS
@@ -7652,7 +7008,7 @@ L<"SYNOPSIS"> and usage information for details.
 
 =item --ask-pass
 
-Prompt for a password when connecting to MySQL.
+Prompt for a password when connecting to MariaDB.
 
 =item --charset
 
@@ -7660,8 +7016,8 @@ short form: -A; type: string
 
 Default character set.  If the value is utf8, sets Perl's binmode on
 STDOUT to utf8, passes the mysql_enable_utf8 option to DBD::mysql, and runs SET
-NAMES UTF8 after connecting to MySQL.  Any other value sets binmode on STDOUT
-without the utf8 layer, and runs SET NAMES after connecting to MySQL.
+NAMES UTF8 after connecting to MariaDB.  Any other value sets binmode on STDOUT
+without the utf8 layer, and runs SET NAMES after connecting to MariaDB.
 
 =item --config
 
@@ -7692,7 +7048,7 @@ The database to use for the connection.
 
 short form: -F; type: string
 
-Only read mysql options from the given file.  You must give an absolute
+Only read MariaDB options from the given file.  You must give an absolute
 pathname.
 
 =item --filter
@@ -7703,7 +7059,7 @@ Discard events for which this Perl code doesn't return true.
 
 This option is a string of Perl code or a file containing Perl code that gets
 compiled into a subroutine with one argument: $event.  This is a hashref.
-If the given value is a readable file, then pt-kill reads the entire
+If the given value is a readable file, then mariadb-kill reads the entire
 file and uses its contents as the code.  The file should not contain
 a shebang (#!/usr/bin/perl) line.
 
@@ -7730,10 +7086,10 @@ filter.txt:
 
 Then specify C<--filter filter.txt> to read the code from filter.txt.
 
-If the filter code won't compile, pt-kill will die with an error.
+If the filter code won't compile, mariadb-kill will die with an error.
 If the filter code does compile, an error may still occur at runtime if the
 code tries to do something wrong (like pattern match an undefined value).
-pt-kill does not provide any safeguards so code carefully!
+mariadb-kill does not provide any safeguards so code carefully!
 
 It is permissible for the code to have side effects (to alter C<$event>).
 
@@ -7797,7 +7153,7 @@ Store each query killed in this DSN.
 The argument specifies a table to store all killed queries.  The DSN
 passed in must have the databse (D) and table (t) options. The
 table must have at least the following columns.  You can add more columns for
-your own special purposes, but they won't be used by pt-kill.  The
+your own special purposes, but they won't be used by mariadb-kill.  The
 following CREATE TABLE definition is also used for L<"--create-log-table">.
 MAGIC_create_log_table:
 
@@ -7858,8 +7214,8 @@ See pt-query-digest for more information.
 
 =item --rds
 
-Denotes the instance in question is on Amazon RDS. By default pt-kill runs
-the MySQL command "kill" for L<"--kill"> and "kill query" L<"--kill-query">.
+Denotes the instance in question is on Amazon RDS. By default mariadb-kill runs
+the MariaDB command "kill" for L<"--kill"> and "kill query" L<"--kill-query">.
 On RDS these two commands are not available and are replaced by function calls.
 This option modifies L<"--kill"> to use "CALL mysql.rds_kill(thread-id)" instead
 and L<"--kill-query"> to use "CALL mysql.rds_kill_query(thread-id)"
@@ -7868,19 +7224,19 @@ and L<"--kill-query"> to use "CALL mysql.rds_kill_query(thread-id)"
 
 type: time
 
-How long to run before exiting.  By default pt-kill runs forever, or until
+How long to run before exiting.  By default mariadb-kill runs forever, or until
 its process is killed or stopped by the creation of a L<"--sentinel"> file.
-If this option is specified, pt-kill runs for the specified amount of time
+If this option is specified, mariadb-kill runs for the specified amount of time
 and sleeps L<"--interval"> seconds between each check of the PROCESSLIST.
 
 =item --sentinel
 
-type: string; default: /tmp/pt-kill-sentinel
+type: string; default: /tmp/mariadb-kill-sentinel
 
 Exit if this file exists.
 
 The presence of the file specified by L<"--sentinel"> will cause all
-running instances of pt-kill to exit.  You might find this handy to stop cron
+running instances of mariadb-kill to exit.  You might find this handy to stop cron
 jobs gracefully if necessary.  See also L<"--stop">.
 
 =item --slave-user
@@ -7903,7 +7259,7 @@ on all slaves.
 
 type: Array
 
-Set the MySQL variables in this comma-separated list of C<variable=value> pairs.
+Set the MariaDB variables in this comma-separated list of C<variable=value> pairs.
 
 By default, the tool sets:
 
@@ -7927,7 +7283,7 @@ Socket file to use for connection.
 
 Stop running instances by creating the L<"--sentinel"> file.
 
-Causes pt-kill to create the sentinel file specified by L<"--sentinel"> and
+Causes mariadb-kill to create the sentinel file specified by L<"--sentinel"> and
 exit.  This should have the effect of stopping all running instances which are
 watching the same sentinel file.
 
@@ -7946,32 +7302,6 @@ User for login if not current user.
 =item --version
 
 Show version and exit.
-
-=item --[no]version-check
-
-default: yes
-
-Check for the latest version of Percona Toolkit, MySQL, and other programs.
-
-This is a standard "check for updates automatically" feature, with two
-additional features.  First, the tool checks its own version and also the
-versions of the following software: operating system, Percona Monitoring and
-Management (PMM), MySQL, Perl, MySQL driver for Perl (DBD::mysql), and
-Percona Toolkit. Second, it checks for and warns about versions with known
-problems. For example, MySQL 5.5.25 had a critical bug and was re-released
-as 5.5.25a.
-
-A secure connection to Percona’s Version Check database server is done to
-perform these checks. Each request is logged by the server, including software
-version numbers and unique ID of the checked system. The ID is generated by the
-Percona Toolkit installation script or when the Version Check database call is
-done for the first time.
-
-Any updates or known problems are printed to STDOUT before the tool's normal
-output.  This feature should never interfere with the normal operation of the
-tool.  
-
-For more information, visit L<https://www.percona.com/doc/percona-toolkit/LATEST/version-check.html>.
 
 =item --victims
 
@@ -8020,7 +7350,7 @@ type: time
 
 Wait before killing a query.  The purpose of this is to give
 L<"--execute-command"> a chance to see the matching query and gather other
-MySQL or system information before it's killed.
+MariaDB or system information before it's killed.
 
 =back
 
@@ -8089,7 +7419,7 @@ See L<"--match-info">.
 
 default: yes; group: Query Matches
 
-Don't kill pt-kill's own connection.
+Don't kill mariadb-kill's own connection.
 
 =item --ignore-state
 
@@ -8148,7 +7478,7 @@ Common Command values are:
   Reset stmt
   Table Dump
 
-See L<http://dev.mysql.com/doc/refman/5.1/en/thread-commands.html> for a full
+See L<https://mariadb.com/kb/en/library/thread-command-values/> for a full
 list and description of Command values.
 
 =item --match-db
@@ -8196,7 +7526,7 @@ Common State values are:
   Table lock
   Updating
 
-See L<http://dev.mysql.com/doc/refman/5.1/en/general-thread-states.html> for
+See L<https://mariadb.com/kb/en/library/general-thread-states/> for
 a full list and description of State values.
 
 =item --match-user
@@ -8285,7 +7615,7 @@ These actions are taken for every matching query from all classes.
 The actions are taken in this order: L<"--print">, L<"--execute-command">,
 L<"--kill">/L<"--kill-query">.  This order allows L<"--execute-command">
 to see the output of L<"--print"> and the query before
-L<"--kill">/L<"--kill-query">.  This may be helpful because pt-kill does
+L<"--kill">/L<"--kill-query">.  This may be helpful because mariadb-kill does
 not pass any information to L<"--execute-command">.
 
 See also L<"GROUP, MATCH AND KILL">.
@@ -8298,10 +7628,10 @@ type: string; group: Actions
 
 Execute this command when a query matches.
 
-After the command is executed, pt-kill has no control over it, so the command
+After the command is executed, mariadb-kill has no control over it, so the command
 is responsible for its own info gathering, logging, interval, etc.  The
 command is executed each time a query matches, so be careful that the command
-behaves well when multiple instances are ran.  No information from pt-kill is
+behaves well when multiple instances are ran.  No information from mariadb-kill is
 passed to the command.
 
 See also L<"--wait-before-kill">.
@@ -8312,12 +7642,12 @@ group: Actions
 
 Kill the connection for matching queries.
 
-This option makes pt-kill kill the connections (a.k.a. processes, threads) that
+This option makes mariadb-kill kill the connections (a.k.a. processes, threads) that
 have matching queries.  Use L<"--kill-query"> if you only want to kill
 individual queries and not their connections.
 
 Unless L<"--print"> is also given, no other information is printed that shows
-that pt-kill matched and killed a query.
+that mariadb-kill matched and killed a query.
 
 See also L<"--wait-before-kill"> and L<"--wait-after-kill">.
 
@@ -8342,7 +7672,7 @@ group: Actions
 
 Kill matching queries.
 
-This option makes pt-kill kill matching queries.  This requires MySQL 5.0 or
+This option makes mariadb-kill kill matching queries.  This requires MariaDB 5.0 or
 newer.  Unlike L<"--kill"> which kills the connection for matching queries,
 this option only kills the query, not its connection.
 
@@ -8407,7 +7737,7 @@ Port number to use for connection.
 
 =item * S
 
-dsn: mysql_socket; copy: yes
+dsn: mariadb_socket; copy: yes
 
 Socket file to use for connection.
 
@@ -8428,7 +7758,7 @@ Table to log actions in, if passed through --log-dsn.
 The environment variable C<PTDEBUG> enables verbose debugging output to STDERR.
 To enable debugging and capture all output to a file, run the tool like:
 
-   PTDEBUG=1 pt-kill ... > FILE 2>&1
+   PTDEBUG=1 mariadb-kill ... > FILE 2>&1
 
 Be careful: debugging output is voluminous and can generate several megabytes
 of output.
@@ -8438,65 +7768,21 @@ of output.
 You need Perl, DBI, DBD::mysql, and some core packages that ought to be
 installed in any reasonably new version of Perl.
 
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-kill>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
-
 =head1 AUTHORS
 
 Baron Schwartz and Daniel Nichter
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-stalk in August, 2019. Percona Toolkit was forked from two
 projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates,
-2009-2011 Baron Schwartz.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -8514,6 +7800,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-kill 3.0.13
+mariadb-kill 3.0.13
 
 =cut
