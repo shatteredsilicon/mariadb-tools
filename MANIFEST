@@ -6,6 +6,7 @@ Makefile.PL
 MANIFEST
 README.md
 bin/mariadb-align-output
+bin/mariadb-database-summary
 bin/mariadb-iostat
 bin/mariadb-kill
 bin/mariadb-query-digest
@@ -14,5 +15,5 @@ bin/mariadb-stacktrace
 bin/mariadb-stat-browser
 bin/mariadb-stat
 bin/mariadb-status-diff
-bin/mariadb-summary
+bin/mariadb-system-summary
 docs/mariadb-tools.pod
