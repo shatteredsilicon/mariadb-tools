@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -12,7 +12,6 @@ set -u
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/log_warn_die.sh
 #   t/lib/bash/log_warn_die.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -60,7 +59,6 @@ _d () {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/parse_options.sh
 #   t/lib/bash/parse_options.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -92,7 +90,7 @@ usage_or_errors() {
    local version=""
 
    if [ "$OPT_VERSION" ]; then
-      version=$(grep '^pt-[^ ]\+ [0-9]' "$file")
+      version=$(grep '^mariadb-[^ ]\+ [0-9]' "$file")
       echo "$version"
       return 1
    fi
@@ -205,9 +203,9 @@ parse_options() {
          _parse_config_files "$user_config_file"
       done
    else
-      _parse_config_files "/etc/percona-toolkit/percona-toolkit.conf" "/etc/percona-toolkit/$TOOL.conf"
+      _parse_config_files "/etc/mariadb/mariadb-tools.conf" "/etc/mariadb-tools/$TOOL.conf"
       if [ "${HOME:-}" ]; then
-         _parse_config_files "$HOME/.percona-toolkit.conf" "$HOME/.$TOOL.conf"
+         _parse_config_files "$HOME/.mariadb-tools.conf" "$HOME/.$TOOL.conf"
       fi
    fi
 
@@ -468,7 +466,6 @@ size_to_bytes() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/mysql_options.sh
 #   t/lib/bash/mysql_options.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -493,7 +490,7 @@ mysql_options() {
    fi
    if [ -n "$OPT_ASK_PASS" ]; then
       stty -echo
-      >&2 printf "Enter MySQL password: "
+      >&2 printf "Enter MariaDB password: "
       read GIVEN_PASS 
       stty echo
       printf "\n"
@@ -530,7 +527,6 @@ arrange_mysql_options() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/tmpdir.sh
 #   t/lib/bash/tmpdir.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -571,7 +567,6 @@ rm_tmpdir() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/alt_cmds.sh
 #   t/lib/bash/alt_cmds.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -618,7 +613,6 @@ _which() {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/report_formatting.sh
 #   t/lib/bash/report_formatting.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -710,7 +704,6 @@ group_concat () {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/summary_common.sh
 #   t/lib/bash/summary_common.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -840,7 +833,6 @@ get_var () {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/collect_mysql_info.sh
 #   t/lib/bash/collect_mysql_info.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -921,8 +913,8 @@ collect_mysql_innodb_status () {
    $CMD_MYSQL $EXT_ARGV -ssE -e 'SHOW /*!50000 ENGINE*/ INNODB STATUS' 2>/dev/null
 }
 
-collect_mysql_ndb_status () {
-   $CMD_MYSQL $EXT_ARGV -ssE -e 'show /*!50000 ENGINE*/ NDB STATUS' 2>/dev/null
+collect_mysql_cs_status () {
+   $CMD_MYSQL $EXT_ARGV -ssE -e 'show /*!50000 ENGINE*/ COLUMNSTORE STATUS' 2>/dev/null
 }
 
 collect_mysql_processlist () {
@@ -1032,53 +1024,52 @@ collect_mysqld_executables () {
 collect_mysql_info () {
    local dir="$1"
 
-   collect_mysql_variables     > "$dir/mysql-variables"
-   collect_mysql_status        > "$dir/mysql-status"
-   collect_mysql_databases     > "$dir/mysql-databases"
-   collect_mysql_plugins       > "$dir/mysql-plugins"
-   collect_mysql_slave_status  > "$dir/mysql-slave"
+   collect_mysql_variables     > "$dir/mariadb-variables"
+   collect_mysql_status        > "$dir/mariadb-status"
+   collect_mysql_databases     > "$dir/mariadb-databases"
+   collect_mysql_plugins       > "$dir/mariadb-plugins"
+   collect_mysql_slave_status  > "$dir/mariadb-slave"
    collect_mysql_innodb_status > "$dir/innodb-status"
-   collect_mysql_ndb_status    > "$dir/ndb-status"
-   collect_mysql_processlist   > "$dir/mysql-processlist"   
-   collect_mysql_users         > "$dir/mysql-users"
-   collect_mysql_roles         > "$dir/mysql-roles"
+   collect_mysql_processlist   > "$dir/mariadb-processlist"   
+   collect_mysql_users         > "$dir/mariadb-users"
+   collect_mysql_roles         > "$dir/mariadb-roles"
 
-   collect_mysqld_instances   "$dir/mysql-variables"  > "$dir/mysqld-instances"
+   collect_mysqld_instances   "$dir/mariadb-variables"  > "$dir/mysqld-instances"
    collect_mysqld_executables "$dir/mysqld-instances" > "$dir/mysqld-executables"
-   collect_mysql_show_slave_hosts  "$dir/mysql-slave-hosts" > "$dir/mysql-slave-hosts"
+   collect_mysql_show_slave_hosts  "$dir/mariadb-slave-hosts" > "$dir/mariadb-slave-hosts"
 
-   local binlog="$(get_var log_bin "$dir/mysql-variables")"
+   local binlog="$(get_var log_bin "$dir/mariadb-variables")"
    if [ "${binlog}" ]; then
-      collect_master_logs_status "$dir/mysql-master-logs" "$dir/mysql-master-status"
+      collect_master_logs_status "$dir/mariadb-master-logs" "$dir/mariadb-master-status"
    fi
 
-   local uptime="$(get_var Uptime "$dir/mysql-status")"
+   local uptime="$(get_var Uptime "$dir/mariadb-status")"
    local current_time="$($CMD_MYSQL $EXT_ARGV -ss -e \
                          "SELECT LEFT(NOW() - INTERVAL ${uptime} SECOND, 16)")"
 
-   local port="$(get_var port "$dir/mysql-variables")"
+   local port="$(get_var port "$dir/mariadb-variables")"
    local cnf_file="$(find_my_cnf_file "$dir/mysqld-instances" ${port})"
 
-   [ -e "$cnf_file" ] && cat "$cnf_file" > "$dir/mysql-config-file"
+   [ -e "$cnf_file" ] && cat "$cnf_file" > "$dir/mariadb-config-file"
 
-   local pid_file="$(get_var "pid_file" "$dir/mysql-variables")"
+   local pid_file="$(get_var "pid_file" "$dir/mariadb-variables")"
    local pid_file_exists=""
    [ -e "${pid_file}" ] && pid_file_exists=1
-   echo "pt-summary-internal-pid_file_exists    $pid_file_exists" >> "$dir/mysql-variables"
+   echo "pt-summary-internal-pid_file_exists    $pid_file_exists" >> "$dir/mariadb-variables"
 
-   echo "pt-summary-internal-current_time    $current_time" >> "$dir/mysql-variables"
-   echo "pt-summary-internal-Config_File_path    $cnf_file" >> "$dir/mysql-variables"
-   collect_internal_vars "$dir/mysqld-executables" >> "$dir/mysql-variables"
+   echo "pt-summary-internal-current_time    $current_time" >> "$dir/mariadb-variables"
+   echo "pt-summary-internal-Config_File_path    $cnf_file" >> "$dir/mariadb-variables"
+   collect_internal_vars "$dir/mysqld-executables" >> "$dir/mariadb-variables"
 
    if [ "$OPT_DATABASES" -o "$OPT_ALL_DATABASES" ]; then
-      local trg_arg="$(get_mysqldump_args "$dir/mysql-variables")"
+      local trg_arg="$(get_mysqldump_args "$dir/mariadb-variables")"
       local dbs="${OPT_DATABASES:-""}"
       get_mysqldump_for "${trg_arg}" "$dbs" > "$dir/mysqldump"
    fi
 
    (
       sleep $OPT_SLEEP
-      collect_mysql_deferred_status "$dir/mysql-status" > "$dir/mysql-status-defer"
+      collect_mysql_deferred_status "$dir/mariadb-status" > "$dir/mariadb-status-defer"
    ) &
    _d "Forked child is $!"
 }
@@ -1093,7 +1084,6 @@ collect_mysql_info () {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/bash/report_mysql_info.sh
 #   t/lib/bash/report_mysql_info.sh
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 
 
@@ -1135,7 +1125,7 @@ feat_on() {
          echo "Disabled"
       fi
    else
-      echo "Not Supported"
+      echo "Not Installed or Available"
    fi
 }
 
@@ -1607,7 +1597,7 @@ format_innodb_status () {
    fi
 }
 
-format_ndb_status() {
+format_cs_status() {
    local file=$1
 
    [ -e "$file" ] || return
@@ -1931,7 +1921,7 @@ format_overall_db_stats () {
    echo
 }
 
-section_percona_server_features () {
+section_mariadb_server_features () {
    local file="$1"
 
    [ -e "$file" ] || return
@@ -1940,18 +1930,6 @@ section_percona_server_features () {
             "$(feat_on_renamed "$file" userstat_running userstat)"
    name_val "Multiple I/O Threads"  \
             "$(feat_on "$file" innodb_read_io_threads gt 1)"
-
-   name_val "Corruption Resilient"  \
-            "$(feat_on_renamed "$file" innodb_pass_corrupt_table innodb_corrupt_table_action)"
-
-   name_val "Durable Replication"   \
-            "$(feat_on_renamed "$file" innodb_overwrite_relay_log_info innodb_recovery_update_relay_log)"
-
-   name_val "Import InnoDB Tables"  \
-            "$(feat_on_renamed "$file" innodb_expand_import innodb_import_table_from_xtrabackup)"
-
-   name_val "Fast Server Restarts"  \
-            "$(feat_on_renamed "$file" innodb_auto_lru_dump innodb_buffer_pool_restore_at_startup)"
    
    name_val "Enhanced Logging"      \
             "$(feat_on "$file" log_slow_verbosity ne microtime)"
@@ -1960,21 +1938,9 @@ section_percona_server_features () {
 
    name_val "Response Time Hist."   \
             "$(feat_on_renamed "$file" enable_query_response_time_stats query_response_time_stats)"
-
-   local smooth_flushing="$(feat_on_renamed "$file" innodb_adaptive_checkpoint innodb_adaptive_flushing_method)"
-   if  [ "${smooth_flushing:-""}" != "Not Supported" ]; then
-      if [ -n "$(get_var innodb_adaptive_checkpoint "$file")" ]; then
-         smooth_flushing="$(feat_on "$file" "innodb_adaptive_checkpoint" ne none)"
-      else
-         smooth_flushing="$(feat_on "$file" "innodb_adaptive_flushing_method" ne native)"
-      fi
-   fi
-   name_val "Smooth Flushing" "$smooth_flushing"
    
    name_val "HandlerSocket NoSQL"   \
             "$(feat_on "$file" handlersocket_port)"
-   name_val "Fast Hash UDFs"   \
-            "$(get_var "pt-summary-internal-FNV_64" "$file")"
 }
 
 section_myisam () {
@@ -1992,6 +1958,25 @@ section_myisam () {
    local used=$((${buf_size:-0} - ${unus}))
 
    name_val "Key Cache" "$(shorten ${buf_size} 1)"
+   name_val "Pct Used" "$(fuzzy_pct ${used} ${buf_size})"
+   name_val "Unflushed" "$(fuzzy_pct ${unfl} ${buf_size})"
+}
+
+section_aria () {
+   local variables_file="$1"
+   local status_file="$2"
+
+   [ -e "$variables_file" -a -e "$status_file" ] || return
+
+   local buf_size="$(get_var aria_pagecache_buffer_size "$variables_file")"
+   local blk_size="$(get_var aria_block_size "$variables_file")"
+   local blk_unus="$(get_var Aria_pagecache_blocks_unused "$status_file")"
+   local blk_unfl="$(get_var Aria_pagecache_blocks_not_flushed "$variables_file")"
+   local unus=$((${blk_unus:-0} * ${blk_size:-0}))
+   local unfl=$((${blk_unfl:-0} * ${blk_size:-0}))
+   local used=$((${buf_size:-0} - ${unus}))
+
+   name_val "Page Cache Buffer" "$(shorten ${buf_size} 1)"
    name_val "Pct Used" "$(fuzzy_pct ${used} ${buf_size})"
    name_val "Unflushed" "$(fuzzy_pct ${unfl} ${buf_size})"
 }
@@ -2189,7 +2174,7 @@ section_mysqld () {
 
    [ -e "$executables_file" -a -e "$variables_file" ] || return
 
-   section "MySQL Executable"
+   section "MariaDB Executable"
    local i=1;
    while read executable; do
       name_val "Path to executable" "$executable"
@@ -2203,7 +2188,7 @@ section_slave_hosts () {
 
    [ -e "$slave_hosts_file" ] || return
 
-   section "Slave Hosts"
+   section "Replicas"
    if [ -s "$slave_hosts_file" ]; then
        cat "$slave_hosts_file"
    else
@@ -2214,7 +2199,7 @@ section_slave_hosts () {
 section_mysql_files () {
    local variables_file="$1"
 
-   section "MySQL Files"
+   section "MariaDB Files"
    for file_name in pid_file slow_query_log_file general_log_file log_error; do
       local file="$(get_var "${file_name}" "$variables_file")"
       local name_out="$(echo "$file_name" | sed 'y/[a-z]/[A-Z]/')"
@@ -2227,7 +2212,7 @@ section_mysql_files () {
    done
 }
 
-section_percona_xtradb_cluster () {
+section_mariadb_galera_cluster () {
    local mysql_var="$1"
    local mysql_status="$2"
 
@@ -2272,9 +2257,9 @@ report_jemalloc_enabled() {
      grep -qc jemalloc /proc/${pid}/environ || ldd $(which mysqld) 2>/dev/null | grep -qc jemalloc
      jemalloc_status=$?
      if [ $jemalloc_status = 1 ]; then
-       echo "jemalloc is not enabled in mysql config for process with id ${pid}" 
+       echo "jemalloc is not enabled in mariadb config for process with id ${pid}" 
      else
-       echo "jemalloc enabled in mysql config for process with id ${pid}"
+       echo "jemalloc enabled in mariadb config for process with id ${pid}"
        GENERAL_JEMALLOC_STATUS=1
      fi
   done
@@ -2296,44 +2281,44 @@ report_mysql_summary () {
    local NAME_VAL_LEN=25
 
 
-   section "Percona Toolkit MySQL Summary Report"
+   section "MariaDB Server Summary Report"
    name_val "System time" "`date -u +'%F %T UTC'` (local TZ: `date +'%Z %z'`)"
    section "Instances"
-   parse_mysqld_instances "$dir/mysqld-instances" "$dir/mysql-variables"
+   parse_mysqld_instances "$dir/mysqld-instances" "$dir/mariadb-variables"
 
-   section_mysqld "$dir/mysqld-executables" "$dir/mysql-variables"
+   section_mysqld "$dir/mysqld-executables" "$dir/mariadb-variables"
 
-   section_slave_hosts "$dir/mysql-slave-hosts"
-   local user="$(get_var "pt-summary-internal-user" "$dir/mysql-variables")"
-   local port="$(get_var port "$dir/mysql-variables")"
-   local now="$(get_var "pt-summary-internal-now" "$dir/mysql-variables")"
+   section_slave_hosts "$dir/mariadb-slave-hosts"
+   local user="$(get_var "pt-summary-internal-user" "$dir/mariadb-variables")"
+   local port="$(get_var port "$dir/mariadb-variables")"
+   local now="$(get_var "pt-summary-internal-now" "$dir/mariadb-variables")"
    section "Report On Port ${port}"
    name_val User "${user}"
-   name_val Time "${now} ($(get_mysql_timezone "$dir/mysql-variables"))"
-   name_val Hostname "$(get_var hostname "$dir/mysql-variables")"
-   get_mysql_version "$dir/mysql-variables"
+   name_val Time "${now} ($(get_mysql_timezone "$dir/mariadb-variables"))"
+   name_val Hostname "$(get_var hostname "$dir/mariadb-variables")"
+   get_mysql_version "$dir/mariadb-variables"
 
-   local uptime="$(get_var Uptime "$dir/mysql-status")"
-   local current_time="$(get_var "pt-summary-internal-current_time" "$dir/mysql-variables")"
+   local uptime="$(get_var Uptime "$dir/mariadb-status")"
+   local current_time="$(get_var "pt-summary-internal-current_time" "$dir/mariadb-variables")"
    name_val Started "$(get_mysql_uptime "${uptime}" "${current_time}")"
 
-   local num_dbs="$(grep -c . "$dir/mysql-databases")"
+   local num_dbs="$(grep -c . "$dir/mariadb-databases")"
    name_val Databases "${num_dbs}"
-   name_val Datadir "$(get_var datadir "$dir/mysql-variables")"
+   name_val Datadir "$(get_var datadir "$dir/mariadb-variables")"
 
-   local fuzz_procs=$(fuzz $(get_var Threads_connected "$dir/mysql-status"))
-   local fuzz_procr=$(fuzz $(get_var Threads_running "$dir/mysql-status"))
+   local fuzz_procs=$(fuzz $(get_var Threads_connected "$dir/mariadb-status"))
+   local fuzz_procr=$(fuzz $(get_var Threads_running "$dir/mariadb-status"))
    name_val Processes "${fuzz_procs} connected, ${fuzz_procr} running"
 
    local slave=""
-   if [ -s "$dir/mysql-slave" ]; then slave=""; else slave="not "; fi
-   local slavecount=$(grep -c 'Binlog Dump' "$dir/mysql-processlist")
+   if [ -s "$dir/mariadb-slave" ]; then slave=""; else slave="not "; fi
+   local slavecount=$(grep -c 'Binlog Dump' "$dir/mariadb-processlist")
    name_val Replication "Is ${slave}a slave, has ${slavecount} slaves connected"
 
 
-   local pid_file="$(get_var "pid_file" "$dir/mysql-variables")"
+   local pid_file="$(get_var "pid_file" "$dir/mariadb-variables")"
    local PID_EXISTS=""
-   if [ "$( get_var "pt-summary-internal-pid_file_exists" "$dir/mysql-variables" )" ]; then
+   if [ "$( get_var "pt-summary-internal-pid_file_exists" "$dir/mariadb-variables" )" ]; then
       PID_EXISTS="(exists)"
    else
       PID_EXISTS="(does not exist)"
@@ -2341,60 +2326,60 @@ report_mysql_summary () {
    name_val Pidfile "${pid_file} ${PID_EXISTS}"
 
    section "Processlist"
-   summarize_processlist "$dir/mysql-processlist"
+   summarize_processlist "$dir/mariadb-processlist"
 
    section "Status Counters (Wait ${OPT_SLEEP} Seconds)"
    wait
    local noncounters_pattern="$(noncounters_pattern)"
-   format_status_variables "$dir/mysql-status-defer" | grep -v "${noncounters_pattern}"
+   format_status_variables "$dir/mariadb-status-defer" | grep -v "${noncounters_pattern}"
 
    section "Table cache"
-   local open_tables=$(get_var "Open_tables" "$dir/mysql-status")
-   local table_cache=$(get_table_cache "$dir/mysql-variables")
+   local open_tables=$(get_var "Open_tables" "$dir/mariadb-status")
+   local table_cache=$(get_table_cache "$dir/mariadb-variables")
    name_val Size  $table_cache
    name_val Usage "$(fuzzy_pct ${open_tables} ${table_cache})"
 
-   section "Key Percona Server features"
-   section_percona_server_features "$dir/mysql-variables"
+   section "Key MariaDB Server features"
+   section_mariadb_server_features "$dir/mariadb-variables"
 
-   section "Percona XtraDB Cluster"
+   section "MariaDB Galera Cluster"
    local has_wsrep=$($CMD_MYSQL $EXT_ARGV -ss -e 'show session variables like "%wsrep_on%";' | cut -f2 | grep -i "on")
    if [ -n "${has_wsrep:-""}" ]; then
       if [ "${has_wsrep:-""}" = "ON" ]; then
-         section_percona_xtradb_cluster "$dir/mysql-variables" "$dir/mysql-status"
+         section_mariadb_galera_cluster "$dir/mariadb-variables" "$dir/mariadb-status"
       else
          name_val "wsrep_on" "OFF"
       fi
    fi
 
    section "Plugins"
-   name_val "InnoDB compression" "$(get_plugin_status "$dir/mysql-plugins" "INNODB_CMP")"
+   name_val "InnoDB compression" "$(get_plugin_status "$dir/mariadb-plugins" "INNODB_CMP")"
 
-   local has_query_cache=$(get_var have_query_cache "$dir/mysql-variables")
+   local has_query_cache=$(get_var have_query_cache "$dir/mariadb-variables")
    if [ "$has_query_cache" = 'YES' ]; then
       section "Query cache"
-      local query_cache_size=$(get_var query_cache_size "$dir/mysql-variables")
-      local used=$(( ${query_cache_size} - $(get_var Qcache_free_memory "$dir/mysql-status") ))
-      local hrat=$(fuzzy_pct $(get_var Qcache_hits "$dir/mysql-status") $(get_var Qcache_inserts "$dir/mysql-status"))
-      name_val query_cache_type $(get_var query_cache_type "$dir/mysql-variables")
+      local query_cache_size=$(get_var query_cache_size "$dir/mariadb-variables")
+      local used=$(( ${query_cache_size} - $(get_var Qcache_free_memory "$dir/mariadb-status") ))
+      local hrat=$(fuzzy_pct $(get_var Qcache_hits "$dir/mariadb-status") $(get_var Qcache_inserts "$dir/mariadb-status"))
+      name_val query_cache_type $(get_var query_cache_type "$dir/mariadb-variables")
       name_val Size "$(shorten ${query_cache_size} 1)"
       name_val Usage "$(fuzzy_pct ${used} ${query_cache_size})"
       name_val HitToInsertRatio "${hrat}"
    fi
 
-   local semisync_enabled_master="$(get_var "rpl_semi_sync_master_enabled" "$dir/mysql-variables")"
+   local semisync_enabled_master="$(get_var "rpl_semi_sync_master_enabled" "$dir/mariadb-variables")"
    if [ -n "${semisync_enabled_master}" ]; then
       section "Semisynchronous Replication"
       if [ "$semisync_enabled_master" = "OFF" -o "$semisync_enabled_master" = "0" -o -z "$semisync_enabled_master" ]; then
-         name_val "Master" "Disabled"
+         name_val "Primary" "Disabled"
       else
-         _semi_sync_stats_for "master" "$dir/mysql-variables"
+         _semi_sync_stats_for "master" "$dir/mariadb-variables"
       fi
-      local semisync_enabled_slave="$(get_var rpl_semi_sync_slave_enabled "$dir/mysql-variables")"
+      local semisync_enabled_slave="$(get_var rpl_semi_sync_slave_enabled "$dir/mariadb-variables")"
       if    [ "$semisync_enabled_slave" = "OFF" -o "$semisync_enabled_slave" = "0" -o -z "$semisync_enabled_slave" ]; then
-         name_val "Slave" "Disabled"
+         name_val "Replica" "Disabled"
       else
-         _semi_sync_stats_for "slave" "$dir/mysql-variables"
+         _semi_sync_stats_for "slave" "$dir/mariadb-variables"
       fi
    fi
 
@@ -2440,52 +2425,52 @@ report_mysql_summary () {
          name_val "InnoDB Compression" "No"
       fi
    fi
-   local ssl="$(get_var Ssl_accepts "$dir/mysql-status")"
+   local ssl="$(get_var Ssl_accepts "$dir/mariadb-status")"
    if [ -n "$ssl" -a "${ssl:-0}" -gt 0 ]; then
       name_val "SSL" "Yes"
    else
       name_val "SSL" "No"
    fi
-   local lock_tables="$(get_var Com_lock_tables "$dir/mysql-status")"
+   local lock_tables="$(get_var Com_lock_tables "$dir/mariadb-status")"
    if [ -n "$lock_tables" -a "${lock_tables:-0}" -gt 0 ]; then
       name_val "Explicit LOCK TABLES" "Yes"
    else
       name_val "Explicit LOCK TABLES" "No"
    fi
-   local delayed_insert="$(get_var Delayed_writes "$dir/mysql-status")"
+   local delayed_insert="$(get_var Delayed_writes "$dir/mariadb-status")"
    if [ -n "$delayed_insert" -a "${delayed_insert:-0}" -gt 0 ]; then
       name_val "Delayed Insert" "Yes"
    else
       name_val "Delayed Insert" "No"
    fi
-   local xat="$(get_var Com_xa_start "$dir/mysql-status")"
+   local xat="$(get_var Com_xa_start "$dir/mariadb-status")"
    if [ -n "$xat" -a "${xat:-0}" -gt 0 ]; then
       name_val "XA Transactions" "Yes"
    else
       name_val "XA Transactions" "No"
    fi
-   local ndb_cluster="$(get_var "Ndb_cluster_node_id" "$dir/mysql-status")"
-   if [ -n "$ndb_cluster" -a "${ndb_cluster:-0}" -gt 0 ]; then
-      name_val "NDB Cluster" "Yes"
+   local cs_cluster="$(get_var "infinidb_local_query" "$dir/mariadb-status")"
+   if [ -n "$cs_cluster" -a "${cs_cluster:-0}" -gt 0 ]; then
+      name_val "ColumnStore Cluster" "Yes"
    else
-      name_val "NDB Cluster" "No"
+      name_val "ColumnStore Cluster" "No"
    fi
-   local prep=$(( $(get_var "Com_stmt_prepare" "$dir/mysql-status") + $(get_var "Com_prepare_sql" "$dir/mysql-status") ))
+   local prep=$(( $(get_var "Com_stmt_prepare" "$dir/mariadb-status") + $(get_var "Com_prepare_sql" "$dir/mariadb-status") ))
    if [ "${prep}" -gt 0 ]; then
       name_val "Prepared Statements" "Yes"
    else
       name_val "Prepared Statements" "No"
    fi
-   local prep_count="$(get_var Prepared_stmt_count "$dir/mysql-status")"
+   local prep_count="$(get_var Prepared_stmt_count "$dir/mariadb-status")"
    if [ "${prep_count}" ]; then
       name_val "Prepared statement count" "${prep_count}"
    fi
 
    section "InnoDB"
-   local have_innodb="$(get_var "have_innodb" "$dir/mysql-variables")"
-   local innodb_version="$(get_var "innodb_version" "$dir/mysql-variables")"
+   local have_innodb="$(get_var "have_innodb" "$dir/mariadb-variables")"
+   local innodb_version="$(get_var "innodb_version" "$dir/mariadb-variables")"
    if [ "${have_innodb}" = "YES" ] || [ -n "${innodb_version}" ]; then
-      section_innodb "$dir/mysql-variables" "$dir/mysql-status"
+      section_innodb "$dir/mariadb-variables" "$dir/mariadb-status"
 
       if [ -s "$dir/innodb-status" ]; then
          format_innodb_status "$dir/innodb-status"
@@ -2495,25 +2480,28 @@ report_mysql_summary () {
    local has_rocksdb=$($CMD_MYSQL $EXT_ARGV -ss -e 'SHOW ENGINES' 2>/dev/null | grep -i 'rocksdb')
    if [ ! -z "$has_rocksdb" ]; then
        section "RocksDB"
-       section_rocksdb "$dir/mysql-variables" "$dir/mysql-status"
+       section_rocksdb "$dir/mariadb-variables" "$dir/mariadb-status"
    fi
 
-   if [ -s "$dir/ndb-status" ]; then
-       section "NDB"
-       format_ndb_status "$dir/ndb-status"
+   if [ -s "$dir/cs-status" ]; then
+       section "ColumnStore"
+       format_cs_status "$dir/cs-status"
    fi
 
    section "MyISAM"
-   section_myisam "$dir/mysql-variables" "$dir/mysql-status"
+   section_myisam "$dir/mariadb-variables" "$dir/mariadb-status"
+
+   section "Aria"
+   section_aria "$dir/mariadb-variables" "$dir/mariadb-status"
 
    section "Security"
-   local users="$( format_users "$dir/mysql-users" )"
+   local users="$( format_users "$dir/mariadb-users" )"
    name_val "Users" "${users}"
-   name_val "Old Passwords" "$(get_var old_passwords "$dir/mysql-variables")"
+   name_val "Old Passwords" "$(get_var old_passwords "$dir/mariadb-variables")"
 
-   if [ -s "$dir/mysql-roles" ]; then
+   if [ -s "$dir/mariadb-roles" ]; then
        section "Roles"
-       format_mysql_roles "$dir/mysql-roles"
+       format_mysql_roles "$dir/mariadb-roles"
    fi
 
    section "Encryption"
@@ -2531,27 +2519,27 @@ report_mysql_summary () {
 
    section "Binary Logging"
 
-   if    [ -s "$dir/mysql-master-logs" ] \
-      || [ -s "$dir/mysql-master-status" ]; then
-      summarize_binlogs "$dir/mysql-master-logs"
-      local format="$(get_var binlog_format "$dir/mysql-variables")"
+   if    [ -s "$dir/mariadb-master-logs" ] \
+      || [ -s "$dir/mariadb-master-status" ]; then
+      summarize_binlogs "$dir/mariadb-master-logs"
+      local format="$(get_var binlog_format "$dir/mariadb-variables")"
       name_val binlog_format "${format:-STATEMENT}"
-      name_val expire_logs_days "$(get_var expire_logs_days "$dir/mysql-variables")"
-      name_val sync_binlog "$(get_var sync_binlog "$dir/mysql-variables")"
-      name_val server_id "$(get_var server_id "$dir/mysql-variables")"
-      format_binlog_filters "$dir/mysql-master-status"
+      name_val expire_logs_days "$(get_var expire_logs_days "$dir/mariadb-variables")"
+      name_val sync_binlog "$(get_var sync_binlog "$dir/mariadb-variables")"
+      name_val server_id "$(get_var server_id "$dir/mariadb-variables")"
+      format_binlog_filters "$dir/mariadb-master-status"
    fi
 
 
    section "Noteworthy Variables"
-   section_noteworthy_variables "$dir/mysql-variables"
+   section_noteworthy_variables "$dir/mariadb-variables"
 
    section "Configuration File"
-   local cnf_file="$(get_var "pt-summary-internal-Config_File_path" "$dir/mysql-variables")"
+   local cnf_file="$(get_var "pt-summary-internal-Config_File_path" "$dir/mariadb-variables")"
 
    if [ -n "${cnf_file}" ]; then
       name_val "Config File" "${cnf_file}"
-      pretty_print_cnf_file "$dir/mysql-config-file"
+      pretty_print_cnf_file "$dir/mariadb-config-file"
    else
       name_val "Config File" "Cannot autodetect or find, giving up"
    fi
@@ -2571,7 +2559,7 @@ report_mysql_summary () {
 # when sourcing this script for testing purposes.
 # ########################################################################
 
-TOOL="pt-mysql-summary"
+TOOL="mariadb-database-summary"
 
 # These vars are declared earlier in the collect_mysql_info package,
 # but if they're still undefined here, try to find them in PATH.
@@ -2583,14 +2571,14 @@ check_mysql () {
    # already dead in the water, so don't bother with cmd line opts,
    # just error and exit.
    [ -n "$(${CMD_MYSQL} --help 2>/dev/null)" ] \
-      || die "Cannot execute mysql.  Check that it is in PATH."
+      || die "Cannot execute mariadb.  Check that it is in PATH."
    [ -n "$(${CMD_MYSQLDUMP} --help 2>/dev/null)" ] \
-      || die "Cannot execute mysqldump.  Check that it is in PATH."
+      || die "Cannot execute mariadb-dump.  Check that it is in PATH."
 
    # Now that we have the cmd line opts, check that we can actually
    # connect to MySQL.
    [ -n "$(${CMD_MYSQL} ${EXT_ARGV} -e 'SHOW STATUS')" ] \
-      || die "Cannot connect to MySQL.  Check that MySQL is running and that the options after -- are correct."
+      || die "Cannot connect to MariaDB.  Check that MariaDB is running and that the options after -- are correct."
 
 }
 
@@ -2693,21 +2681,21 @@ fi
 
 =head1 NAME
 
-pt-mysql-summary - Summarize MySQL information nicely.
+mariadb-database-summary - Summarize MariaDB information nicely.
 
 =head1 SYNOPSIS
 
-Usage: pt-mysql-summary [OPTIONS]
+Usage: mariadb-database-summary [OPTIONS]
 
-pt-mysql-summary conveniently summarizes the status and configuration of a
-MySQL database server so that you can learn about it at a glance.  It is not
+mariadb-database-summary conveniently summarizes the status and configuration of a
+MariaDB database server so that you can learn about it at a glance.  It is not
 a tuning tool or diagnosis tool.  It produces a report that is easy to diff
 and can be pasted into emails without losing the formatting.  It should work
 well on any modern UNIX systems.
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+mariadb-database-summary is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -2725,24 +2713,24 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-mysql-summary works by connecting to a MySQL database server and querying
+mariadb-database-summary works by connecting to a MariaDB database server and querying
 it for status and configuration information.  It saves these bits of data
 into files in a temporary directory, and then formats them neatly with awk
 and other scripting languages.
 
 To use, simply execute it.  Optionally add a double dash and then the same
-command-line options you would use to connect to MySQL, such as the following:
+command-line options you would use to connect to MariaDB, such as the following:
 
-  pt-mysql-summary --user=root
+  mariadb-database-summary --user=root
 
 The tool interacts minimally with the server upon which it runs.  It assumes
 that you'll run it on the same server you're inspecting, and therefore it
 assumes that it will be able to find the my.cnf configuration file, for example.
 However, it should degrade gracefully if this is not the case.  Note, however,
-that its output does not indicate which information comes from the MySQL
+that its output does not indicate which information comes from the MariaDB
 database and which comes from the host operating system, so it is possible for
 confusing output to be generated if you run the tool on one server and connect
-to a MySQL database server running on another server.
+to a MariaDB database server running on another server.
 
 =head1 OUTPUT
 
@@ -2757,7 +2745,7 @@ then the nearest 10, nearest 25, and then repeats by a factor of 10 larger
 
 The following is a sample of the report that the tool produces:
 
-  # Percona Toolkit MySQL Summary Report #######################
+  # MariaDB Server Summary Report ##############################
                 System time | 2012-03-30 18:46:05 UTC
                               (local TZ: EDT -0400)
   # Instances ##################################################
@@ -2768,16 +2756,16 @@ The following is a sample of the report that the tool produces:
     12347 /tmp/12347/data            0    0   /tmp/12347.sock
 
 The first two sections show which server the report was generated on and which
-MySQL instances are running on the server. This is detected from the output of
+MariaDB instances are running on the server. This is detected from the output of
 C<ps> and does not always detect all instances and parameters, but often works
-well.  From this point forward, the report will be focused on a single MySQL
+well.  From this point forward, the report will be focused on a single MariaDB
 instance, although several instances may appear in the above paragraph.
 
   # Report On Port 12345 #######################################
                        User | msandbox@%
                        Time | 2012-03-30 14:46:05 (EDT)
                    Hostname | localhost.localdomain
-                    Version | 5.5.20-log MySQL Community Server (GPL)
+                    Version | 10.4.7-MariaDB-1:10.4.7+maria~bionic
                    Built On | linux2.6 i686
                     Started | 2012-03-28 23:33 (up 1+15:12:09)
                   Databases | 4
@@ -2786,8 +2774,8 @@ instance, although several instances may appear in the above paragraph.
                 Replication | Is not a slave, has 1 slaves connected
                     Pidfile | /tmp/12345/data/12345.pid (exists)
 
-This section is a quick summary of the MySQL instance: version, uptime, and
-other very basic parameters. The Time output is generated from the MySQL server,
+This section is a quick summary of the MariaDB instance: version, uptime, and
+other very basic parameters. The Time output is generated from the MariaDB server,
 unlike the system date and time printed earlier, so you can see whether the
 database and operating system times match.
 
@@ -2865,7 +2853,7 @@ was generated.
 This section shows the size of the table cache, followed by the percentage of
 the table cache in use. The usage is fuzzy-rounded.
 
-  # Key Percona Server features ################################
+  # Key MariaDB Server features ################################
         Table & Index Stats | Not Supported
        Multiple I/O Threads | Enabled
        Corruption Resilient | Not Supported
@@ -2879,9 +2867,8 @@ the table cache in use. The usage is fuzzy-rounded.
         HandlerSocket NoSQL | Not Supported
              Fast Hash UDFs | Unknown
 
-This section shows features that are available in Percona Server and whether
-they are enabled or not. In the example shown, the server is standard MySQL, not
-Percona Server, so the features are generally not supported.
+This section shows features that are available in MariaDB Server and whether
+they are enabled or not.
 
   # Plugins ####################################################
          InnoDB compression | ACTIVE
@@ -2932,7 +2919,7 @@ are fuzzy-rounded.
 
 If you specify L<"--databases"> or L<"--all-databases">, the tool will print
 the above section. This summarizes the number and type of objects in the
-databases. It is generated by running C<mysqldump --no-data>, not by querying
+databases. It is generated by running C<mariadb-dump --no-data>, not by querying
 the INFORMATION_SCHEMA, which can freeze a busy server.
 
 The first sub-report in the section is the count of objects by type in each
@@ -2958,7 +2945,7 @@ All of the numbers in this portion of the output are exact, not fuzzy-rounded.
        Explicit LOCK TABLES | No
              Delayed Insert | No
             XA Transactions | No
-                NDB Cluster | No
+        ColumnStore Cluster | No
         Prepared Statements | No
    Prepared statement count | 0
 
@@ -3013,6 +3000,14 @@ that this output will change in the future to become more useful.
                   Unflushed | 0%
 
 This section shows the size of the MyISAM key cache, followed by the percentage
+of the cache in use and percentage unflushed (fuzzy-rounded).
+
+  # Aria #######################################################
+          Page Cache Buffer | 16.0M
+                   Pct Used | 10%
+                  Unflushed | 0%
+
+This section shows the size of the Aria page cache, followed by the percentage
 of the cache in use and percentage unflushed (fuzzy-rounded).
 
   # Security ###################################################
@@ -3083,8 +3078,8 @@ be important to know about when working with this server.
   innodb_log_group_home_dir           = /tmp/12345/data
   innodb_data_file_path               = ibdata1:10M:autoextend
   innodb_log_file_size                = 5M
-  log-bin                             = mysql-bin
-  relay_log                           = mysql-relay-bin
+  log-bin                             = mariadb-bin
+  relay_log                           = mariadb-relay-bin
   log_slave_updates
   server-id                           = 12345
   report-host                         = 127.0.0.1
@@ -3104,17 +3099,17 @@ configuration file fails.
 
 =head1 OPTIONS
 
-All options after -- are passed to C<mysql>.
+All options after -- are passed to C<mariadb>.
 
 =over
 
 =item --all-databases
 
-mysqldump and summarize all databases.  See L<"--databases">.
+mariadb-dump and summarize all databases.  See L<"--databases">.
 
 =item --ask-pass
 
-Prompt for a password when connecting to MySQL.
+Prompt for a password when connecting to MariaDB.
 
 =item --config
 
@@ -3127,14 +3122,14 @@ first option on the command line.
 
 type: string
 
-mysqldump and summarize this comma-separated list of databases.  Specify
+mariadb-dump and summarize this comma-separated list of databases.  Specify
 L<"--all-databases"> instead if you want to dump and summary all databases.
 
 =item --defaults-file
 
 short form: -F; type: string
 
-Only read mysql options from the given file.  You must give an absolute
+Only read mariadb options from the given file.  You must give an absolute
 pathname.
 
 =item --help
@@ -3213,65 +3208,21 @@ This tool requires Bash v3 or newer, Perl 5.8 or newer, and binutils.
 These are generally already provided by most distributions.
 On BSD systems, it may require a mounted procfs.
 
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-mysql-summary>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
-
 =head1 AUTHORS
 
 Baron Schwartz, Brian Fraser, and Daniel Nichter
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
-projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-mysql-summary in August, 2019. Percona Toolkit was forked
+from two projects in June, 2011: Maatkit and Aspersa.  Those projects were 
+created by Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2011-2018 Percona LLC and/or its affiliates,
-2010-2011 Baron Schwartz.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -3289,7 +3240,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-mysql-summary 3.0.13
+mariadb-database-summary 3.0.13
 
 =cut
 
