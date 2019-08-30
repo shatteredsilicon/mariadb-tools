@@ -15,5 +15,6 @@ bin/mariadb-stacktrace
 bin/mariadb-stat-browser
 bin/mariadb-stat
 bin/mariadb-status-diff
+bin/mariadb-summary
 bin/mariadb-system-summary
 docs/mariadb-tools.pod
