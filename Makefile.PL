@@ -1,11 +1,11 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME      => 'percona-toolkit',
-    VERSION   => '3.0.13',
+    NAME      => 'mariadb-tools',
+    VERSION   => '1.0.0', # PT 3.0.13
     EXE_FILES => [ <bin/*> ],
     MAN1PODS  => {
-      'docs/percona-toolkit.pod' => 'blib/man1/percona-toolkit.1p',
+      'docs/mariadb-tools.pod' => 'blib/man1/mariadb-tools.1p',
       map {
          (my $name = $_) =~ s/^bin.//;
          my $file_name = $_;
