@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
+# This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
@@ -13,7 +13,7 @@ use warnings FATAL => 'all';
 # documentation for a full list of dependencies.
 BEGIN {
    $INC{$_} = __FILE__ for map { (my $pkg = "$_.pm") =~ s!::!/!g; $pkg } (qw(
-      Percona::Toolkit
+      MariaD::Tools
       Lmo::Utils
       Lmo::Meta
       Lmo::Object
@@ -54,15 +54,14 @@ BEGIN {
 }
 
 # ###########################################################################
-# Percona::Toolkit package
+# MariaD::Tools package
 # This package is a copy without comments from the original.  The original
 # with comments and its test file can be found in the Bazaar repository at,
-#   lib/Percona/Toolkit.pm
-#   t/lib/Percona/Toolkit.t
-# See https://launchpad.net/percona-toolkit for more information.
+#   lib/MariaDB/Tools.pm
+#   t/lib/MariaDB/Tools.t
 # ###########################################################################
 {
-package Percona::Toolkit;
+package MariaD::Tools;
 
 our $VERSION = '3.0.13';
 
@@ -113,7 +112,7 @@ sub _d {
 1;
 }
 # ###########################################################################
-# End Percona::Toolkit package
+# End MariaD::Tools package
 # ###########################################################################
 
 # ###########################################################################
@@ -122,7 +121,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Utils.pm
 #   t/lib/Lmo/Utils.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Utils;
@@ -182,7 +180,6 @@ sub _unimport_coderefs {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Meta.pm
 #   t/lib/Lmo/Meta.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Meta;
@@ -239,7 +236,6 @@ sub attributes_for_new {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Object.pm
 #   t/lib/Lmo/Object.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Object;
@@ -335,7 +331,6 @@ sub meta {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo/Types.pm
 #   t/lib/Lmo/Types.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Lmo::Types;
@@ -436,7 +431,6 @@ sub _nested_constraints {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Lmo.pm
 #   t/lib/Lmo.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 BEGIN {
@@ -771,7 +765,6 @@ sub override {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/DSNParser.pm
 #   t/lib/DSNParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package DSNParser;
@@ -983,7 +976,7 @@ sub get_dbh {
    }
 
    if ( !$have_dbi ) {
-      die "Cannot connect to MySQL because the Perl DBI module is not "
+      die "Cannot connect to MariaDB because the Perl DBI module is not "
          . "installed or not found.  Run 'perl -MDBI' to see the directories "
          . "that Perl searches for DBI.  If DBI is not installed, try:\n"
          . "  Debian/Ubuntu  apt-get install libdbi-perl\n"
@@ -1002,7 +995,7 @@ sub get_dbh {
 
       if ( !$dbh && $EVAL_ERROR ) {
          if ( $EVAL_ERROR =~ m/locate DBD\/mysql/i ) {
-            die "Cannot connect to MySQL because the Perl DBD::mysql module is "
+            die "Cannot connect to MariaDB because the Perl DBD::mysql module is "
                . "not installed or not found.  Run 'perl -MDBD::mysql' to see "
                . "the directories that Perl searches for DBD::mysql.  If "
                . "DBD::mysql is not installed, try:\n"
@@ -1165,7 +1158,7 @@ sub set_vars {
             $msg .= "  The current value for $var is $current_val.  "
                   . "If the variable is read only (not dynamic), specify "
                   . "--set-vars $var=$current_val to avoid this warning, "
-                  . "else manually set the variable and restart MySQL.";
+                  . "else manually set the variable and restart MariaDB.";
          }
          warn $msg . "\n\n";
       }
@@ -1194,7 +1187,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Quoter.pm
 #   t/lib/Quoter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Quoter;
@@ -1345,7 +1337,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/OptionParser.pm
 #   t/lib/OptionParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package OptionParser;
@@ -1407,9 +1398,9 @@ sub new {
       defaults_to       => {},  # rule: opt defaults to value of other opt
       DSNParser         => undef,
       default_files     => [
-         "/etc/percona-toolkit/percona-toolkit.conf",
-         "/etc/percona-toolkit/$program_name.conf",
-         "$home/.percona-toolkit.conf",
+         "/etc/mariadb/mariadb-tools.conf",
+         "/etc/mariadb/$program_name.conf",
+         "$home/.mariadb-tools.conf",
          "$home/.$program_name.conf",
       ],
       types             => {
@@ -2456,7 +2447,6 @@ if ( PTDEBUG ) {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Transformers.pm
 #   t/lib/Transformers.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Transformers;
@@ -2659,7 +2649,7 @@ sub any_unix_timestamp {
       return $val;
    }
    elsif ( my ($ymd, $hms) = $val =~ m/^(\d{6})(?:\s+(\d+:\d+:\d+))?/ ) {
-      PTDEBUG && _d('ts is MySQL slow log timestamp');
+      PTDEBUG && _d('ts is MariaDB slow log timestamp');
       $val .= ' 00:00:00' unless $hms;
       return unix_timestamp(parse_timestamp($val));
    }
@@ -2669,7 +2659,7 @@ sub any_unix_timestamp {
       return unix_timestamp($val);
    }
    else {
-      PTDEBUG && _d('ts is MySQL expression');
+      PTDEBUG && _d('ts is MariaDB expression');
       return $callback->($val) if $callback && ref $callback eq 'CODE';
    }
 
@@ -2809,7 +2799,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/QueryRewriter.pm
 #   t/lib/QueryRewriter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package QueryRewriter;
@@ -3214,7 +3203,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Processlist.pm
 #   t/lib/Processlist.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Processlist;
@@ -3603,7 +3591,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TcpdumpParser.pm
 #   t/lib/TcpdumpParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TcpdumpParser;
@@ -3734,7 +3721,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/MySQLProtocolParser.pm
 #   t/lib/MySQLProtocolParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package MySQLProtocolParser;
@@ -3961,7 +3947,7 @@ sub parse_event {
       $client      = $src_host;
    }
    else {
-      PTDEBUG && _d('Packet is not to or from a MySQL server');
+      PTDEBUG && _d('Packet is not to or from a MariaDB server');
       return $self->{null_event};
    }
    PTDEBUG && _d('Client', $client);
@@ -4966,7 +4952,7 @@ sub remove_mysql_header {
    my $mysql_hdr      = substr($packet->{data}, 0, 8, '');
    my $mysql_data_len = to_num(substr($mysql_hdr, 0, 6));
    my $pkt_num        = to_num(substr($mysql_hdr, 6, 2));
-   PTDEBUG && _d('MySQL packet: header data', $mysql_hdr,
+   PTDEBUG && _d('MariaDB packet: header data', $mysql_hdr,
       'data len (bytes)', $mysql_data_len, 'number', $pkt_num);
 
    $packet->{mysql_hdr}      = $mysql_hdr;
@@ -5002,7 +4988,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/SlowLogParser.pm
 #   t/lib/SlowLogParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package SlowLogParser;
@@ -5230,7 +5215,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/SlowLogWriter.pm
 #   t/lib/SlowLogWriter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package SlowLogWriter;
@@ -5321,7 +5305,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/EventAggregator.pm
 #   t/lib/EventAggregator.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package EventAggregator;
@@ -6230,7 +6213,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/ReportFormatter.pm
 #   t/lib/ReportFormatter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package ReportFormatter;
@@ -6651,7 +6633,6 @@ no Lmo;
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/QueryReportFormatter.pm
 #   t/lib/QueryReportFormatter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package QueryReportFormatter;
@@ -7835,7 +7816,6 @@ no Lmo;
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/JSONReportFormatter.pm
 #   t/lib/JSONReportFormatter.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package JSONReportFormatter;
@@ -8201,7 +8181,6 @@ no Lmo;
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/EventTimeline.pm
 #   t/lib/EventTimeline.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package EventTimeline;
@@ -8373,7 +8352,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/QueryParser.pm
 #   t/lib/QueryParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package QueryParser;
@@ -8785,7 +8763,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/TableParser.pm
 #   t/lib/TableParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package TableParser;
@@ -8996,7 +8973,7 @@ sub find_possible_keys {
       my @candidates = split(',', $expl->{possible_keys});
       my %possible   = map { $_ => 1 } @candidates;
       if ( $expl->{key} ) {
-         PTDEBUG && _d('MySQL chose', $expl->{key});
+         PTDEBUG && _d('MariaDB chose', $expl->{key});
          unshift @candidates, grep { $possible{$_} } split(',', $expl->{key});
          PTDEBUG && _d('Before deduping:', join(', ', @candidates));
          my %seen;
@@ -9217,7 +9194,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/QueryReview.pm
 #   t/lib/QueryReview.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package QueryReview;
@@ -9328,7 +9304,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/QueryHistory.pm
 #   t/lib/QueryHistory.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package QueryHistory;
@@ -9445,7 +9420,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Daemon.pm
 #   t/lib/Daemon.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Daemon;
@@ -9699,7 +9673,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/BinaryLogParser.pm
 #   t/lib/BinaryLogParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package BinaryLogParser;
@@ -9902,7 +9875,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/GeneralLogParser.pm
 #   t/lib/GeneralLogParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package GeneralLogParser;
@@ -10064,7 +10036,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/RawLogParser.pm
 #   t/lib/RawLogParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package RawLogParser;
@@ -10144,7 +10115,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/ProtocolParser.pm
 #   t/lib/ProtocolParser.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package ProtocolParser;
@@ -10456,7 +10426,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/MasterSlave.pm
 #   t/lib/MasterSlave.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package MasterSlave;
@@ -11253,7 +11222,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Progress.pm
 #   t/lib/Progress.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Progress;
@@ -11400,7 +11368,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/FileIterator.pm
 #   t/lib/FileIterator.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package FileIterator;
@@ -11479,7 +11446,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Runtime.pm
 #   t/lib/Runtime.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Runtime;
@@ -11612,7 +11578,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/Pipeline.pm
 #   t/lib/Pipeline.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package Pipeline;
@@ -11796,7 +11761,6 @@ sub _d {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/HTTP/Micro.pm
 #   t/lib/HTTP/Micro.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package HTTP::Micro;
@@ -12449,7 +12413,6 @@ if ( $INC{"IO/Socket/SSL.pm"} ) {
 # with comments and its test file can be found in the Bazaar repository at,
 #   lib/VersionCheck.pm
 #   t/lib/VersionCheck.t
-# See https://launchpad.net/percona-toolkit for more information.
 # ###########################################################################
 {
 package VersionCheck;
@@ -12473,14 +12436,13 @@ use File::Spec;
 use FindBin qw();
 
 eval {
-   require Percona::Toolkit;
+   require MariaD::Tools;
    require HTTP::Micro;
 };
 
 my $home    = $ENV{HOME} || $ENV{HOMEPATH} || $ENV{USERPROFILE} || '.';
 my @vc_dirs = (
-   '/etc/percona',
-   '/etc/percona-toolkit',
+   '/etc/mariadb',
    '/tmp',
    "$home",
 );
@@ -12697,7 +12659,7 @@ sub get_instance_id {
    }
    my $id = md5_hex($name);
 
-   PTDEBUG && _d('MySQL instance:', $id, $name, Dumper($dsn));
+   PTDEBUG && _d('MariaDB instance:', $id, $name, Dumper($dsn));
 
    return $name, $id;
 }
@@ -13020,7 +12982,7 @@ sub get_from_mysql {
 
    if ( !$instances || !@$instances ) {
       PTDEBUG && _d('Cannot check', $item,
-         'because there are no MySQL instances');
+         'because there are no MariaDB instances');
       return;
    }
 
@@ -13043,7 +13005,7 @@ sub get_from_mysql {
       foreach my $var ( @{$item->{vars}} ) {
          $var = lc($var);
          my $version = $rows->{$var}->{value};
-         PTDEBUG && _d('MySQL version for', $item->{item}, '=', $version,
+         PTDEBUG && _d('MariaDB version for', $item->{item}, '=', $version,
             'on', $instance->{name});
          push @versions, $version;
       }
@@ -13089,7 +13051,7 @@ use Scalar::Util qw(looks_like_number);
 use POSIX        qw(signal_h);
 use Data::Dumper;
 
-use Percona::Toolkit;
+use MariaD::Tools;
 
 $Data::Dumper::Indent    = 1;
 $Data::Dumper::Sortkeys  = 1;
@@ -13115,7 +13077,7 @@ use sigtrap 'handler', \&sig_int, 'normal-signals';
 my $oktorun = 1;
 my $ep_dbh;  # For --explain
 my $ps_dbh;  # For Processlist
-my $aux_dbh; # For --aux-dsn (--since/--until "MySQL expression")
+my $aux_dbh; # For --aux-dsn (--since/--until "MariaDB expression")
 
 my $resume_file;
 my $resume = {};
@@ -13768,7 +13730,7 @@ sub main {
                         $args->{next_ts_interval});
                   }
                   else {
-                     PTDEBUG && _d("Failed to parse MySQL ts:",
+                     PTDEBUG && _d("Failed to parse MariaDB ts:",
                         $args->{event}->{ts});
                   }
                }
@@ -13785,7 +13747,7 @@ sub main {
    } # runtime
 
    # Filter early for --since and --until.
-   # If --since or --until is a MySQL expression, then any_unix_timestamp()
+   # If --since or --until is a MariaDB expression, then any_unix_timestamp()
    # will need this callback to execute the expression.  We don't know what
    # type of time value the user gave, so we'll create the callback in any case.
    if ( $o->get('since') || $o->get('until') ) {
@@ -14354,16 +14316,16 @@ sub main {
    # ########################################################################
    # Do the version-check
    # ########################################################################
-   if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
-      VersionCheck::version_check(
-         force     => $o->got('version-check'),
-         instances => [
-            ($qv_dbh ? { dbh => $qv_dbh, dsn => $review_dsn  } : ()),
-            ($qh_dbh ? { dbh => $qh_dbh, dsn => $history_dsn } : ()),
-            ($ps_dbh ? { dbh => $ps_dbh, dsn => $ps_dsn      } : ()),
-         ],
-      );
-   }
+   # if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
+   #    VersionCheck::version_check(
+   #       force     => $o->got('version-check'),
+   #       instances => [
+   #          ($qv_dbh ? { dbh => $qv_dbh, dsn => $review_dsn  } : ()),
+   #          ($qh_dbh ? { dbh => $qh_dbh, dsn => $history_dsn } : ()),
+   #          ($ps_dbh ? { dbh => $ps_dbh, dsn => $ps_dsn      } : ()),
+   #       ],
+   #    );
+   # }
 
    # ##########################################################################
    # Parse the input.
@@ -15001,14 +14963,14 @@ if ( !caller ) { exit main(@ARGV); }
 
 =head1 NAME
 
-pt-query-digest - Analyze MySQL queries from logs, processlist, and tcpdump.
+mariadb-query-digest - Analyze MariaDB queries from logs, processlist, and tcpdump.
 
 =head1 SYNOPSIS
 
-Usage: pt-query-digest [OPTIONS] [FILES] [DSN]
+Usage: mariadb-query-digest [OPTIONS] [FILES] [DSN]
 
-pt-query-digest analyzes MySQL queries from slow, general, and binary log
-files.  It can also analyze queries from C<SHOW PROCESSLIST> and MySQL
+mariadb-query-digest analyzes MariaDB queries from slow, general, and binary log
+files.  It can also analyze queries from C<SHOW PROCESSLIST> and MariaDB
 protocol data from tcpdump.  By default, queries are grouped by fingerprint
 and reported in descending order of query time (i.e. the slowest queries
 first).  If no C<FILES> are given, the tool reads C<STDIN>.  The optional
@@ -15016,25 +14978,25 @@ C<DSN> is used for certain options like L<"--since"> and L<"--until">.
 
 Report the slowest queries from C<slow.log>:
 
-   pt-query-digest slow.log
+   mariadb-query-digest slow.log
 
 Report the slowest queries from the processlist on host1:
 
-   pt-query-digest --processlist h=host1
+   mariadb-query-digest --processlist h=host1
 
-Capture MySQL protocol data with tcppdump, then report the slowest queries:
+Capture MariaDB protocol data with tcppdump, then report the slowest queries:
 
-   tcpdump -s 65535 -x -nn -q -tttt -i any -c 1000 port 3306 > mysql.tcp.txt
+   tcpdump -s 65535 -x -nn -q -tttt -i any -c 1000 port 3306 > mariadb.tcp.txt
 
-   pt-query-digest --type tcpdump mysql.tcp.txt
+   mariadb-query-digest --type tcpdump mariadb.tcp.txt
 
 Save query data from C<slow.log> to host2 for later review and trend analysis:
 
-   pt-query-digest --review h=host2 --no-report slow.log
+   mariadb-query-digest --review h=host2 --no-report slow.log
 
 =head1 RISKS
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+MariaDB Tools is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -15052,17 +15014,17 @@ server.  Before using this tool, please:
 
 =head1 DESCRIPTION
 
-pt-query-digest is a sophisticated but easy to use tool for analyzing
-MySQL queries.  It can analyze queries from MySQL slow, general, and binary
+mariadb-query-digest is a sophisticated but easy to use tool for analyzing
+MariaDB queries.  It can analyze queries from MariaDB slow, general, and binary
 logs. (Binary logs must first be converted to text, see L<"--type">).
-It can also use C<SHOW PROCESSLIST> and MySQL protocol data from tcpdump.
+It can also use C<SHOW PROCESSLIST> and MariaDB protocol data from tcpdump.
 By default, the tool reports which queries are the slowest, and therefore
 the most important to optimize.  More complex and custom-tailored reports
 can be created by using options like L<"--group-by">, L<"--filter">, and
 L<"--embedded-attributes">.
 
 Query analysis is a best-practice that should be done frequently.  To
-make this easier, pt-query-digest has two features: query review
+make this easier, mariadb-query-digest has two features: query review
 (L<"--review">) and query history (L<"--history">).  When the L<"--review">
 option is used, all unique queries are saved to a database.  When the
 tool is ran again with L<"--review">, queries marked as reviewed in
@@ -15075,12 +15037,12 @@ query performance over time.
 
 =head1 ATTRIBUTES
 
-pt-query-digest works on events, which are a collection of key-value pairs
+mariadb-query-digest works on events, which are a collection of key-value pairs
 called attributes.  You'll recognize most of the attributes right away:
 C<Query_time>, C<Lock_time>, and so on.  You can just look at a slow log
 and see them.  However, there are some that don't exist in the slow log,
-and slow logs may actually include different kinds of attributes (for example,
-you may have a server with the Percona patches).
+and slow logs may actually include different kinds of attributes depending
+upon the MariaDB Server version.
 
 See L<"ATTRIBUTES REFERENCE"> near the end of this documentation for a list
 of common and L<"--type"> specific attributes.  A familiarity with these
@@ -15167,7 +15129,7 @@ select the reviewed query's details from the database with a query like C<SELECT
 If you are investigating the report and want to print out every sample of a
 particular query, then the following L<"--filter"> may be helpful:
 
-   pt-query-digest slow.log           \
+   mariadb-query-digest slow.log           \
       --no-report                     \
       --output slowlog                \
       --filter '$event->{fingerprint} \
@@ -15284,7 +15246,7 @@ anything you can see in the report.
 
 =back
 
-To use this feature, you run pt-query-digest with the L<"--review"> option.  It
+To use this feature, you run mariadb-query-digest with the L<"--review"> option.  It
 will store the fingerprints and other information into the table you specify.
 Next time you run it with the same option, it will do the following:
 
@@ -15342,11 +15304,11 @@ Both of those queries will fingerprint to
 Once the query's fingerprint is known, we can then talk about a query as though
 it represents all similar queries.
 
-What C<pt-query-digest> does is analogous to a GROUP BY statement in SQL.  (But
+What C<mariadb-query-digest> does is analogous to a GROUP BY statement in SQL.  (But
 note that "multiple columns" doesn't define a multi-column grouping; it defines
 multiple reports!) If your command-line looks like this,
 
-  pt-query-digest               \
+  mariadb-query-digest               \
       --group-by fingerprint    \
       --order-by Query_time:sum \
       --limit 10                \
@@ -15376,7 +15338,7 @@ be exhaustive:
 
 =item *
 
-Group all SELECT queries from mysqldump together, even if they are against
+Group all SELECT queries from mariadb-dump together, even if they are against
 different tables.  The same applies to all queries from pt-table-checksum.
 
 =item *
@@ -15429,7 +15391,7 @@ L<"SYNOPSIS"> and usage information for details.
 
 =item --ask-pass
 
-Prompt for a password when connecting to MySQL.
+Prompt for a password when connecting to MariaDB.
 
 =item --attribute-aliases
 
@@ -15438,7 +15400,7 @@ type: array; default: db|Schema
 List of attribute|alias,etc.
 
 Certain attributes have multiple names, like db and Schema.  If an event does
-not have the primary attribute, pt-query-digest looks for an alias attribute.
+not have the primary attribute, mariadb-query-digest looks for an alias attribute.
 If it finds an alias, it creates the primary attribute with the alias
 attribute's value and removes the alias attribute.
 
@@ -15464,9 +15426,9 @@ short form: -A; type: string
 
 Default character set.  If the value is utf8, sets Perl's binmode on
 STDOUT to utf8, passes the mysql_enable_utf8 option to DBD::mysql, and
-runs SET NAMES UTF8 after connecting to MySQL.  Any other value sets
+runs SET NAMES UTF8 after connecting to MariaDB.  Any other value sets
 binmode on STDOUT without the utf8 layer, and runs SET NAMES after
-connecting to MySQL.
+connecting to MariaDB.
 
 =item --config
 
@@ -15516,7 +15478,7 @@ Connect to this database.
 
 short form: -F; type: string
 
-Only read mysql options from the given file.  You must give an absolute pathname.
+Only read mariadb options from the given file.  You must give an absolute pathname.
 
 =item --embedded-attributes
 
@@ -15533,9 +15495,9 @@ For example, suppose your query looks like the following:
 
   SELECT * from users -- file: /login.php, line: 493;
 
-You might run pt-query-digest with the following option:
+You might run mariadb-query-digest with the following option:
 
-  pt-query-digest --embedded-attributes ' -- .*','(\w+): ([^\,]+)'
+  mariadb-query-digest --embedded-attributes ' -- .*','(\w+): ([^\,]+)'
 
 The first regular expression captures the whole comment:
 
@@ -15569,7 +15531,7 @@ type: DSN
 Run EXPLAIN for the sample query with this DSN and print results.
 
 This works only when L<"--group-by"> includes fingerprint.  It causes
-pt-query-digest to run EXPLAIN and include the output into the report.  For
+mariadb-query-digest to run EXPLAIN and include the output into the report.  For
 safety, queries that appear to have a subquery that EXPLAIN will execute won't
 be EXPLAINed.  Those are typically "derived table" queries of the form
 
@@ -15577,7 +15539,7 @@ be EXPLAINed.  Those are typically "derived table" queries of the form
 
 The EXPLAIN results are printed as a full vertical format in the event report,
 which appears at the end of each event report in vertical style
-(C<\G>) just like MySQL prints it.
+(C<\G>) just like MariaDB prints it.
 
 =item --filter
 
@@ -15587,7 +15549,7 @@ Discard events for which this Perl code doesn't return true.
 
 This option is a string of Perl code or a file containing Perl code that gets
 compiled into a subroutine with one argument: $event.  This is a hashref.
-If the given value is a readable file, then pt-query-digest reads the entire
+If the given value is a readable file, then mariadb-query-digest reads the entire
 file and uses its contents as the code.  The file should not contain
 a shebang (#!/usr/bin/perl) line.
 
@@ -15614,10 +15576,10 @@ filter.txt:
 
 Then specify C<--filter filter.txt> to read the code from filter.txt.
 
-If the filter code won't compile, pt-query-digest will die with an error.
+If the filter code won't compile, mariadb-query-digest will die with an error.
 If the filter code does compile, an error may still occur at runtime if the
 code tries to do something wrong (like pattern match an undefined value).
-pt-query-digest does not provide any safeguards so code carefully!
+mariadb-query-digest does not provide any safeguards so code carefully!
 
 An example filter that discards everything but SELECT statements:
 
@@ -15640,7 +15602,7 @@ Here are more examples of filter code:
 
 --filter '($event->{host} || $event->{ip} || "") =~ m/domain.com/'
 
-Sometimes MySQL logs the host where the IP is expected.  Therefore, we
+Sometimes MariaDB logs the host where the IP is expected.  Therefore, we
 check both.
 
 =item User matches john
@@ -15722,24 +15684,24 @@ Show help and exit.
 
 type: DSN
 
-Save metrics for each query class in the given table.  pt-query-digest saves
+Save metrics for each query class in the given table.  mariadb-query-digest saves
 query metrics (query time, lock time, etc.) to this table so you can see how
 query classes change over time.
 
 =for comment ignore-pt-internal-value
 MAGIC_default_history_table
 
-The default table is C<percona_schema.query_history>.  Specify database
+The default table is C<mariadb_tools.query_history>.  Specify database
 (D) and table (t) DSN options to override the default.  The database and
 table are automatically created unless C<--no-create-history-table>
 is specified (see L<"--[no]create-history-table">).
 
-pt-query-digest inspects the columns in the table.  The table must have at
+mariadb-query-digest inspects the columns in the table.  The table must have at
 least the following columns:
 
   CREATE TABLE query_review_history (
     checksum     CHAR(32) NOT NULL,
-    sample       TEXT NOT NULL
+    sample       LONGTEXT NOT NULL
   );
 
 Any columns not mentioned above are inspected to see if they follow a certain
@@ -15769,7 +15731,7 @@ MAGIC_create_history_table
 
  CREATE TABLE IF NOT EXISTS query_history (
    checksum             CHAR(32) NOT NULL,
-   sample               TEXT NOT NULL,
+   sample               LONGTEXT NOT NULL,
    ts_min               DATETIME,
    ts_max               DATETIME,
    ts_cnt               FLOAT,
@@ -15797,8 +15759,7 @@ MAGIC_create_history_table
    Rows_examined_pct_95 FLOAT,
    Rows_examined_stddev FLOAT,
    Rows_examined_median FLOAT,
-   -- Percona extended slowlog attributes 
-   -- http://www.percona.com/docs/wiki/patches:slow_extended
+   -- extended slowlog attributes 
    Rows_affected_sum             FLOAT,
    Rows_affected_min             FLOAT,
    Rows_affected_max             FLOAT,
@@ -15871,9 +15832,6 @@ MAGIC_create_history_table
 
 Note that we store the count (cnt) for the ts attribute only; it will be
 redundant to store this for other attributes.
-
-Starting from Percona Toolkit 3.0.11, the checksum function has been updated to use 32 chars in the MD5 sum.
-This causes the checksum field in the history table will have a different value than in the previous versions of the tool.
 
 =item --host
 
@@ -15988,7 +15946,7 @@ becomes C<Query_time:cnt>.  General logs do not report query times so only
 the C<cnt> aggregate makes sense because all query times are zero.
 
 If you specify an attribute that doesn't exist in the events, then
-pt-query-digest falls back to the default C<Query_time:sum> and prints a notice
+mariadb-query-digest falls back to the default C<Query_time:sum> and prints a notice
 at the beginning of the report for each query class.  You can create attributes
 with L<"--filter"> and order by them; see L<"ATTRIBUTES"> for an example.
 
@@ -16021,7 +15979,7 @@ How to format and print the query analysis results.  Accepted values are:
    VALUE          FORMAT
    =======        ==============================
    report         Standard query analysis report
-   slowlog        MySQL slow log
+   slowlog        MariaDB slow log
    json           JSON, on array per query class
    json-anon      JSON without example queries
    secure-slowlog JSON without example queries
@@ -16070,7 +16028,7 @@ type: DSN
 
 Poll this DSN's processlist for queries, with L<"--interval"> sleep between.
 
-If the connection fails, pt-query-digest tries to reopen it once per second.
+If the connection fails, mariadb-query-digest tries to reopen it once per second.
 
 =item --progress
 
@@ -16123,7 +16081,7 @@ Print these sections of the query analysis report.
   ============ ======================================================
   rusage       CPU times and memory usage reported by ps
   date         Current local date and time
-  hostname     Hostname of machine on which pt-query-digest was run
+  hostname     Hostname of machine on which mariadb-query-digest was run
   files        Input files read/parse
   header       Summary of the entire analysis run
   profile      Compact table of queries for an overview of the report
@@ -16176,14 +16134,14 @@ Save query classes for later review, and don't report already reviewed classes.
 =for comment ignore-pt-internal-value
 MAGIC_default_review_table
 
-The default table is C<percona_schema.query_review>.  Specify database
+The default table is C<mariadb_tools.query_review>.  Specify database
 (D) and table (t) DSN options to override the default.  The database and
 table are automatically created unless C<--no-create-review-table>
 is specified (see L<"--[no]create-review-table">).
 
 If the table was created manually, it must have at least the following columns.
 You can add more columns for your own special purposes, but they won't be used
-by pt-query-digest.
+by mariadb-query-digest.
 
 =for comment ignore-pt-internal-value
 MAGIC_create_review_table:
@@ -16226,11 +16184,11 @@ type: time
 
 How long to run for each L<"--iterations">.  The default is to run forever
 (you can interrupt with CTRL-C).  Because L<"--iterations"> defaults to 1,
-if you only specify L<"--run-time">, pt-query-digest runs for that amount of
+if you only specify L<"--run-time">, mariadb-query-digest runs for that amount of
 time and then exits.  The two options are specified together to do
 collect-and-report cycles.  For example, specifying L<"--iterations"> C<4>
 L<"--run-time"> C<15m> with a continuous input (like STDIN or
-L<"--processlist">) will cause pt-query-digest to run for 1 hour
+L<"--processlist">) will cause mariadb-query-digest to run for 1 hour
 (15 minutes x 4), reporting four times, once at each 15 minute interval.
 
 =item --run-time-mode
@@ -16271,7 +16229,7 @@ or days.  For example, C<5m> divides evenly into hours (60/5=12, so 12
 
 Specifying C<--run-time-mode interval --run-time 30m --iterations 0> is
 similar to specifying C<--run-time-mode clock --run-time 30m --iterations 0>.
-In the latter case, pt-query-digest will run forever, producing reports every
+In the latter case, mariadb-query-digest will run forever, producing reports every
 30 minutes, but this only works effectively with  continuous inputs like
 STDIN and the processlist.  For fixed inputs, like log files, the former
 example produces multiple reports by dividing the log into 30 minutes
@@ -16286,7 +16244,7 @@ When a new timestamp exceeds the interval, a report is printed, and the
 next interval is recalculated based on the new timestamp.
 
 Since L<"--iterations"> is 1 by default, you probably want to specify
-a new value else pt-query-digest will only get and report on the first
+a new value else mariadb-query-digest will only get and report on the first
 interval from the log since 1 interval = 1 iteration.  If you want to
 get and report every interval in a log, specify L<"--iterations"> C<0>.
 
@@ -16304,7 +16262,7 @@ the queries.  You probably want to set C<--no-report> to avoid the overhead of
 aggregating and reporting if you're just using this to print out samples of
 queries.  A complete example:
 
-  pt-query-digest --sample 2 --no-report --output slowlog slow.log
+  mariadb-query-digest --sample 2 --no-report --output slowlog slow.log
 
 =item --slave-user
 
@@ -16326,7 +16284,7 @@ on all slaves.
 
 type: Array
 
-Set the MySQL variables in this comma-separated list of C<variable=value> pairs.
+Set the MariaDB variables in this comma-separated list of C<variable=value> pairs.
 
 By default, the tool sets:
 
@@ -16346,7 +16304,7 @@ type: Hash
 
 Show all values for these attributes.
 
-By default pt-query-digest only shows as many of an attribute's value that
+By default mariadb-query-digest only shows as many of an attribute's value that
 fit on a single line.  This option allows you to specify attributes for which
 all values will be shown (line width is ignored).  This only works for
 attributes with string values like user, host, db, etc.  Multiple attributes
@@ -16367,17 +16325,17 @@ several types:
     given); this is like saying "since N[shmd] ago"
   * Full date with optional hours:minutes:seconds:
     YYYY-MM-DD [HH:MM:SS]
-  * Short, MySQL-style date:
+  * Short, MariaDB-style date:
     YYMMDD [HH:MM:SS]
-  * Any time expression evaluated by MySQL:
+  * Any time expression evaluated by MariaDB:
     CURRENT_DATE - INTERVAL 7 DAY
 
-If you give a MySQL time expression, and you have not also specified a DSN
+If you give a MariaDB time expression, and you have not also specified a DSN
 for L<"--explain">, L<"--processlist">, or L<"--review">, then you must specify
-a DSN on the command line so that pt-query-digest can connect to MySQL to
+a DSN on the command line so that mariadb-query-digest can connect to MariaDB to
 evaluate the expression.
 
-The MySQL time expression is wrapped inside a query like
+The MariaDB time expression is wrapped inside a query like
 "SELECT UNIX_TIMESTAMP(<expression>)", so be sure that the expression is
 valid inside this query.  For example, do not use UNIX_TIMESTAMP() because
 UNIX_TIMESTAMP(UNIX_TIMESTAMP()) returns 0.
@@ -16400,7 +16358,7 @@ Socket file to use for connection.
 
 Show a timeline of events.
 
-This option makes pt-query-digest print another kind of report: a timeline of
+This option makes mariadb-query-digest print another kind of report: a timeline of
 the events.  Each query is still grouped and aggregate into classes according to
 L<"--group-by">, but then they are printed in chronological order.  The timeline
 report prints out the timestamp, interval, count and value of each classes.
@@ -16412,7 +16370,7 @@ will be printed at the end before the response-time profile
 
 For example, this:
 
-  pt-query-digest /path/to/log --group-by distill --timeline
+  mariadb-query-digest /path/to/log --group-by distill --timeline
 
 will print something like:
 
@@ -16433,33 +16391,33 @@ The type of input to parse.  The permitted types are
 
 =item binlog
 
-Parse a binary log file that has first been converted to text using mysqlbinlog.
+Parse a binary log file that has first been converted to text using mariadb-binlog.
 
 For example: 
 
-   mysqlbinlog mysql-bin.000441 > mysql-bin.000441.txt
+   mariadb-binlog mariadb-bin.000441 > mariadb-bin.000441.txt
 
-   pt-query-digest --type binlog mysql-bin.000441.txt
+   mariadb-query-digest --type binlog mariadb-bin.000441.txt
 
 =item genlog
 
-Parse a MySQL general log file.  General logs lack a lot of L<"ATTRIBUTES">,
+Parse a MariaDB general log file.  General logs lack a lot of L<"ATTRIBUTES">,
 notably C<Query_time>.  The default L<"--order-by"> for general logs
 changes to C<Query_time:cnt>.
 
 =item slowlog
 
-Parse a log file in any variation of MySQL slow log format.
+Parse a log file in any variation of MariaDB slow log format.
 
 =item tcpdump
 
-Inspect network packets and decode the MySQL client protocol, extracting queries
+Inspect network packets and decode the MariaDB client protocol, extracting queries
 and responses from it.
 
-pt-query-digest does not actually watch the network (i.e. it does NOT "sniff
+mariadb-query-digest does not actually watch the network (i.e. it does NOT "sniff
 packets").  Instead, it's just parsing the output of tcpdump.  You are
-responsible for generating this output; pt-query-digest does not do it for you.
-Then you send this to pt-query-digest as you would any log file: as files on the
+responsible for generating this output; mariadb-query-digest does not do it for you.
+Then you send this to mariadb-query-digest as you would any log file: as files on the
 command line or to STDIN.
 
 The parser expects the input to be formatted with the following options: C<-x -n
@@ -16467,8 +16425,8 @@ The parser expects the input to be formatted with the following options: C<-x -n
 you can do something like the following (the port must come last on FreeBSD):
 
   tcpdump -s 65535 -x -nn -q -tttt -i any -c 1000 port 3306 \
-    > mysql.tcp.txt
-  pt-query-digest --type tcpdump mysql.tcp.txt
+    > mariadb.tcp.txt
+  mariadb-query-digest --type tcpdump mariadb.tcp.txt
 
 The other tcpdump parameters, such as -s, -c, and -i, are up to you.  Just make
 sure the output looks like this (there is a line break in the first line to
@@ -16486,7 +16444,7 @@ L<http://bugs.mysql.com/bug.php?id=31577> if you're confused about this.
 
 Devananda Van Der Veen explained on the MySQL Performance Blog how to capture
 traffic without dropping packets on busy servers.  Dropped packets cause
-pt-query-digest to miss the response to a request, then see the response to a
+mariadb-query-digest to miss the response to a request, then see the response to a
 later request and assign the wrong execution time to the query.  You can change
 the filter to something like the following to help capture a subset of the
 queries.  (See L<http://www.mysqlperformanceblog.com/?p=6092> for details.)
@@ -16494,19 +16452,19 @@ queries.  (See L<http://www.mysqlperformanceblog.com/?p=6092> for details.)
   tcpdump -i any -s 65535 -x -n -q -tttt \
      'port 3306 and tcp[1] & 7 == 2 and tcp[3] & 7 == 2'
 
-All MySQL servers running on port 3306 are automatically detected in the
+All MariaDB servers running on port 3306 are automatically detected in the
 tcpdump output.  Therefore, if the tcpdump out contains packets from
 multiple servers on port 3306 (for example, 10.0.0.1:3306, 10.0.0.2:3306,
 etc.), all packets/queries from all these servers will be analyzed
 together as if they were one server.
 
-If you're analyzing traffic for a MySQL server that is not running on port
+If you're analyzing traffic for a MariaDB server that is not running on port
 3306, see L<"--watch-server">.
 
-Also note that pt-query-digest may fail to report the database for queries
+Also note that mariadb-query-digest may fail to report the database for queries
 when parsing tcpdump output.  The database is discovered only in the initial
 connect events for a new client or when <USE db> is executed.  If the tcpdump
-output contains neither of these, then pt-query-digest cannot discover the
+output contains neither of these, then mariadb-query-digest cannot discover the
 database.
 
 Server-side prepared statements are supported.  SSL-encrypted traffic cannot be
@@ -16514,7 +16472,7 @@ inspected and decoded.
 
 =item rawlog
 
-Raw logs are not MySQL logs but simple text files with one SQL statement
+Raw logs are not MariaDB logs but simple text files with one SQL statement
 per line, like:
 
   SELECT c FROM t WHERE id=1
@@ -16523,7 +16481,7 @@ per line, like:
   INSERT INTO t SELECT * FROM monkeys
 
 Since raw logs do not have any metrics, many options and features of
-pt-query-digest do not work with them.
+mariadb-query-digest do not work with them.
 
 One use case for raw logs is ranking queries by count when the only
 information available is a list of queries, from polling C<SHOW PROCESSLIST>
@@ -16578,56 +16536,30 @@ distinct checksums are treated as equal.
 
 Show version and exit.
 
-=item --[no]version-check
-
-default: yes
-
-Check for the latest version of Percona Toolkit, MySQL, and other programs.
-
-This is a standard "check for updates automatically" feature, with two
-additional features.  First, the tool checks its own version and also the
-versions of the following software: operating system, Percona Monitoring and
-Management (PMM), MySQL, Perl, MySQL driver for Perl (DBD::mysql), and
-Percona Toolkit. Second, it checks for and warns about versions with known
-problems. For example, MySQL 5.5.25 had a critical bug and was re-released
-as 5.5.25a.
-
-A secure connection to Percona’s Version Check database server is done to
-perform these checks. Each request is logged by the server, including software
-version numbers and unique ID of the checked system. The ID is generated by the
-Percona Toolkit installation script or when the Version Check database call is
-done for the first time.
-
-Any updates or known problems are printed to STDOUT before the tool's normal
-output.  This feature should never interfere with the normal operation of the
-tool.  
-
-For more information, visit L<https://www.percona.com/doc/percona-toolkit/LATEST/version-check.html>.
-
 =item --[no]vertical-format
 
 default: yes
 
 Output a trailing "\G" in the reported SQL queries.
 
-This makes the mysql client display the result using vertical format.
-Non-native MySQL clients like phpMyAdmin do not support this.
+This makes the mariadb client display the result using vertical format.
+Non-native MariaDB clients like phpMyAdmin do not support this.
 
 =item --watch-server
 
 type: string
 
-This option tells pt-query-digest which server IP address and port (like
+This option tells mariadb-query-digest which server IP address and port (like
 "10.0.0.1:3306") to watch when parsing tcpdump (for L<"--type"> tcpdump);
 all other servers are ignored.  If you don't specify it,
-pt-query-digest watches all servers by looking for any IP address using port
-3306 or "mysql".  If you're watching a server with a non-standard port, this
+mariadb-query-digest watches all servers by looking for any IP address using port
+3306 or "mariadb".  If you're watching a server with a non-standard port, this
 won't work, so you must specify the IP address and port to watch.
 
 If you want to watch a mix of servers, some running on standard port 3306
 and some running on non-standard ports, you need to create separate
 tcpdump outputs for the non-standard port servers and then specify this
-option for each.  At present pt-query-digest cannot auto-detect servers on
+option for each.  At present mariadb-query-digest cannot auto-detect servers on
 port 3306 and also be told to watch a server on a non-standard port.
 
 =back
@@ -16638,7 +16570,7 @@ These DSN options are used to create a DSN.  Each option is given like
 C<option=value>.  The options are case-sensitive, so P and p are not the
 same option.  There cannot be whitespace before or after the C<=> and
 if the value contains whitespace it must be quoted.  DSN options are
-comma-separated.  See the L<percona-toolkit> manpage for full details.
+comma-separated.  See the L<mariadb-tools> manpage for full details.
 
 =over
 
@@ -16652,7 +16584,7 @@ Default character set.
 
 dsn: database; copy: yes
 
-Default database to use when connecting to MySQL.
+Default database to use when connecting to MariaDB.
 
 =item * F
 
@@ -16702,7 +16634,7 @@ User for login if not current user.
 The environment variable C<PTDEBUG> enables verbose debugging output to STDERR.
 To enable debugging and capture all output to a file, run the tool like:
 
-   PTDEBUG=1 pt-query-digest ... > FILE 2>&1
+   PTDEBUG=1 mariadb-query-digest ... > FILE 2>&1
 
 Be careful: debugging output is voluminous and can generate several megabytes
 of output.
@@ -16711,48 +16643,6 @@ of output.
 
 You need Perl, DBI, DBD::mysql, and some core packages that ought to be
 installed in any reasonably new version of Perl.
-
-=head1 BUGS
-
-For a list of known bugs, see L<http://www.percona.com/bugs/pt-query-digest>.
-
-Please report bugs at L<https://jira.percona.com/projects/PT>.
-Include the following information in your bug report:
-
-=over
-
-=item * Complete command-line used to run the tool
-
-=item * Tool L<"--version">
-
-=item * MySQL version of all servers involved
-
-=item * Output from the tool including STDERR
-
-=item * Input files (log/dump/config files, etc.)
-
-=back
-
-If possible, include debugging output by running the tool with C<PTDEBUG>;
-see L<"ENVIRONMENT">.
-
-=head1 DOWNLOADING
-
-Visit L<http://www.percona.com/software/percona-toolkit/> to download the
-latest release of Percona Toolkit.  Or, get the latest release from the
-command line:
-
-   wget percona.com/get/percona-toolkit.tar.gz
-
-   wget percona.com/get/percona-toolkit.rpm
-
-   wget percona.com/get/percona-toolkit.deb
-
-You can also get individual tools from the latest release:
-
-   wget percona.com/get/TOOL
-
-Replace C<TOOL> with the name of any tool.
 
 =head1 ATTRIBUTES REFERENCE
 
@@ -16763,7 +16653,7 @@ using it, else the filter code may crash the tool with a
 
 You can dump event attributes for any input like:
 
-  $ pt-query-digest                  \
+  $ mariadb-query-digest                  \
       slow.log                       \
       --filter 'print Dumper $event' \
       --no-report                    \
@@ -16843,9 +16733,6 @@ Events have all available attributes from the log file.  Therefore, you only
 need to look at the log file to see which events are available, but remember:
 not all events have the same attributes.
 
-Percona Server adds many attributes to the slow log; see
-http://www.percona.com/docs/wiki/patches:slow_extended for more information.
-
 =head2 TCPDUMP
 
 These attributes are available when parsing L<"--type"> tcpdump.
@@ -16854,7 +16741,7 @@ These attributes are available when parsing L<"--type"> tcpdump.
 
 =item Error_no
 
-The MySQL error number if the query caused an error.
+The MariaDB error number if the query caused an error.
 
 =item ip
 
@@ -16887,18 +16774,18 @@ the process ID, in addition to the common attributes.
 
 Baron Schwartz, Daniel Nichter, and Brian Fraser
 
-=head1 ABOUT PERCONA TOOLKIT
+=head1 ABOUT THIS MARIADB TOOL
 
-This tool is part of Percona Toolkit, a collection of advanced command-line
-tools for MySQL developed by Percona.  Percona Toolkit was forked from two
-projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.  Visit
-L<http://www.percona.com/software/> to learn about other free, open-source
-software from Percona.
+This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit's pt-query-digest in November, 2019.  Percona Toolkit was 
+forked from two projects in June, 2011: Maatkit and Aspersa.  Those projects 
+were created by Baron Schwartz and primarily developed by him and Daniel 
+Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2008-2018 Percona LLC and/or its affiliates.
+This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
@@ -16916,6 +16803,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-pt-query-digest 3.0.13
+mariadb-query-digest 3.0.13
 
 =cut
