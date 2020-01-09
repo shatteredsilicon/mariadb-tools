@@ -39,6 +39,7 @@ Alternative Install Methods
 ===========================
 
 You can also download the packages from the
+
 `MariaDB Customer Portal <https://customers.mariadb.com>`_
 and install it using tools like ``dpkg`` and ``rpm``,
 depending on your system.
@@ -49,4 +50,3 @@ http://tools.mariadb.com/get
 For example, to download the ``mariadb-summary`` tool, run::
 
  wget tools.mariadb.com/get/mariadb-summary
-
