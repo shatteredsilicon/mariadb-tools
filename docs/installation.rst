@@ -1,10 +1,10 @@
 .. _install:
 
 ==========================
-Installing Percona Toolkit
+Installing MariaDB Tools
 ==========================
 
-Percona provides packages for most popular 64-bit Linux distributions:
+MariaDB provides packages for most popular 64-bit Linux distributions:
 
 * Debian 7 ("wheezy")
 * Debian 8 ("jessie")
@@ -15,59 +15,38 @@ Percona provides packages for most popular 64-bit Linux distributions:
 * Red Hat Enterprise Linux or CentOS 6 (Santiago)
 * Red Hat Enterprise Linux or CentOS 7 (Maipo)
 
-.. note:: Percona Toolkit should work on other DEB-based and RPM-based systems
+.. note:: MariaDB Tools should work on other DEB-based and RPM-based systems
    (for example, Oracle Linux and Amazon Linux AMI),
    but it is tested only on those listed above.
 
-It is recommended to install Percona software from official repositories:
+It is recommended to install MariaDB software from official repositories:
 
-1. Configure Percona repositories as described in
-   `Percona Software Repositories Documentation
-   <https://www.percona.com/doc/percona-repo-config/index.html>`_.
+1. Configure repositories as described in
+   `MariaDB Enterprise Documentation
+   <https://mariadb.com/docs/deploy/installation/#install-repository>`_.
 
-#. Install Percona Toolkit using the corresponding package manager:
+#. Install MariaDB Tools using the corresponding package manager:
 
    * For Debian or Ubuntu::
 
-      sudo apt-get install percona-toolkit
+      sudo apt-get install MariaDB-Tools
 
    * For RHEL or CentOS::
 
-      sudo yum install percona-toolkit
+      sudo yum install MariaDB-Tools
 
-.. rubric:: Generating an instance UUID for statistics
-	    
-During the installating process, the percona-toolkit installer records a unique
-identifier specific to the given percona-toolkit instance. This ID is a the
-product UUID stored in |product-uud|. The installer copies the product_uuid to
-|toolkit-uuid|.
-
-This unique identifier is used when collecting statistics about the usage of
-percona-toolkit. Note that no other information is gathered for this purpose.
-
-In cases when the installer is not able to read the contents of
-|product-uuid|, a random UUID is generated. A random UUID is
-also generated if percona-toolkit is run from the binary in the *tar.gz* file.
-      
 Alternative Install Methods
 ===========================
 
 You can also download the packages from the
-`Percona web site <https://www.percona.com/downloads/percona-toolkit/>`_
+`MariaDB Customer Portal <https://customers.mariadb.com>`_
 and install it using tools like ``dpkg`` and ``rpm``,
 depending on your system.
-For example, to download the package for Debian 8 ("jessie"),
-run the following::
-
- wget https://www.percona.com/downloads/percona-toolkit/3.0.3/binary/debian/jessie/x86_64/percona-toolkit_3.0.3-1.jessie_amd64.deb
 
 If you want to download a specific tool, use the following address:
-http://www.percona.com/get
+http://tools.mariadb.com/get
 
-For example, to download the ``pt-summary`` tool, run::
+For example, to download the ``mariadb-summary`` tool, run::
 
- wget percona.com/get/pt-summary
+ wget tools.mariadb.com/get/mariadb-summary
 
-
-.. |toolkit-uuid| replace:: :file:`/etc/percona-toolkit/.percona.toolkit.uuid`
-.. |product-uuid| replace:: :file:`/sys/class/dmi/id/product_uuid`

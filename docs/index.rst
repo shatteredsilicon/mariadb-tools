@@ -1,11 +1,11 @@
 
 ===============================
- Percona Toolkit Documentation
+ MariaDB Tools Documentation
 ===============================
 
-Percona Toolkit is a collection of advanced command-line tools
-used by `Percona <http://www.percona.com/>`_) support staff
-to perform a variety of MySQL, MongoDB, and system tasks
+MariaDB Tools are a collection of advanced command-line tools
+used by `MariaDB <http://www.mariadb.com/>`_) support staff
+to perform a variety of MariaDB database and system tasks
 that are too difficult or complex to perform manually.
 
 These tools are ideal alternatives to private or "one-off" scripts,
@@ -15,13 +15,12 @@ They are also fully self-contained,
 so installation is quick and easy,
 and no libraries are installed.
 
-Percona Toolkit was derived from Maatkit and Aspersa,
-two of the best-known toolkits for MySQL server administration.
-It is developed and supported by Percona.
-For more information and other free, open-source software
-developed by Percona, visit http://www.percona.com/software/.
+MariaDB Tools were derived from MariaDB scripts, Percona Toolkit, 
+Maatkit, PalaminoDB Tools and Aspersa,
+some of the best-known toolkits for MariaDB server administration.
+It is developed and supported by MariaDB.
 
-Getting Percona Toolkit
+Getting MariaDB Tools
 =======================
 
 .. toctree::
@@ -37,7 +36,7 @@ Tools
    :maxdepth: 1
    :glob:
 
-   pt-*
+   mariadb-*
 
 
 Configuration
