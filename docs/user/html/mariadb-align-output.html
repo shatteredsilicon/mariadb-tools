@@ -1,0 +1,244 @@
+
+
+
+    <title>mariadb-align-output &mdash; MariaDB Tools Documentation</title>
+    
+  <head>
+    
+    
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="MariaDB Tools Documentation" href="index.html" />
+    <link rel="next" title="mariadb-archiver" href="mariadb-archiver.html" />
+    <link rel="prev" title="Installing MariaDB Tools" href="installation.html" /> 
+  </head>
+  <body>
+    <div class="container">  
+
+    <div class="document row">
+      <div class="documentwrapper col-md-9 col-md-push-3">
+    <div class="related row">
+      
+      <ul class="nav nav-pills">
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mariadb-archiver.html" title="mariadb-archiver"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installing MariaDB Tools"
+             accesskey="P">previous</a></li>
+        <li><a href="index.html">MariaDB Tools</a></li> 
+      </ul>
+    </div>
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mariadb-align-output">
+<h1><strong class="program">mariadb-align-output</strong><a class="headerlink" href="#mariadb-align-output" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="name">
+<h2>NAME<a class="headerlink" href="#name" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">mariadb-align-output</strong> - Align output from other tools to columns.</p>
+</div>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mariadb</span><span class="o">-</span><span class="n">align</span><span class="o">-</span><span class="n">output</span> <span class="p">[</span><span class="n">FILES</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong class="program">mariadb-align-output</strong> aligns output from other tools to columns.  If no FILES are specified,
+STDIN is read.</p>
+<p>If a tool prints the following output,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>DATABASE TABLE   ROWS
+foo      bar      <span class="m">100</span>
+long_db_name table  <span class="m">1</span>
+another  long_name <span class="m">500</span>
+</pre></div>
+</div>
+<p>then <strong class="program">mariadb-align-output</strong> reprints the output as,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>DATABASE     TABLE     ROWS
+foo          bar        <span class="m">100</span>
+long_db_name table        <span class="m">1</span>
+another      long_name  <span class="m">500</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="risks">
+<h2>RISKS<a class="headerlink" href="#risks" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">mariadb-align-output</strong> is mature, proven in the real world, and well tested,
+but all database tools can pose a risk to the system and the database
+server.  Before using this tool, please:</p>
+<ul class="simple">
+<li><p>Read the tool’s documentation</p></li>
+<li><p>Review the tool’s known “BUGS”</p></li>
+<li><p>Test the tool on a non-production server</p></li>
+<li><p>Backup your production server and verify the backups</p></li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">mariadb-align-output</strong> reads lines and splits them into words.  It counts how many
+words each line has, and if there is one number that predominates, it assumes
+this is the number of words in each line.  Then it discards all lines that
+don’t have that many words, and looks at the 2nd line that does.  It assumes
+this is the first non-header line.  Based on whether each word looks numeric
+or not, it decides on column alignment.  Finally, it goes through and decides
+how wide each column should be, and then prints them out.</p>
+<p>This is useful for things like aligning the output of vmstat or iostat so it
+is easier to read.</p>
+</div>
+<div class="section" id="options">
+<h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<p>This tool accepts additional command-line arguments.  Refer to the
+“SYNOPSIS” and usage information for details.</p>
+<dl class="option">
+<dt id="cmdoption-mariadb-align-output-help">
+<code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-align-output-help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-align-output-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-align-output-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version and exit.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="environment">
+<h2>ENVIRONMENT<a class="headerlink" href="#environment" title="Permalink to this headline">¶</a></h2>
+<p>This tool does not use any environment variables.</p>
+</div>
+<div class="section" id="system-requirements">
+<h2>SYSTEM REQUIREMENTS<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
+<p>You need Perl, and some core packages that ought to be installed in any
+reasonably new version of Perl.</p>
+</div>
+<div class="section" id="authors">
+<h2>AUTHORS<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<p>Baron Schwartz, Brian Fraser, and Daniel Nichter</p>
+</div>
+<div class="section" id="about-this-mariadb-tool">
+<h2>ABOUT THIS MARIADB TOOL<a class="headerlink" href="#about-this-mariadb-tool" title="Permalink to this headline">¶</a></h2>
+<p>This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit’s pt-align in August, 2019. Percona Toolkit was forked from two
+projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
+Baron Schwartz and primarily developed by him and Daniel Nichter.</p>
+</div>
+<div class="section" id="copyright-license-and-warranty">
+<h2>COPYRIGHT, LICENSE, AND WARRANTY<a class="headerlink" href="#copyright-license-and-warranty" title="Permalink to this headline">¶</a></h2>
+<p>This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.</p>
+<p>THIS PROGRAM IS PROVIDED “AS IS” AND WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</p>
+<p>This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, version 2; OR the Perl Artistic License.  On UNIX and similar
+systems, you can issue `man perlgpl’ or `man perlartistic’ to read these
+licenses.</p>
+<p>You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place, Suite 330, Boston, MA  02111-1307  USA.</p>
+</div>
+<div class="section" id="version">
+<h2>VERSION<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">mariadb-align-output</strong> 3.0.13</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+    <div class="related row">
+      
+      <ul class="nav nav-pills">
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="mariadb-archiver.html" title="mariadb-archiver"
+             >next</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installing MariaDB Tools"
+             >previous</a></li>
+        <li><a href="index.html">MariaDB Tools</a></li> 
+      </ul>
+    </div>
+      </div>
+      <div class="sphinxsidebar  col-md-3 col-md-pull-9">
+        <div class="sphinxsidebarwrapper">
+  
+          {@ product_logo @}          
+
+          {@ product_pdf_download @}
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong class="program">mariadb-align-output</strong></a><ul>
+<li><a class="reference internal" href="#name">NAME</a></li>
+<li><a class="reference internal" href="#synopsis">SYNOPSIS</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#risks">RISKS</a></li>
+<li><a class="reference internal" href="#description">DESCRIPTION</a></li>
+<li><a class="reference internal" href="#options">OPTIONS</a></li>
+<li><a class="reference internal" href="#environment">ENVIRONMENT</a></li>
+<li><a class="reference internal" href="#system-requirements">SYSTEM REQUIREMENTS</a></li>
+<li><a class="reference internal" href="#authors">AUTHORS</a></li>
+<li><a class="reference internal" href="#about-this-mariadb-tool">ABOUT THIS MARIADB TOOL</a></li>
+<li><a class="reference internal" href="#copyright-license-and-warranty">COPYRIGHT, LICENSE, AND WARRANTY</a></li>
+<li><a class="reference internal" href="#version">VERSION</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installing MariaDB Tools</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mariadb-archiver.html"
+                        title="next chapter"><strong class="program">mariadb-archiver</strong></a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">jQuery(document).ready(function(){ jQuery('#searchbox').show(0); });</script>
+          {@ product_series @}
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <!-- div class="footer">
+        &copy; Copyright 2020, MariaDB Corporation and/or its affiliates.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 2.3.1.
+    </div -->
+  </div>
+  </body>

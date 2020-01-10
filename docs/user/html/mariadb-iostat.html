@@ -1,0 +1,696 @@
+
+
+
+    <title>mariadb-iostat &mdash; MariaDB Tools Documentation</title>
+    
+  <head>
+    
+    
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="MariaDB Tools Documentation" href="index.html" />
+    <link rel="next" title="mariadb-kill" href="mariadb-kill.html" />
+    <link rel="prev" title="mariadb-database-summary" href="mariadb-database-summary.html" /> 
+  </head>
+  <body>
+    <div class="container">  
+
+    <div class="document row">
+      <div class="documentwrapper col-md-9 col-md-push-3">
+    <div class="related row">
+      
+      <ul class="nav nav-pills">
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mariadb-kill.html" title="mariadb-kill"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="mariadb-database-summary.html" title="mariadb-database-summary"
+             accesskey="P">previous</a></li>
+        <li><a href="index.html">MariaDB Tools</a></li> 
+      </ul>
+    </div>
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mariadb-iostat">
+<h1><strong class="program">mariadb-iostat</strong><a class="headerlink" href="#mariadb-iostat" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="name">
+<h2>NAME<a class="headerlink" href="#name" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">mariadb-iostat</strong> - An interactive I/O monitoring tool for GNU/Linux.</p>
+</div>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mariadb</span><span class="o">-</span><span class="n">iostat</span> <span class="p">[</span><span class="n">OPTIONS</span><span class="p">]</span> <span class="p">[</span><span class="n">FILES</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong class="program">mariadb-iostat</strong> prints disk I/O statistics for GNU/Linux.  It is somewhat similar
+to iostat, but it is interactive and more detailed.  It can analyze samples
+gathered from another machine.</p>
+</div>
+</div>
+<div class="section" id="risks">
+<h2>RISKS<a class="headerlink" href="#risks" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">mariadb-iostat</strong> is mature, proven in the real world, and well tested,
+but all database tools can pose a risk to the system and the database
+server.  Before using this tool, please:</p>
+<ul class="simple">
+<li><p>Read the tool’s documentation</p></li>
+<li><p>Test the tool on a non-production server</p></li>
+<li><p>Backup your production server and verify the backups</p></li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong class="program">mariadb-iostat</strong> tool is similar to iostat, but has some advantages. It prints
+read and write statistics separately, and has more columns. It is menu-driven
+and interactive, with several different ways to aggregate the data. It
+integrates well with the mariadb-stat tool. It also does the “right thing” by
+default, such as hiding disks that are idle.  These properties make it very
+convenient for quickly drilling down into I/O performance and inspecting disk
+behavior.</p>
+<p>This program works in two modes. The default is to collect samples of
+<em>/proc/diskstats</em> and print out the formatted statistics at intervals. The other
+mode is to process a file that contains saved samples of <em>/proc/diskstats</em>; there
+is a shell script later in this documentation that shows how to collect such a
+file.</p>
+<p>In both cases, the tool is interactively controlled by keystrokes, so you can
+redisplay and slice the data flexibly and easily.  It loops forever, until you
+exit with the ‘q’ key.  If you press the ‘?’ key, you will bring up the
+interactive help menu that shows which keys control the program.</p>
+<p>When the program is gathering samples of <em>/proc/diskstats</em> and refreshing its
+display, it prints information about the newest sample each time it refreshes.
+When it is operating on a file of saved samples, it redraws the entire file’s
+contents every time you change an option.</p>
+<p>The program doesn’t print information about every block device on the system. It
+hides devices that it has never observed to have any activity.  You can enable
+and disable this by pressing the ‘i’ key.</p>
+</div>
+<div class="section" id="output">
+<h2>OUTPUT<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p>In the rest of this documentation, we will try to clarify the distinction
+between block devices (/dev/sda1, for example), which the kernel presents to the
+application via a filesystem, versus the (usually) physical device underneath
+the block device, which could be a disk, a RAID controller, and so on.  We will
+sometimes refer to logical I/O operations, which occur at the block device,
+versus physical I/Os which are performed on the underlying device.  When we
+refer to the queue, we are speaking of the queue associated with the block
+device, which holds requests until they’re issued to the physical device.</p>
+<p>The program’s output looks like the following sample, which is too wide for this
+manual page, so we have formatted it as several samples with line breaks:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#ts device rd_s rd_avkb rd_mb_s rd_mrg rd_cnc   rd_rt</span>
+<span class="o">{</span><span class="m">6</span><span class="o">}</span> sda     <span class="m">0</span>.9     <span class="m">4</span>.2     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">17</span>.9
+<span class="o">{</span><span class="m">6</span><span class="o">}</span> sdb     <span class="m">0</span>.4     <span class="m">4</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">26</span>.1
+<span class="o">{</span><span class="m">6</span><span class="o">}</span> dm-0    <span class="m">0</span>.0     <span class="m">4</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">13</span>.5
+<span class="o">{</span><span class="m">6</span><span class="o">}</span> dm-1    <span class="m">0</span>.8     <span class="m">4</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">16</span>.0
+
+    ...    wr_s wr_avkb wr_mb_s wr_mrg wr_cnc   wr_rt
+    ...    <span class="m">99</span>.7     <span class="m">6</span>.2     <span class="m">0</span>.6    <span class="m">35</span>%    <span class="m">3</span>.7    <span class="m">23</span>.7
+    ...    <span class="m">14</span>.5    <span class="m">15</span>.8     <span class="m">0</span>.2    <span class="m">75</span>%    <span class="m">0</span>.5     <span class="m">9</span>.2
+    ...     <span class="m">1</span>.0     <span class="m">4</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0     <span class="m">2</span>.3
+    ...   <span class="m">117</span>.7     <span class="m">4</span>.0     <span class="m">0</span>.5     <span class="m">0</span>%    <span class="m">4</span>.1    <span class="m">35</span>.1
+
+    ...              busy in_prg    io_s  qtime stime
+    ...                <span class="m">6</span>%      <span class="m">0</span>   <span class="m">100</span>.6   <span class="m">23</span>.3   <span class="m">0</span>.4
+    ...                <span class="m">4</span>%      <span class="m">0</span>    <span class="m">14</span>.9    <span class="m">8</span>.6   <span class="m">0</span>.6
+    ...                <span class="m">0</span>%      <span class="m">0</span>     <span class="m">1</span>.1    <span class="m">1</span>.5   <span class="m">1</span>.2
+    ...                <span class="m">5</span>%      <span class="m">0</span>   <span class="m">118</span>.5   <span class="m">34</span>.5   <span class="m">0</span>.4
+</pre></div>
+</div>
+<p>The columns are as follows:</p>
+<p>#ts</p>
+<blockquote>
+<div><p>This column’s contents vary depending on the tool’s aggregation mode.  In the
+default mode, when each line contains information about a single disk but
+possibly aggregates across several samples from that disk, this column shows the
+number of samples that were included into the line of output, in {curly braces}.
+In the example shown, each line of output aggregates {10} samples of
+<em>/proc/diskstats</em>.</p>
+<p>In the “all” group-by mode, this column shows timestamp offsets, relative to the
+time the tool began aggregating or the timestamp of the previous lines printed,
+depending on the mode.  The output can be confusing to explain, but it’s rather
+intuitive when you see the lines appearing on your screen periodically.</p>
+<p>Similarly, in “sample” group-by mode, the number indicates the total time span
+that is grouped into each sample.</p>
+<p>If you specify <a class="reference internal" href="#cmdoption-mariadb-iostat-show-timestamps"><code class="xref std std-option docutils literal notranslate"><span class="pre">--show-timestamps</span></code></a>, this field instead shows the timestamp at
+which the sample was taken; if multiple timestamps are present in a single line
+of output, then the first timestamp is used.</p>
+</div></blockquote>
+<p>device</p>
+<blockquote>
+<div><p>The device name.  If there is more than one device, then instead the number
+of devices aggregated into the line is shown, in {curly braces}.</p>
+</div></blockquote>
+<p>rd_s</p>
+<blockquote>
+<div><p>The average number of reads per second.  This is the number of I/O requests that
+were sent to the underlying device.  This usually is a smaller number than the
+number of logical IO requests made by applications.  More requests might have
+been queued to the block device, but some of them usually are merged before
+being sent to the disk.</p>
+<p>This field is computed from the contents of <em>/proc/diskstats</em> as follows.  See
+“KERNEL DOCUMENTATION” below for the meaning of the field numbers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>delta<span class="o">[</span>field1<span class="o">]</span> / delta<span class="o">[</span>time<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>rd_avkb</p>
+<blockquote>
+<div><p>The average size of the reads, in kilobytes.  This field is computed as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">2</span> * delta<span class="o">[</span>field3<span class="o">]</span> / delta<span class="o">[</span>field1<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>rd_mb_s</p>
+<blockquote>
+<div><p>The average number of megabytes read per second.  Computed as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">2</span> * delta<span class="o">[</span>field3<span class="o">]</span> / delta<span class="o">[</span>time<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>rd_mrg</p>
+<blockquote>
+<div><p>The percentage of read requests that were merged together in the queue scheduler
+before being sent to the physical device.  The field is computed as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">100</span> * delta<span class="o">[</span>field2<span class="o">]</span> / <span class="o">(</span>delta<span class="o">[</span>field2<span class="o">]</span> + delta<span class="o">[</span>field1<span class="o">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>rd_cnc</p>
+<blockquote>
+<div><p>The average concurrency of the read operations, as computed by Little’s Law.
+This is the end-to-end concurrency on the block device, not the underlying
+disk’s concurrency. It includes time spent in the queue.  The field is computed
+as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>delta<span class="o">[</span>field4<span class="o">]</span> / delta<span class="o">[</span>time<span class="o">]</span> / <span class="m">1000</span> / devices-in-group
+</pre></div>
+</div>
+</div></blockquote>
+<p>rd_rt</p>
+<blockquote>
+<div><p>The average response time of the read operations, in milliseconds.  This is the
+end-to-end response time, including time spent in the queue.  It is the response
+time that the application making I/O requests sees, not the response time of the
+physical disk underlying the block device.  It is computed as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>delta<span class="o">[</span>field4<span class="o">]</span> / <span class="o">(</span>delta<span class="o">[</span>field1<span class="o">]</span> + delta<span class="o">[</span>field2<span class="o">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>wr_s, wr_avkb, wr_mb_s, wr_mrg, wr_cnc, wr_rt</p>
+<blockquote>
+<div><p>These columns show write activity, and they match the corresponding columns for
+read activity.</p>
+</div></blockquote>
+<p>busy</p>
+<blockquote>
+<div><p>The fraction of wall-clock time that the device had at least one request in
+progress; this is what iostat calls %util, and indeed it is utilization,
+depending on how you define utilization, but that is sometimes ambiguous in
+common parlance.  It may also be called the residence time; the time during
+which at least one request was resident in the system.  It is computed as
+follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">100</span> * delta<span class="o">[</span>field10<span class="o">]</span> / <span class="o">(</span><span class="m">1000</span> * delta<span class="o">[</span>time<span class="o">])</span>
+</pre></div>
+</div>
+<p>This field cannot exceed 100% unless there is a rounding error, but it is a
+common mistake to think that a device that’s busy all the time is saturated.  A
+device such as a RAID volume should support concurrency higher than 1, and
+solid-state drives can support very high concurrency.  Concurrency can grow
+without bound, and is a more reliable indicator of how loaded the device really
+is.</p>
+</div></blockquote>
+<p>in_prg</p>
+<blockquote>
+<div><p>The number of requests that were in progress.  Unlike the read and write
+concurrencies, which are averages that are generated from reliable numbers, this
+number is an instantaneous sample, and you can see that it might represent a
+spike of requests, rather than the true long-term average.  If this number is
+large, it essentially means that the device is heavily loaded.  It is computed
+as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>field9
+</pre></div>
+</div>
+</div></blockquote>
+<p>ios_s</p>
+<blockquote>
+<div><p>The average throughput of the physical device, in I/O operations per second
+(IOPS).  This column shows the total IOPS the underlying device is handling.  It
+is the sum of rd_s and wr_s.</p>
+</div></blockquote>
+<p>qtime</p>
+<blockquote>
+<div><p>The average queue time; that is, time a request spends in the device scheduler
+queue before being sent to the physical device.  This is an average over reads
+and writes.</p>
+<p>It is computed in a slightly complex way: the average response time seen by the
+application, minus the average service time (see the description of the next
+column).  This is derived from the queueing theory formula for response time, R
+= W + S: response time = queue time + service time.  This is solved for W, of
+course, to give W = R - S.  The computation follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>delta<span class="o">[</span>field11<span class="o">]</span> / <span class="o">(</span>delta<span class="o">[</span>field1, <span class="m">2</span>, <span class="m">5</span>, <span class="m">6</span><span class="o">]</span> + delta<span class="o">[</span>field9<span class="o">])</span>
+   - delta<span class="o">[</span>field10<span class="o">]</span> / delta<span class="o">[</span>field1, <span class="m">2</span>, <span class="m">5</span>, <span class="m">6</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>See the description for <code class="docutils literal notranslate"><span class="pre">stime</span></code> for more details and cautions.</p>
+</div></blockquote>
+<p>stime</p>
+<blockquote>
+<div><p>The average service time; that is, the time elapsed while the physical device
+processes the request, after the request finishes waiting in the queue.  This is
+an average over reads and writes.  It is computed from the queueing theory
+utilization formula, U = SX, solved for S.  This means that utilization divided
+by throughput gives service time:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>delta<span class="o">[</span>field10<span class="o">]</span> / <span class="o">(</span>delta<span class="o">[</span>field1, <span class="m">2</span>, <span class="m">5</span>, <span class="m">6</span><span class="o">])</span>
+</pre></div>
+</div>
+<p>Note, however, that there can be some kernel bugs that cause field 9 in
+<em>/proc/diskstats</em> to become negative, and this can cause field 10 to be wrong,
+thus making the service time computation not wholly trustworthy.</p>
+<p>Note that in the above formula we use utilization very specifically. It is a
+duration, not a percentage.</p>
+<p>You can compare the stime and qtime columns to see whether the response time for
+reads and writes is spent in the queue or on the physical device.  However, you
+cannot see the difference between reads and writes.  Changing the block device
+scheduler algorithm might improve queue time greatly.  The default algorithm,
+cfq, is very bad for servers, and should only be used on laptops and
+workstations that perform tasks such as working with spreadsheets and surfing
+the Internet.</p>
+</div></blockquote>
+<p>If you are used to using iostat, you might wonder where you can find the same
+information in <strong class="program">mariadb-iostat</strong>.  Here are two samples of output from both tools on
+the same machine at the same time, for <em>/dev/sda</em>, wrapped to fit:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>     <span class="c1">#ts dev rd_s rd_avkb rd_mb_s rd_mrg rd_cnc   rd_rt</span>
+<span class="m">08</span>:50:10 sda  <span class="m">0</span>.0     <span class="m">0</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0     <span class="m">0</span>.0
+<span class="m">08</span>:50:20 sda  <span class="m">0</span>.4     <span class="m">4</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">15</span>.5
+<span class="m">08</span>:50:30 sda  <span class="m">2</span>.1     <span class="m">4</span>.4     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">21</span>.1
+<span class="m">08</span>:50:40 sda  <span class="m">2</span>.4     <span class="m">4</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">15</span>.4
+<span class="m">08</span>:50:50 sda  <span class="m">0</span>.1     <span class="m">4</span>.0     <span class="m">0</span>.0     <span class="m">0</span>%    <span class="m">0</span>.0    <span class="m">33</span>.0
+
+             wr_s wr_avkb wr_mb_s wr_mrg wr_cnc   wr_rt
+              <span class="m">7</span>.7    <span class="m">25</span>.5     <span class="m">0</span>.2    <span class="m">84</span>%    <span class="m">0</span>.0     <span class="m">0</span>.3
+             <span class="m">49</span>.6     <span class="m">6</span>.8     <span class="m">0</span>.3    <span class="m">41</span>%    <span class="m">2</span>.4    <span class="m">28</span>.8
+            <span class="m">210</span>.1     <span class="m">5</span>.6     <span class="m">1</span>.1    <span class="m">28</span>%    <span class="m">7</span>.4    <span class="m">25</span>.2
+            <span class="m">297</span>.1     <span class="m">5</span>.4     <span class="m">1</span>.6    <span class="m">26</span>%   <span class="m">11</span>.4    <span class="m">28</span>.3
+             <span class="m">11</span>.9    <span class="m">11</span>.7     <span class="m">0</span>.1    <span class="m">66</span>%    <span class="m">0</span>.2     <span class="m">4</span>.9
+
+                     busy  in_prg   io_s  qtime   stime
+                       <span class="m">1</span>%       <span class="m">0</span>    <span class="m">7</span>.7    <span class="m">0</span>.1     <span class="m">0</span>.2
+                       <span class="m">6</span>%       <span class="m">0</span>   <span class="m">50</span>.0   <span class="m">28</span>.1     <span class="m">0</span>.7
+                      <span class="m">12</span>%       <span class="m">0</span>  <span class="m">212</span>.2   <span class="m">24</span>.8     <span class="m">0</span>.4
+                      <span class="m">16</span>%       <span class="m">0</span>  <span class="m">299</span>.5   <span class="m">27</span>.8     <span class="m">0</span>.4
+                       <span class="m">1</span>%       <span class="m">0</span>   <span class="m">12</span>.0    <span class="m">4</span>.7     <span class="m">0</span>.3
+
+         Dev rrqm/s  wrqm/s   r/s    w/s  rMB/s  wMB/s
+<span class="m">08</span>:50:10 sda   <span class="m">0</span>.00   <span class="m">41</span>.40  <span class="m">0</span>.00   <span class="m">7</span>.70   <span class="m">0</span>.00   <span class="m">0</span>.19
+<span class="m">08</span>:50:20 sda   <span class="m">0</span>.00   <span class="m">34</span>.70  <span class="m">0</span>.40  <span class="m">49</span>.60   <span class="m">0</span>.00   <span class="m">0</span>.33
+<span class="m">08</span>:50:30 sda   <span class="m">0</span>.00   <span class="m">83</span>.30  <span class="m">2</span>.10 <span class="m">210</span>.10   <span class="m">0</span>.01   <span class="m">1</span>.15
+<span class="m">08</span>:50:40 sda   <span class="m">0</span>.00  <span class="m">105</span>.10  <span class="m">2</span>.40 <span class="m">297</span>.90   <span class="m">0</span>.01   <span class="m">1</span>.58
+<span class="m">08</span>:50:50 sda   <span class="m">0</span>.00   <span class="m">22</span>.50  <span class="m">0</span>.10  <span class="m">11</span>.10   <span class="m">0</span>.00   <span class="m">0</span>.13
+
+                avgrq-sz avgqu-sz  await  svctm  %util
+                   <span class="m">51</span>.01     <span class="m">0</span>.02   <span class="m">2</span>.04   <span class="m">1</span>.25   <span class="m">0</span>.96
+                   <span class="m">13</span>.55     <span class="m">2</span>.44  <span class="m">48</span>.76   <span class="m">1</span>.16   <span class="m">5</span>.79
+                   <span class="m">11</span>.15     <span class="m">7</span>.45  <span class="m">35</span>.10   <span class="m">0</span>.55  <span class="m">11</span>.76
+                   <span class="m">10</span>.81    <span class="m">11</span>.40  <span class="m">37</span>.96   <span class="m">0</span>.53  <span class="m">15</span>.97
+                   <span class="m">24</span>.07     <span class="m">0</span>.17  <span class="m">15</span>.60   <span class="m">0</span>.87   <span class="m">0</span>.97
+</pre></div>
+</div>
+<p>The correspondence between the columns is not one-to-one.  In particular:</p>
+<p>rrqm/s, wrqm/s</p>
+<blockquote>
+<div><p>These columns in iostat are replaced by rd_mrg and wr_mrg in <strong class="program">mariadb-iostat</strong>.</p>
+</div></blockquote>
+<p>avgrq-sz</p>
+<blockquote>
+<div><p>This column is in sectors in iostat, and is a combination of reads and writes.
+The <strong class="program">mariadb-iostat</strong> output breaks these out separately and shows them in kB.  You
+can derive it via a weighted average of rd_avkb and wr_avkb in <strong class="program">mariadb-iostat</strong>, and
+then multiply by 2 to get sectors (each sector is 512 bytes).</p>
+</div></blockquote>
+<p>avgqu-sz</p>
+<blockquote>
+<div><p>This column really represents concurrency at the block device scheduler.  The
+<strong class="program">mariadb-iostat</strong> output shows concurrency for reads and writes separately: rd_cnc
+and wr_cnc.</p>
+</div></blockquote>
+<p>await</p>
+<blockquote>
+<div><p>This column is the average response time from the beginning to the end of a
+request to the block device, including queue time and service time, and is not
+shown in <strong class="program">mariadb-iostat</strong>.  Instead, <strong class="program">mariadb-iostat</strong> shows individual response times at
+the disk level for reads and writes (rd_rt and wr_rt), as well as queue time
+versus service time for reads and writes in aggregate.</p>
+</div></blockquote>
+<p>svctm</p>
+<blockquote>
+<div><p>This column is the average service time at the disk, and is shown as stime in
+<strong class="program">mariadb-iostat</strong>.</p>
+</div></blockquote>
+<p>%util</p>
+<blockquote>
+<div><p>This column is called busy in <strong class="program">mariadb-iostat</strong>.  Utilization is usually defined as
+the portion of time during which there was at least one active request, not as a
+percentage, which is why we chose to avoid this confusing term.</p>
+</div></blockquote>
+</div>
+<div class="section" id="collecting-data">
+<h2>COLLECTING DATA<a class="headerlink" href="#collecting-data" title="Permalink to this headline">¶</a></h2>
+<p>It is straightforward to gather a sample of data for this tool.  Files should
+have this format, with a timestamp line preceding each sample of statistics:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>TS &lt;timestamp&gt;
+&lt;contents of /proc/diskstats&gt;
+TS &lt;timestamp&gt;
+&lt;contents of /proc/diskstats&gt;
+... et cetera
+</pre></div>
+</div>
+<p>You can simply use <strong class="program">mariadb-iostat</strong> with <a class="reference internal" href="#cmdoption-mariadb-iostat-save-samples"><code class="xref std std-option docutils literal notranslate"><span class="pre">--save-samples</span></code></a> to collect this data
+for you.  If you wish to capture samples as part of some other tool, and use
+<strong class="program">mariadb-iostat</strong> to analyze them, you can include a snippet of shell script such as
+the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">INTERVAL</span><span class="o">=</span><span class="m">1</span>
+<span class="k">while</span> true<span class="p">;</span> <span class="k">do</span>
+   <span class="nv">sleep</span><span class="o">=</span><span class="k">$(</span>date +%s.%N <span class="p">|</span> awk <span class="s2">&quot;{print </span><span class="nv">$INTERVAL</span><span class="s2"> - (\$1 % </span><span class="nv">$INTERVAL</span><span class="s2">)}&quot;</span><span class="k">)</span>
+   sleep <span class="nv">$sleep</span>
+   date +<span class="s2">&quot;TS %s.%N %F %T&quot;</span> &gt;&gt; diskstats-samples.txt
+   cat /proc/diskstats &gt;&gt; diskstats-samples.txt
+<span class="k">done</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="kernel-documentation">
+<h2>KERNEL DOCUMENTATION<a class="headerlink" href="#kernel-documentation" title="Permalink to this headline">¶</a></h2>
+<p>This documentation supplements <a class="reference external" href="http://www.kernel.org/doc/Documentation/iostats.txt">the official
+documentation</a> on the
+contents of <em>/proc/diskstats</em>.  That documentation can sometimes be difficult
+to understand for those who are not familiar with Linux kernel internals.  The
+contents of <em>/proc/diskstats</em> are generated by the <code class="docutils literal notranslate"><span class="pre">diskstats_show()</span></code> function
+in the kernel source file <em>block/genhd.c</em>.</p>
+<p>Here is a sample of <em>/proc/diskstats</em> on a recent kernel.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">8</span> <span class="m">1</span> sda1 <span class="m">426</span> <span class="m">243</span> <span class="m">3386</span> <span class="m">2056</span> <span class="m">3</span> <span class="m">0</span> <span class="m">18</span> <span class="m">87</span> <span class="m">0</span> <span class="m">2135</span> <span class="m">2142</span>
+</pre></div>
+</div>
+<p>The fields in this sample are as follows.  The first three fields are the major
+and minor device numbers (8, 1), and the device name (sda1). They are followed
+by 11 fields of statistics:</p>
+<ol class="arabic simple">
+<li><p>The number of reads completed.  This is the number of physical reads done by the
+underlying disk, not the number of reads that applications made from the block
+device.  This means that 426 actual reads have completed successfully to the
+disk on which <em>/dev/sda1</em> resides.  Reads are not counted until they complete.</p></li>
+<li><p>The number of reads merged because they were adjacent.  In the sample, 243 reads
+were merged. This means that <em>/dev/sda1</em> actually received 869 logical reads,
+but sent only 426 physical reads to the underlying physical device.</p></li>
+<li><p>The number of sectors read successfully.  The 426 physical reads to the disk
+read 3386 sectors.  Sectors are 512 bytes, so a total of about 1.65MB have been
+read from <em>/dev/sda1</em>.</p></li>
+<li><p>The number of milliseconds spent reading.  This counts only reads that have
+completed, not reads that are in progress.  It counts the time spent from when
+requests are placed on the queue until they complete, not the time that the
+underlying disk spends servicing the requests. That is, it measures the total
+response time seen by applications, not disk response times.</p></li>
+<li><p>Ditto for field 1, but for writes.</p></li>
+<li><p>Ditto for field 2, but for writes.</p></li>
+<li><p>Ditto for field 3, but for writes.</p></li>
+<li><p>Ditto for field 4, but for writes.</p></li>
+<li><p>The number of I/Os currently in progress, that is, they’ve been scheduled by the
+queue scheduler and issued to the disk (submitted to the underlying disk’s
+queue), but not yet completed.  There are bugs in some kernels that cause this
+number, and thus fields 10 and 11, to be wrong sometimes.</p></li>
+<li><p>The total number of milliseconds spent doing I/Os.  This is <strong>not</strong> the total
+response time seen by the applications; it is the total amount of time during
+which at least one I/O was in progress.  If one I/O is issued at time 100,
+another comes in at 101, and both of them complete at 102, then this field
+increments by 2, not 3.</p></li>
+<li><p>This field counts the total response time of all I/Os.  In contrast to field 10,
+it counts double when two I/Os overlap.  In our previous example, this field
+would increment by 3, not 2.</p></li>
+</ol>
+</div>
+<div class="section" id="options">
+<h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<p>This tool accepts additional command-line arguments.  Refer to the
+“SYNOPSIS” and usage information for details.</p>
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-columns-regex">
+<code class="sig-name descname">--columns-regex</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-columns-regex" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: string; default: .</p>
+<p>Print columns that match this Perl regex.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-config">
+<code class="sig-name descname">--config</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-config" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: Array</p>
+<p>Read this comma-separated list of config files; if specified, this must be the
+first option on the command line.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-devices-regex">
+<code class="sig-name descname">--devices-regex</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-devices-regex" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: string</p>
+<p>Print devices that match this Perl regex.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-group-by">
+<code class="sig-name descname">--group-by</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-group-by" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: string; default: all</p>
+<p>Group-by mode: disk, sample, or all.  In <strong>disk</strong> mode, each line of output
+shows one disk device, with the statistics computed since the tool started.  In
+<strong>sample</strong> mode, each line of output shows one sample of statistics, with all
+disks averaged together.  In <strong>all</strong> mode, each line of output shows one sample
+and one disk device.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-headers">
+<code class="sig-name descname">--headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: Hash; default: group,scroll</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">group</span></code> is present, each sample will be separated by a blank line, unless
+the sample is only one line.  If <code class="docutils literal notranslate"><span class="pre">scroll</span></code> is present, the tool will print the
+headers as often as needed to prevent them from scrolling out of view. Note that
+you can press the space bar, or the enter key, to reprint headers at will.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-help">
+<code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-interval">
+<code class="sig-name descname">--interval</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: int; default: 1</p>
+<p>When in interactive mode, wait N seconds before printing to the screen.
+Also, how often the tool should sample <em>/proc/diskstats</em>.</p>
+<p>The tool attempts to gather statistics exactly on even intervals of clock time.
+That is, if you specify a 5-second interval, it will try to capture samples at
+12:00:00, 12:00:05, and so on; it will not gather at 12:00:01, 12:00:06 and so
+forth.</p>
+<p>This can lead to slightly odd delays in some circumstances, because the tool
+waits one full cycle before printing out the first set of lines. (Unlike iostat
+and vmstat, <strong class="program">mariadb-iostat</strong> does not start with a line representing the averages
+since the computer was booted.)  Therefore, the rule has an exception to avoid
+very long delays.  Suppose you specify a 10-second interval, but you start the
+tool at 12:00:00.01.  The tool might wait until 12:00:20 to print its first
+lines of output, and in the intervening 19.99 seconds, it would appear to do
+nothing.</p>
+<p>To alleviate this, the tool waits until the next even interval of time to
+gather, unless more than 20% of that interval remains.  This means the tool will
+never wait more than 120% of the sampling interval to produce output, e.g if you
+start the tool at 12:00:53 with a 10-second sampling interval, then the first
+sample will be only 7 seconds long, not 10 seconds.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-iterations">
+<code class="sig-name descname">--iterations</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-iterations" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: int</p>
+<p>When in interactive mode, stop after N samples.  Run forever by default.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-sample-time">
+<code class="sig-name descname">--sample-time</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-sample-time" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: int; default: 1</p>
+<p>In –group-by sample mode, include N seconds of samples per group.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-save-samples">
+<code class="sig-name descname">--save-samples</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-save-samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: string</p>
+<p>File to save diskstats samples in; these can be used for later analysis.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-show-inactive">
+<code class="sig-name descname">--show-inactive</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-show-inactive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show inactive devices.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-show-timestamps">
+<code class="sig-name descname">--show-timestamps</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-show-timestamps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a ‘HH:MM:SS’ timestamp in the <code class="docutils literal notranslate"><span class="pre">#ts</span></code> column.  If multiple timestamps are
+aggregated into one line, the first timestamp is shown.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-mariadb-iostat-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-mariadb-iostat-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version and exit.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="environment">
+<h2>ENVIRONMENT<a class="headerlink" href="#environment" title="Permalink to this headline">¶</a></h2>
+<p>The environment variable <code class="docutils literal notranslate"><span class="pre">PTDEBUG</span></code> enables verbose debugging output to STDERR.
+To enable debugging and capture all output to a file, run the tool like:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">PTDEBUG</span><span class="o">=</span><span class="m">1</span> mariadb-iostat ... &gt; FILE <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Be careful: debugging output is voluminous and can generate several megabytes
+of output.</p>
+</div>
+<div class="section" id="system-requirements">
+<h2>SYSTEM REQUIREMENTS<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
+<p>This tool requires Perl v5.8.0 or newer and the <em>/proc</em> filesystem, unless
+reading from files.</p>
+</div>
+<div class="section" id="authors">
+<h2>AUTHORS<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<p>Baron Schwartz, Brian Fraser, and Daniel Nichter</p>
+</div>
+<div class="section" id="about-this-mariadb-tool">
+<h2>ABOUT THIS MARIADB TOOL<a class="headerlink" href="#about-this-mariadb-tool" title="Permalink to this headline">¶</a></h2>
+<p>This tool is part of MariaDB client tools. This MariaDB Tool was forked from
+Percona Toolkit’s pt-diskstat in August, 2019. Percona Toolkit was forked from two
+projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
+Baron Schwartz and primarily developed by him and Daniel Nichter.</p>
+</div>
+<div class="section" id="copyright-license-and-warranty">
+<h2>COPYRIGHT, LICENSE, AND WARRANTY<a class="headerlink" href="#copyright-license-and-warranty" title="Permalink to this headline">¶</a></h2>
+<p>This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.</p>
+<p>THIS PROGRAM IS PROVIDED “AS IS” AND WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</p>
+<p>This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, version 2; OR the Perl Artistic License.  On UNIX and similar
+systems, you can issue `man perlgpl’ or `man perlartistic’ to read these
+licenses.</p>
+<p>You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place, Suite 330, Boston, MA  02111-1307  USA.</p>
+</div>
+<div class="section" id="version">
+<h2>VERSION<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">mariadb-iostat</strong> 3.0.13</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+    <div class="related row">
+      
+      <ul class="nav nav-pills">
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="mariadb-kill.html" title="mariadb-kill"
+             >next</a></li>
+        <li class="right" >
+          <a href="mariadb-database-summary.html" title="mariadb-database-summary"
+             >previous</a></li>
+        <li><a href="index.html">MariaDB Tools</a></li> 
+      </ul>
+    </div>
+      </div>
+      <div class="sphinxsidebar  col-md-3 col-md-pull-9">
+        <div class="sphinxsidebarwrapper">
+  
+          {@ product_logo @}          
+
+          {@ product_pdf_download @}
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong class="program">mariadb-iostat</strong></a><ul>
+<li><a class="reference internal" href="#name">NAME</a></li>
+<li><a class="reference internal" href="#synopsis">SYNOPSIS</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#risks">RISKS</a></li>
+<li><a class="reference internal" href="#description">DESCRIPTION</a></li>
+<li><a class="reference internal" href="#output">OUTPUT</a></li>
+<li><a class="reference internal" href="#collecting-data">COLLECTING DATA</a></li>
+<li><a class="reference internal" href="#kernel-documentation">KERNEL DOCUMENTATION</a></li>
+<li><a class="reference internal" href="#options">OPTIONS</a></li>
+<li><a class="reference internal" href="#environment">ENVIRONMENT</a></li>
+<li><a class="reference internal" href="#system-requirements">SYSTEM REQUIREMENTS</a></li>
+<li><a class="reference internal" href="#authors">AUTHORS</a></li>
+<li><a class="reference internal" href="#about-this-mariadb-tool">ABOUT THIS MARIADB TOOL</a></li>
+<li><a class="reference internal" href="#copyright-license-and-warranty">COPYRIGHT, LICENSE, AND WARRANTY</a></li>
+<li><a class="reference internal" href="#version">VERSION</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mariadb-database-summary.html"
+                        title="previous chapter"><strong class="program">mariadb-database-summary</strong></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mariadb-kill.html"
+                        title="next chapter"><strong class="program">mariadb-kill</strong></a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">jQuery(document).ready(function(){ jQuery('#searchbox').show(0); });</script>
+          {@ product_series @}
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <!-- div class="footer">
+        &copy; Copyright 2020, MariaDB Corporation and/or its affiliates.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 2.3.1.
+    </div -->
+  </div>
+  </body>
