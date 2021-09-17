@@ -860,6 +860,11 @@ collect() {
       local strace_pid=$!
    fi
 
+   local cnt=$(($OPT_RUN_TIME / $OPT_SLEEP_COLLECT))
+
+   $CMD_MYSQLADMIN $EXT_ARGV ext -i$OPT_SLEEP_COLLECT -c$cnt >>"$d/$p-mysqladmin" &
+   local mysqladmin_pid=$!
+
    if [ ! "$OPT_MARIADB_ONLY" ]; then 
       ps -eaF  >> "$d/$p-ps"  &
       top -bn${OPT_RUN_TIME} >> "$d/$p-top" &
