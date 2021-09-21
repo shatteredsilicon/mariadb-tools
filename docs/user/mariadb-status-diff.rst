@@ -122,5 +122,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-status-diff` 3.0.13
+:program:`mariadb-status-diff` 3.3.1
 

@@ -1931,5 +1931,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-query-digest` 3.0.13
+:program:`mariadb-query-digest` 3.3.1
 

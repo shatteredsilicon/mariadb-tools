@@ -1496,5 +1496,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-schema-change` 3.0.13
+:program:`mariadb-schema-change` 3.3.1
 
