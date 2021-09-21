@@ -54,7 +54,7 @@ BEGIN {
 {
 package MariaDB::Tools;
 
-our $VERSION = '3.0.13';
+our $VERSION = '3.3.1';
 
 use strict;
 use warnings FATAL => 'all';
@@ -12443,6 +12443,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-schema-change 3.0.13
+mariadb-schema-change 3.3.1
 
 =cut

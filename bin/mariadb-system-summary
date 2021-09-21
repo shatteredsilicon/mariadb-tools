@@ -1167,7 +1167,7 @@ find_memory_stats () { local PTFUNCNAME=find_memory_stats;
    local platform="$1"
 
    if [ "${platform}" = "Linux" ]; then
-      free -b
+      free -bw
       cat /proc/meminfo
    elif [ "${platform}" = "SunOS" ]; then
       $CMD_PRTCONF | awk -F: '/Memory/{print $2}'
@@ -1271,7 +1271,8 @@ top_processes () { local PTFUNCNAME=top_processes;
 
 notable_processes_info () { local PTFUNCNAME=notable_processes_info;
    local format="%5s    %+2d    %s\n"
-   local sshd_pid=$(ps -eo pid,args | awk '$2 ~ /\/usr\/sbin\/sshd/ { print $1; exit }')
+   local sshd_pid=$(ps -eo pid,args | awk '$0 ~ /\/usr\/sbin\/sshd/ { print $1; exit }')
+   # local sshd_pid=$(ps -eo pid,args | awk '$2 ~ /\/usr\/sbin\/sshd/ { print $1; exit }')
 
    echo "  PID    OOM    COMMAND"
 
@@ -1506,7 +1507,8 @@ parse_dmidecode_mem_devices () { local PTFUNCNAME=parse_dmidecode_mem_devices;
           -e 's/>/}/g' \
           -e 's/[ \t]*\n/\n/g' \
        "${file}" \
-       | awk -F: '/Size|Type|Form.Factor|Type.Detail|^[\t ]+Locator/{printf("|%s", $2)}/^[\t ]+Speed/{print "|" $2}' \
+       | awk -F: '/Size|Type|Form.Factor|Type.Detail|^[\t ]+Locator|^[\t ]+Speed/{printf("|%s", $2)}/^$/{print}' \
+       | sed '/^$/d' \
        | sed -e 's/No Module Installed/{EMPTY}/' \
        | sort \
        | awk -F'|' '{printf("  %-9s %-8s %-17s %-13s %-13s %-8s\n", $4, $2, $7, $3, $5, $6);}'
@@ -2242,7 +2244,7 @@ report_system_summary () { local PTFUNCNAME=report_system_summary;
                                        "$data_dir/vmstat"        \
                                        "$platform"
 
-   section "Memory mamagement"
+   section "Memory management"
    report_transparent_huge_pages
    section "The End"
 }
@@ -2664,7 +2666,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-system-summary 3.0.13
+mariadb-system-summary 3.3.1
 
 =cut
 
