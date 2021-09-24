@@ -54,7 +54,7 @@ BEGIN {
 {
 package MariaDB::Tools;
 
-our $VERSION = '3.3.1';
+our $VERSION = '6.0.0a';
 
 use strict;
 use warnings FATAL => 'all';
@@ -8526,7 +8526,7 @@ sub main {
                $child_table->{row_est} || '?';
          }
 
-         # TODO: This was broken in pt 3.3.1 with two jiras to resolve. possibly going to be removed.
+         # TODO: This was broken in pt 6.0.0a with two jiras to resolve. possibly going to be removed.
          if (_has_self_ref_fks($orig_tbl->{db}, $orig_tbl->{tbl}, $child_tables) && $o->get('check-foreign-keys')) {
              print "The table has self-referencing foreign keys and that might lead to errors.\n";
              print "Use --no-check-foreign-keys to disable this check.\n";
@@ -12768,6 +12768,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-schema-change 3.3.1
+mariadb-schema-change 6.0.0a
 
 =cut
