@@ -610,5 +610,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-database-summary` 3.3.1
+:program:`mariadb-database-summary` 6.0.0a
 

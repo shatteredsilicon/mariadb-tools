@@ -928,6 +928,9 @@ This tool accepts additional command-line arguments.  Refer to the
  Note that we store the count (cnt) for the ts attribute only; it will be
  redundant to store this for other attributes.
 
+ Starting from MariaDB Toolkit 3.0.11, the checksum function has been updated to use 32 chars in the MD5 sum.
+ This causes the checksum field in the history table will have a different value than in the previous versions of the tool.
+
 .. option:: --host
 
  short form: -h; type: string
@@ -1931,5 +1934,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-query-digest` 3.3.1
+:program:`mariadb-query-digest` 6.0.0a
 
