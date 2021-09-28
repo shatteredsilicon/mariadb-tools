@@ -2,17 +2,19 @@
 ## This rudimentary script combines build processes for MariaDB-Tools and backup-manager.
 
 ## Reusables
-URL="https\:\/\/github.com\/mariadb-corporation\/mariadb-tools"
+URL="https://github.com/mariadb-corporation/mariadb-tools"
 
 echo "Welcome to the MariaDB Tools Build Script!"
 echo "Starting Shell Tools Build..."
 
 ## Local build of MariaDB-Backup-Manager as defined by Rick Pizzi.
+git submodule init                                                                                  ## Download the mariadb-backup-manager repository.
 git submodule sync                                                                                  ## Download the mariadb-backup-manager repository.
+git submodule update                                                                                ## Download the mariadb-backup-manager repository.
 pushd internal-linked-projects/backup-manager                                                       ## new working directory from inside the repo
 cat backup_manager.common backup_manager.packaged backup_manager.main > mariadb-backup-manager      ## thanks Rick.
 chmod 755 mariadb-backup-manager                                                                    ## thanks Rick.
-if [[ $? -gt 0 ]]; then
+if [[ $? -ne 0 ]]; then
   echo "\033[0;31;40mWARN: Could not change permissions for backup-manager. This could prevent the tool from being utilized."
   echo "\033[0;31;40mCheck *internal-linked-projects/mariadb-backup-manager/mariadb-backup-manager* permissions before continuing"
 fi
@@ -29,6 +31,10 @@ perl Makefile.PL
 echo perl status: $?
 if [[ $? -eq 0 ]]; then
   make
+  if [[ $? -ne 0 ]]; then
+    echo "Seems we ran into an issue attempting to run make. Please ensure make is installed and available."
+    exit 2
+  fi
 else
   echo "Failed to create Makefile. Please ensure Makefile.PL is readable. Stopping build..."
   exit 2
