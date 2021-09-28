@@ -1169,7 +1169,7 @@ they will be fetched from the Internet if curl is available.
 
 =head1 AUTHORS
 
-Baron Schwartz
+Cole Busby, Baron Schwartz
 
 =head1 ABOUT THIS MARIADB TOOL
 

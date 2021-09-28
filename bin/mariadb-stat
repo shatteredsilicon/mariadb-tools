@@ -2340,7 +2340,7 @@ This tool requires Bash v3 or newer.  Certain options require other programs:
 
 =head1 AUTHORS
 
-Baron Schwartz, Justin Swanhart, Fernando Ipar, Daniel Nichter,
+Cole Busby, Baron Schwartz, Justin Swanhart, Fernando Ipar, Daniel Nichter,
 and Brian Fraser
 
 =head1 ABOUT THIS MARIADB TOOL

@@ -726,7 +726,7 @@ This tool requires the Bourne shell (F</bin/sh>) and the seq program.
 
 =head1 AUTHORS
 
-Baron Schwartz
+Cole Busby, Baron Schwartz
 
 =head1 ABOUT THIS MARIADB TOOL
 

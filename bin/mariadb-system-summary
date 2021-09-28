@@ -2636,7 +2636,7 @@ This tool requires the Bourne shell (F</bin/sh>).
 
 =head1 AUTHORS
 
-Baron Schwartz, Kevin van Zonneveld, and Brian Fraser
+Cole Busby, Baron Schwartz, Kevin van Zonneveld, and Brian Fraser
 
 =head1 ABOUT THIS MARIADB TOOL
 

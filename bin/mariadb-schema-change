@@ -12729,7 +12729,7 @@ REPLICATION SLAVE and REPLICATION CLIENT privileges.
 
 =head1 AUTHORS
 
-Daniel Nichter and Baron Schwartz
+Cole Busby, Daniel Nichter and Baron Schwartz
 
 =head1 ACKNOWLEDGMENTS
 

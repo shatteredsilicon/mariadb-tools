@@ -3235,7 +3235,7 @@ On BSD systems, it may require a mounted procfs.
 
 =head1 AUTHORS
 
-Baron Schwartz, Brian Fraser, and Daniel Nichter
+Cole Busby,Baron Schwartz, Brian Fraser, and Daniel Nichter
 
 =head1 ABOUT THIS MARIADB TOOL
 

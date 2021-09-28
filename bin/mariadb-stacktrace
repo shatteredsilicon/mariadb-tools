@@ -816,7 +816,7 @@ on the command line.
 
 =head1 AUTHORS
 
-Baron Schwartz, based on a script by Domas Mituzas (L<http://poormansprofiler.org/>)
+Cole Busby, Baron Schwartz, based on a script by Domas Mituzas (L<http://poormansprofiler.org/>)
 
 =head1 ABOUT THIS MARIADB TOOL
 
