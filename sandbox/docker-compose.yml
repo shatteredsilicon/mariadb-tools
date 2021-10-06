@@ -5,8 +5,9 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=skysql
     volumes:
-      - "../test_data/primary:/var/lib/data/"
-      - "../test_configs/primary:/etc/"
+      - "./tmp/primary/data/:/var/lib/mysql/"
+      - "./tmp/primary/configs/:/etc/mysql/"
+      - "./tmp/primary/run/:/run/mysqld/"
     ports:
      - "12345:3306"
   mariatertiary:
@@ -14,16 +15,18 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=skysql
     volumes:
-      - "../test_data/tertiary:/var/lib/data/"
-      - "../test_data/tertiary:/var/lib/data/"
+      - "./tmp/tertiary/data/:/var/lib/mysql/"
+      - "./tmp/tertiary/configs/:/etc/mysql/"
+      - "./tmp/tertiary/run/:/run/mysqld/"
     ports:
-     - "12346:3306"
+     - "12347:3306"
   mariasecondary:
     image: mariadb:latest
     environment:
       - MYSQL_ROOT_PASSWORD=skysql
     volumes:
-      - "../test_data/secondary:/var/lib/data/"
-      - "../test_data/secondary:/var/lib/data/"
+      - "./tmp/secondary/data/:/var/lib/mysql/"
+      - "./tmp/secondary/configs/:/etc/mysql/"
+      - "./tmp/secondary/run/:/run/mysqld/"
     ports:
-     - "12347:3306"
+     - "12346:3306"
