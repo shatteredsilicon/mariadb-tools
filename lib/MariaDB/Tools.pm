@@ -14,16 +14,16 @@
 # this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 # Place, Suite 330, Boston, MA  02111-1307  USA.
 # ###########################################################################
-# Percona::Toolkit package
+# MariaDB Tools package
 # ###########################################################################
-package Percona::Toolkit;
+package MariaDB::Tools;
 
 our $VERSION = '3.3.1';
 
 use strict;
 use warnings FATAL => 'all';
 use English qw(-no_match_vars);
-use constant PTDEBUG => $ENV{PTDEBUG} || 0;
+use constant DEBUG => $ENV{MDBDEBUG} || 0;
 
 use Carp qw(carp cluck);
 use Data::Dumper qw();
