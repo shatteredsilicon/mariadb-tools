@@ -1284,7 +1284,7 @@ reasonably new version of Perl.
 
 =head1 AUTHORS
 
-Baron Schwartz, Brian Fraser, and Daniel Nichter
+Cole Busby,Baron Schwartz, Brian Fraser, and Daniel Nichter
 
 =head1 ABOUT THIS MARIADB TOOL
 
@@ -1314,6 +1314,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-align-output 3.0.13
+mariadb-align-output 6.0.0a
 
 =cut

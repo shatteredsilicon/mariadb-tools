@@ -642,5 +642,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-iostat` 3.0.13
+:program:`mariadb-iostat` 6.0.0a
 

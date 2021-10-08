@@ -130,5 +130,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-align-output` 3.0.13
+:program:`mariadb-align-output` 6.0.0a
 

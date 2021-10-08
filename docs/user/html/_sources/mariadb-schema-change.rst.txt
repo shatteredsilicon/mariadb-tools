@@ -351,6 +351,18 @@ This tool accepts additional command-line arguments.  Refer to the
 
  Prompt for a password when connecting to MariaDB.
 
+.. option:: --channel
+
+ type: string
+
+ Channel name used when connected to a server using replication channels.
+ Suppose you have two masters, master_a at port 12345, master_b at port 1236 and
+ a slave connected to both masters using channels chan_master_a and chan_master_b.
+ If you want to run pt-table-sync to synchronize the slave against master_a, pt-table-sync
+ won't be able to determine what's the correct master since SHOW SLAVE STATUS
+ will return 2 rows. In this case, you can use --channel=chan_master_a to specify
+ the channel name to use in the SHOW SLAVE STATUS command.
+
 .. option:: --charset
 
  short form: -A; type: string
@@ -388,6 +400,15 @@ This tool accepts additional command-line arguments.  Refer to the
   for its triggers.  You should first run the tool with :option:`--dry-run` and
   :option:`--print` and verify that the triggers are correct.
 
+
+.. option:: --[no]check-foreign-keys
+
+ default: yes
+
+ Check for self-referencing foreign keys. Currently self referencing FKs are
+ not full supported, so, to prevent errors, this program won't run if the table
+ has self-referencing foreign keys. Use this parameter to disable self-referencing
+ FK checks.
 
 .. option:: --check-interval
 
@@ -974,6 +995,16 @@ This tool accepts additional command-line arguments.  Refer to the
  You can change the list of hosts while OSC is executing:
  if you change the contents of the DSN table, OSC will pick it up very soon.
 
+--reverse-triggers Copy the triggers added during the copy in reverse order. Commands in the new table will be
+reflected in the old table. You can use this as a safety feature, so that the old
+table continues to receive updates. This option requires ``--no-drop-old-table``.
+
+ Warning! This option creates reverse triggers on the new table before it starts copying.
+ After new table is renamed to its original name triggers will continue working. But because the
+ name change metadata version in the table cache will also change you may start receiving
+ "Prepared statement needs to be re-prepared" errors. The workaround for this is to re-prepare statements.
+ If you do not use server-side prepared statements your application should not be affected.
+
 .. option:: --skip-check-slave-lag
 
  type: DSN; repeatable: yes
@@ -1496,5 +1527,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-schema-change` 3.0.13
+:program:`mariadb-schema-change` 6.0.0a
 

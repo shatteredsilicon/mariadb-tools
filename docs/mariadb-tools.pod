@@ -32,49 +32,18 @@ Align output from other tools to columns.
 
 Archive rows from a MariaDB table into another table or a file.
 
+=item mariadb-backup-manager
+
+Backup manager is a script that supports several different backup tools and
+allows you to manage and/or schedule any of them to your liking.
+
 =item mariadb-config-diff
 
 Diff MariaDB configuration files and server variables.
 
-# =item pt-deadlock-logger
-
-# Log MariaDB deadlocks.
-
 =item mariadb-iostat
 
 An interactive I/O monitoring tool for GNU/Linux.
-
-# =item pt-duplicate-key-checker
-
-# Find duplicate indexes and foreign keys on MariaDB tables.
-
-# =item pt-fifo-split
-
-# Split files and pipe lines to a fifo without really splitting.
-
-# =item pt-find
-
-# Find MariaDB tables and execute actions, like GNU find.
-
-# =item pt-fingerprint
-
-# Convert queries into fingerprints.
-
-# =item pt-fk-error-logger
-
-# Log MariaDB foreign key errors.
-
-# =item pt-heartbeat
-
-# Monitor MariaDB replication delay.
-
-# =item pt-index-usage
-
-# Read queries from a log and analyze how they use indexes.
-
-# =item pt-ioprofile
-
-# Watch process IO and print a table of file and I/O activity.
 
 =item mariadb-kill
 
@@ -100,57 +69,13 @@ ALTER tables without locking them.
 
 Aggregate GDB stack traces for a selected program.
 
-# =item pt-show-grants
-
-# Canonicalize and print MariaDB grants so you can effectively replicate, compare and version-control them.
-
 =item mariadb-stat-browser
 
 Browses files created by pt-stalk.
 
-# =item pt-slave-delay
-
-# Make a MariaDB slave server lag behind its master.
-
-# =item pt-slave-find
-
-# Find and print replication hierarchy tree of MariaDB slaves.
-
-# =item pt-slave-restart
-
-# Watch and restart MariaDB replication after errors.
-
 =item mariadb-stat
 
 Collect forensic data about MariaDB when problems occur.
-
-# =item pt-summary
-
-# Summarize system information nicely.
-
-# =item pt-table-checksum
-
-# Verify MariaDB replication integrity.
-
-# =item pt-table-sync
-
-# Synchronize MariaDB table data efficiently.
-
-# =item pt-table-usage
-
-# Analyze how queries use tables.
-
-# =item pt-upgrade
-
-# Verify that query results are identical on different servers.
-
-# =item pt-variable-advisor
-
-# Analyze MariaDB variables and advise on possible problems.
-
-# =item pt-visual-explain
-
-# Format EXPLAIN output as a tree.
 
 =back
 
