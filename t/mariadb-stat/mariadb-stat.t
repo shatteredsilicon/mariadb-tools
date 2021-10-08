@@ -538,7 +538,7 @@ cleanup();
 
 SKIP: {
 
-   skip "Only test on mysql 5.7" if ( $sandbox_version lt '5.7' );
+   skip "Only test on MySQL 5.7" if ( $sandbox_version lt '5.7' );
 
    sub start_thread_1642750 {
       # this must run in a thread because we need to have an active session

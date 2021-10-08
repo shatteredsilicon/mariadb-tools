@@ -76,7 +76,7 @@ my %server_type = (
    node     => 1,
 );
 
-my $test_dbs = qr/^(?:mysql|information_schema|sakila|performance_schema|percona_test|sys)$/;
+my $test_dbs = qr/^(?:mysql|information_schema|sakila|performance_schema|mariadb_test|sys)$/;
 
 sub new {
    my ( $class, %args ) = @_;
@@ -343,18 +343,18 @@ sub wait_for_slaves {
    my $master_dbh = $self->get_dbh_for($args{master} || 'master');
    my $slave2_dbh = $self->get_dbh_for($args{slave}  || 'slave2');
    my ($ping) = $master_dbh->selectrow_array("SELECT MD5(RAND())");
-   $master_dbh->do("UPDATE percona_test.sentinel SET ping='$ping' WHERE id=1 /* wait_for_slaves */");
+   $master_dbh->do("UPDATE mariadb_test.sentinel SET ping='$ping' WHERE id=1 /* wait_for_slaves */");
    PerconaTest::wait_until(
       sub {
          my ($pong) = $slave2_dbh->selectrow_array(
-            "SELECT ping FROM percona_test.sentinel WHERE id=1 /* wait_for_slaves */");
+            "SELECT ping FROM mariadb_test.sentinel WHERE id=1 /* wait_for_slaves */");
          return $ping eq ($pong || '');
       }, undef, 300
    );
 }
 
 # Verifies that master, slave1, and slave2 have a faithful copy of the mysql and
-# sakila databases. The reference data is inserted into percona_test.checksums
+# sakila databases. The reference data is inserted into mariadb_test.checksums
 # by util/checksum-test-dataset when sandbox/test-env starts the environment.
 sub verify_test_data {
    my ($self, $host) = @_;
@@ -362,7 +362,7 @@ sub verify_test_data {
    # Get the known-good checksums from the master.
    my $master = $self->get_dbh_for('master');
    my $ref    = $self->{checksum_ref} || $master->selectall_hashref(
-         'SELECT * FROM percona_test.checksums',
+         'SELECT * FROM mariadb_test.checksums',
          'db_tbl');
    $self->{checksum_ref} = $ref unless $self->{checksum_ref};
    my @tables_in_mysql  = grep { !/^(?:innodb|slave)_/ }
@@ -370,6 +370,8 @@ sub verify_test_data {
                           grep { !/engine_cost$/ }
                           grep { !/server_cost$/ }
                           grep { !/tables_priv$/ }
+                          grep { !/global_priv$/ }
+                          grep { !/proxies_priv$/ }
                           grep { !/user$/ }
                           @{$master->selectcol_arrayref('SHOW TABLES FROM mysql')};
    my @tables_in_sakila = qw(actor address category city country customer
@@ -455,7 +457,7 @@ sub is_cluster_node {
 
 sub can_load_data {
     my ($self, $server) = @_;
-    my $output = $self->use($server, q{-e "SELECT * FROM percona_test.load_data"});
+    my $output = $self->use($server, q{-e "SELECT * FROM mariadb_test.load_data"});
     return ($output || '') =~ /1/;
 }
 
