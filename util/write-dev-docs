@@ -34,7 +34,7 @@ else
       cd ..
    done
    if [ ! -f Makefile.PL ]; then
-      die "Cannot find the root directory of the Percona Toolkit branch"
+      die "Cannot find the root directory of the MariaDB Tools branch"
    fi
    BRANCH=`pwd`
 fi
