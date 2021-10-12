@@ -13,14 +13,14 @@ use Test::More;
 
 use PerconaTest;
 
-my $cmd  = "$trunk/bin/pt-query-digest";
+my $cmd  = "$trunk/bin/mariadb-query-digest";
 my $help = qx{$cmd --help};
 
 my $output;
 
 # #############################################################################
 # https://bugs.launchpad.net/percona-toolkit/+bug/885382
-# pt-query-digest --embedded-attributes doesn't check cardinality
+# mariadb-query-digest --embedded-attributes doesn't check cardinality
 # #############################################################################
 my $sample = "$trunk/t/lib/samples/slowlogs/";
 
@@ -58,7 +58,7 @@ like $output,
 # We removed --statistics, but they should still print out if we use PTDEBUG.
 
 $output = qx{PTDEBUG=1 $cmd --no-report ${sample}slow002.txt 2>&1};
-my $stats = load_file("t/pt-query-digest/samples/stats-slow002.txt");
+my $stats = load_file("t/mariadb-query-digest/samples/stats-slow002.txt");
 
 like(
    $output,
@@ -73,7 +73,7 @@ like(
 );
 
 # #############################################################################
-# pt-query-digest help output mangled
+# mariadb-query-digest help output mangled
 # https://bugs.launchpad.net/percona-toolkit/+bug/831525
 # #############################################################################
 
@@ -83,7 +83,7 @@ like(
       \QPrint these sections of the query analysis\E\s*
       \Qreport (default rusage\E,\s*date,\s*hostname,\s*files,\s*
       header,\s*profile,\s*query_report,\s*prepared\)/x,
-   "Bug 831525: pt-query-digest help output mangled"
+   "Bug 831525: mariadb-query-digest help output mangled"
 );
 
 # #############################################################################

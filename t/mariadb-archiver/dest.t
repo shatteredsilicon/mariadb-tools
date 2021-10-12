@@ -14,7 +14,7 @@ use Data::Dumper;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -26,12 +26,12 @@ if ( !$dbh ) {
 
 my $output;
 my $rows;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
-my $cmd = "$trunk/bin/pt-archiver";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-archiver";
 
 # Make sure load works.
 $sb->create_dbs($dbh, ['test']);
-$sb->load_file('master', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 
 # Archive to another table.
 $output = output(
@@ -44,7 +44,7 @@ $output = `/tmp/12345/use -N -e "select count(*) from test.table_2"`;
 is($output + 0, 4, 'Found rows in new table OK when archiving to another table');
 
 # Archive only some columns to another table.
-$sb->load_file('master', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 $output = output(
    sub { pt_archiver::main("-c", "b,c", qw(--where 1=1), "--source", "D=test,t=table_1,F=$cnf", qw(--dest t=table_2)) },
 );
@@ -84,7 +84,7 @@ is_deeply(
    'Found rows in new table OK when archiving only some columns to another table') or diag(Dumper($rows));
 
 # Archive to another table with autocommit
-$sb->load_file('master', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 $output = output(
    sub { pt_archiver::main(qw(--where 1=1 --txn-size 0), "--source", "D=test,t=table_1,F=$cnf", qw(--dest t=table_2)) },
 );
@@ -95,7 +95,7 @@ $output = `/tmp/12345/use -N -e "select count(*) from test.table_2"`;
 is($output + 0, 4, 'Found rows in new table OK when archiving to another table with autocommit');
 
 # Archive to another table with commit every 2 rows
-$sb->load_file('master', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 $output = output(
    sub { pt_archiver::main(qw(--where 1=1 --txn-size 2), "--source", "D=test,t=table_1,F=$cnf", qw(--dest t=table_2)) },
 );
@@ -106,7 +106,7 @@ $output = `/tmp/12345/use -N -e "select count(*) from test.table_2"`;
 is($output + 0, 4, 'Found rows in new table OK when archiving to another table with commit every 2 rows');
 
 # Test that table with many rows can be archived to table with few
-$sb->load_file('master', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 $output = output(
    sub { pt_archiver::main(qw(--where 1=1 --dest t=table_4 --no-check-columns), "--source", "D=test,t=table_1,F=$cnf") },
 );

@@ -15,7 +15,7 @@ use Data::Dumper;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 ok (1,
     "version checking site offline for now"
@@ -24,7 +24,7 @@ done_testing;
 exit 0;
 
 my $output;
-my $cmd = "$trunk/bin/pt-query-digest --limit 1 $trunk/t/lib/samples/slowlogs/slow001.txt";
+my $cmd = "$trunk/bin/mariadb-query-digest --limit 1 $trunk/t/lib/samples/slowlogs/slow001.txt";
 
 my $vc_file = VersionCheck::version_check_file();
 unlink $vc_file if -f $vc_file;
@@ -153,11 +153,11 @@ ok(
 
 unlink $vc_file if -f $vc_file;
 
-diag(`cp $trunk/bin/pt-query-digest /tmp/pt-query-digest.$PID`);
+diag(`cp $trunk/bin/mariadb-query-digest /tmp/mariadb-query-digest.$PID`);
 
 # Notice: --version-check is NOT on the command line, because
 # it should be enabled by default.
-$output = `PTDEBUG=1 /tmp/pt-query-digest.$PID --limit 1 $trunk/t/lib/samples/slowlogs/slow001.txt 2>&1`;
+$output = `PTDEBUG=1 /tmp/mariadb-query-digest.$PID --limit 1 $trunk/t/lib/samples/slowlogs/slow001.txt 2>&1`;
 
 like(
    $output,
@@ -170,7 +170,7 @@ ok(
    "Version check file was created by default"
 ) or diag($output);
 
-unlink "/tmp/pt-query-digest.$PID" if "/tmp/pt-query-digest.$PID";
+unlink "/tmp/mariadb-query-digest.$PID" if "/tmp/mariadb-query-digest.$PID";
 
 # #############################################################################
 # Done.

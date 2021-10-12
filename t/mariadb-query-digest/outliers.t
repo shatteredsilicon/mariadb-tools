@@ -12,7 +12,7 @@ use English qw(-no_match_vars);
 use Test::More tests => 2;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my @args   = qw(--report-format=query_report);
 my $sample = "$trunk/t/lib/samples/slowlogs/";
@@ -21,7 +21,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'slow013.txt',
             qw(--group-by user --outliers Query_time:.0000001:1)) },
-      "t/pt-query-digest/samples/slow013_report_outliers.txt"
+      "t/mariadb-query-digest/samples/slow013_report_outliers.txt"
    ),
    'slow013 --outliers'
 );
@@ -31,7 +31,7 @@ ok(
       sub { pt_query_digest::main(@args, $sample.'slow049.txt',
             qw(--limit 2 --outliers Query_time:5:3),
             '--report-format', 'header,profile,query_report') },
-      "t/pt-query-digest/samples/slow049.txt",
+      "t/mariadb-query-digest/samples/slow049.txt",
    ),
    'slow049 --outliers'
 );

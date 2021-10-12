@@ -14,7 +14,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 use Data::Dumper;
 $Data::Dumper::Indent    = 1;
@@ -31,7 +31,7 @@ if ( !$dbh ) {
 
 my $output;
 my $dsn = $sb->dsn_for('master');
-my $cnf = '/tmp/12345/my.sandbox.cnf';
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
 
 # TODO:  These tests need something to match, so we background
 # a SLEEP(4) query and match that, but this isn't ideal because

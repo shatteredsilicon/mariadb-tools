@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 use Data::Dumper;
 $Data::Dumper::Indent    = 1;
@@ -58,7 +58,7 @@ $exec =~ s/(\S+)      3s$/786ms      3s/;
 ok(
    no_diff(
       $exec,
-      "t/pt-query-digest/samples/proclist001.txt",
+      "t/mariadb-query-digest/samples/proclist001.txt",
       cmd_output => 1,
    ),
    "--processlist correctly observes and measures multiple queries"

@@ -12,15 +12,15 @@ use English qw(-no_match_vars);
 use Test::More tests => 2;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my @args   = qw(--report-format=profile --limit=10);
-my $sample = "$trunk/t/pt-query-digest/samples/";
+my $sample = "$trunk/t/mariadb-query-digest/samples/";
 
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'issue_1604834.log') },
-      "t/pt-query-digest/samples/issue_1604834-1.txt",
+      "t/mariadb-query-digest/samples/issue_1604834-1.txt",
    ),
    'Distill nonsense and non-SQL'
 );
@@ -29,7 +29,7 @@ ok(
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'issue_1604834.log') },
-      "t/pt-query-digest/samples/issue_1604834-2.txt",
+      "t/mariadb-query-digest/samples/issue_1604834-2.txt",
    ),
    'Distill nonsense and non-SQL'
 );

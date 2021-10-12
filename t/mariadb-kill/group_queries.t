@@ -13,7 +13,7 @@ use Test::More tests => 3;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 my $qr = new QueryRewriter();
 

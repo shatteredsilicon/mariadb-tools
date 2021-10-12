@@ -12,7 +12,7 @@ use English qw(-no_match_vars);
 use Test::More tests => 1;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my @args   = ('--report-format', 'query_report,profile', qw(--limit 10));
 my $sample = "$trunk/t/lib/samples/slowlogs/";
@@ -21,7 +21,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, qw(--report-histogram Lock_time),
          qw(--order-by Lock_time:sum), $sample.'slow034.txt') },
-      "t/pt-query-digest/samples/slow034-order-by-Locktime-sum-with-Locktime-distro.txt",
+      "t/mariadb-query-digest/samples/slow034-order-by-Locktime-sum-with-Locktime-distro.txt",
    ),
    '--report-histogram Lock_time'
 );

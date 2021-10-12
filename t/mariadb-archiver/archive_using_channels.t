@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -53,7 +53,7 @@ my $master1_port = $sb->port_for('chan_master1');
 my $num_rows = 40000;
 
 # Load some rows into masters 1 & 2.
-$sb->load_file('chan_master1', "t/pt-archiver/samples/channels.sql", undef, no_wait => 1);
+$sb->load_file('chan_master1', "t/mariadb-archiver/samples/channels.sql", undef, no_wait => 1);
 
 diag("Loading $num_rows into the test.t1 table on first master. This might take some time.");
 diag(`util/mysql_random_data_load --host=127.0.0.1 --port=$master1_port --user=msandbox --password=msandbox test t1 $num_rows`);

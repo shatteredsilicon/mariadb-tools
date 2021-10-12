@@ -12,9 +12,9 @@ use English qw(-no_match_vars);
 use Test::More tests => 1;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
-my $sample = "$trunk/t/pt-query-digest/samples/pt-234-profile.log";
+my $sample = "$trunk/t/mariadb-query-digest/samples/pt-234-profile.log";
 my @args   = ( '--report-format', 'header,query_report,profile', '--type', 'genlog', $sample );
 
 my ($output, $exit_status) = full_output(
@@ -25,7 +25,7 @@ my ($output, $exit_status) = full_output(
 ok(
    no_diff(
       sub { pt_query_digest::main(@args) },
-      "t/pt-query-digest/samples/pt-234.log",
+      "t/mariadb-query-digest/samples/pt-234.log",
    ),
    'Parse genlog having timestamps with TZ'
 );

@@ -14,10 +14,10 @@ use Test::More tests => 1;
 use PerconaTest;
 
 
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $in   = "$trunk/t/lib/samples/slowlogs/";
-my $out  = "t/pt-query-digest/samples/";
+my $out  = "t/mariadb-query-digest/samples/";
 my @args = qw(--variations arg --limit 5 --report-format query_report);
 
 # #############################################################################

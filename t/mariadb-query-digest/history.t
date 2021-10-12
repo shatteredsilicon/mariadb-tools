@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -49,7 +49,7 @@ my $output;
 my $cmd;
 
 $sb->create_dbs($dbh, ['test']);
-$sb->load_file('master', 't/pt-query-digest/samples/query_review.sql');
+$sb->load_file('master', 't/mariadb-query-digest/samples/query_review.sql');
 
 # Test --create-review and --create-review-history-table
 $output = run_with("slow006.txt", '--create-history-table',

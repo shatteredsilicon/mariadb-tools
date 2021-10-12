@@ -13,15 +13,15 @@ use Test::More tests => 6;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
 my $master_dbh = $sb->get_dbh_for('master');
 
 my $output;
-my $cnf='/tmp/12345/my.sandbox.cnf';
-my $cmd = "$trunk/bin/pt-kill -F $cnf -h 127.1";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.1";
 
 # #########################################################################
 # Check that it daemonizes.
@@ -32,29 +32,29 @@ SKIP: {
 
    # There's no hung queries so we'll just make sure it outputs anything,
    # its debug stuff in this case.
-   `$cmd --print --interval 1s --run-time 2 --pid /tmp/pt-kill.pid --log /tmp/pt-kill.log --daemonize`;
-   $output = `ps -eaf | grep 'pt-kill \-F'`;
+   `$cmd --print --interval 1s --run-time 2 --pid /tmp/mariadb-kill.pid --log /tmp/mariadb-kill.log --daemonize`;
+   $output = `ps -eaf | grep 'mariadb-kill \-F'`;
    like(
       $output,
-      qr/pt-kill -F /,
+      qr/mariadb-kill -F /,
       'It lives daemonized'
    );
    ok(
-      -f '/tmp/pt-kill.pid',
+      -f '/tmp/mariadb-kill.pid',
       'PID file created'
    );
    ok(
-      -f '/tmp/pt-kill.log',
+      -f '/tmp/mariadb-kill.log',
       'Log file created'
    );
 
-   wait_until(sub { return !-f '/tmp/pt-kill.pid' });
+   wait_until(sub { return !-f '/tmp/mariadb-kill.pid' });
    ok(
-      !-f '/tmp/pt-kill.pid',
+      !-f '/tmp/mariadb-kill.pid',
       'PID file removed'
    );
 
-   diag(`rm -rf /tmp/pt-kill.log 2>/dev/null`);
+   diag(`rm -rf /tmp/mariadb-kill.log 2>/dev/null`);
 }
 
 # #########################################################################

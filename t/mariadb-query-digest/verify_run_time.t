@@ -12,7 +12,7 @@ use English qw(-no_match_vars);
 use Test::More tests => 18;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $m = 60;
 my $h = 3600;

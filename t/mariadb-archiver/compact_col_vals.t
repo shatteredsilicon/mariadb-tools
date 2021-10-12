@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -28,14 +28,14 @@ else {
 }
 
 my $output;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
 # Add path to samples to Perl's INC so the tool can find the module.
-my $cmd = "perl -I $trunk/t/pt-archiver/samples $trunk/bin/pt-archiver";
+my $cmd = "perl -I $trunk/t/mariadb-archiver/samples $trunk/bin/mariadb-archiver";
 
 # ###########################################################################
 # Bulk delete with limit that results in 2 chunks.
 # ###########################################################################
-$sb->load_file('master', "t/pt-archiver/samples/compact_col_vals.sql");
+$sb->load_file('master', "t/mariadb-archiver/samples/compact_col_vals.sql");
 $dbh->do('use cai');
 
 is_deeply(

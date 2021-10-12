@@ -22,14 +22,14 @@ my $dbh = $sb->get_dbh_for('master');
 
 my $output;
 
-my $pid_file = '/tmp/pt-query-digest.test.pid';
+my $pid_file = '/tmp/mariadb-query-digest.test.pid';
 `rm $pid_file >/dev/null 2>&1`;
 
 # #########################################################################
 # Issue 391: Add --pid option to all scripts
 # #########################################################################
 `touch $pid_file`;
-$output = `$trunk/bin/pt-query-digest $trunk/commont/t/samples/slow002.txt --pid $pid_file 2>&1`;
+$output = `$trunk/bin/mariadb-query-digest $trunk/commont/t/samples/slow002.txt --pid $pid_file 2>&1`;
 like(
    $output,
    qr{PID file $pid_file exists},
@@ -43,7 +43,7 @@ like(
 SKIP: {
    skip "Cannot connect to sandbox master", 5 unless $dbh;
 
-   my $cmd = "$trunk/bin/pt-query-digest --daemonize --pid $pid_file --processlist h=127.1,P=12345,u=msandbox,p=msandbox --log /dev/null";
+   my $cmd = "$trunk/bin/mariadb-query-digest --daemonize --pid $pid_file --processlist h=127.1,P=12345,u=msandbox,p=msandbox --log /dev/null";
    `$cmd`;
    $output = `ps xw | grep -v grep | grep '$cmd'`;
    like($output, qr/$cmd/, 'It is running');

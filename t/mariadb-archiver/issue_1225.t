@@ -14,7 +14,7 @@ use utf8;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -32,7 +32,7 @@ my $output;
 # #############################################################################
 # Issue 1152: mk-archiver columns option resulting in null archived table data
 # #############################################################################
-$sb->load_file('master', 't/pt-archiver/samples/issue_1225.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/issue_1225.sql');
 
 $dbh->do('set names "utf8"');
 my $original_rows = $dbh->selectall_arrayref('select c from issue_1225.t limit 2');
@@ -73,7 +73,7 @@ ok(
    "UTF8 characters lost when cxn isn't also UTF8"
 );
 
-$sb->load_file('master', 't/pt-archiver/samples/issue_1225.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/issue_1225.sql');
 
 $output = output(
    sub { pt_archiver::main(

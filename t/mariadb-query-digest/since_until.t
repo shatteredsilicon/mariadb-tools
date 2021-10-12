@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -21,9 +21,9 @@ my $dbh = $sb->get_dbh_for('master');
 
 my @args       = (qw(--report-format query_report --limit 10));
 my $sample_in  = "$trunk/t/lib/samples/slowlogs";
-my $sample_out = "t/pt-query-digest/sample";
+my $sample_out = "t/mariadb-query-digest/sample";
 
-my $run_with = "$trunk/bin/pt-query-digest --report-format=query_report --limit 10 $trunk/t/lib/samples/slowlogs/";
+my $run_with = "$trunk/bin/mariadb-query-digest --report-format=query_report --limit 10 $trunk/t/lib/samples/slowlogs/";
 
 # #############################################################################
 # Issue 154: Add --since and --until options to mk-query-digest
@@ -35,7 +35,7 @@ ok(
       sub { pt_query_digest::main(@args,
          "$sample_in/slow033.txt", qw(--since 2009-07-28)
       )},
-      "t/pt-query-digest/samples/slow033-since-yyyy-mm-dd.txt",
+      "t/mariadb-query-digest/samples/slow033-since-yyyy-mm-dd.txt",
       stderr => 1,
    ),
    '--since 2009-07-28'
@@ -46,7 +46,7 @@ ok(
       sub { pt_query_digest::main(@args,
          "$sample_in/slow033.txt", qw(--since 090727),
       )},
-      "t/pt-query-digest/samples/slow033-since-yymmdd.txt",
+      "t/mariadb-query-digest/samples/slow033-since-yymmdd.txt",
       stderr => 1,
    ),
    '--since 090727'
@@ -59,7 +59,7 @@ ok(
       sub { pt_query_digest::main(@args,
          "$sample_in/slow033.txt", qw(--since 2555d),
       )},
-      "t/pt-query-digest/samples/slow033-since-Nd.txt",
+      "t/mariadb-query-digest/samples/slow033-since-Nd.txt",
       stderr => 1,
    ),
    '--since 2555d (6 years ago)'
@@ -71,7 +71,7 @@ ok(
       sub { pt_query_digest::main(@args,
          "$sample_in/slow033.txt", qw(--until 2009-07-27),
       )},
-      "t/pt-query-digest/samples/slow033-until-date.txt",
+      "t/mariadb-query-digest/samples/slow033-until-date.txt",
       stderr => 1,
    ),
    '--until 2009-07-27'
@@ -82,7 +82,7 @@ ok(
       sub { pt_query_digest::main(@args,
          "$sample_in/slow033.txt", qw(--until 090727),
       )},
-      "t/pt-query-digest/samples/slow033-until-date.txt",
+      "t/mariadb-query-digest/samples/slow033-until-date.txt",
       stderr => 1,
    ),
    '--until 090727'
@@ -94,7 +94,7 @@ ok(
       sub { pt_query_digest::main(@args,
          "$sample_in/slow033.txt", qw(--until 1d),
       )},
-      "t/pt-query-digest/samples/slow033-untl-1d.txt",
+      "t/mariadb-query-digest/samples/slow033-untl-1d.txt",
       stderr => 1,
    ),
    '--until 1d'
@@ -108,7 +108,7 @@ ok(
          "--since", "2009-07-26 11:19:28",
          "--until", "090727 11:30:00",
       )},
-      "t/pt-query-digest/samples/slow033-precise-since-until.txt",
+      "t/mariadb-query-digest/samples/slow033-precise-since-until.txt",
       stderr => 1,
    ),
    '--since "2009-07-26 11:19:28" --until "090727 11:30:00"'
@@ -127,7 +127,7 @@ SKIP: {
             "$sample_in/slow033.txt",
             "--since", "\'2009-07-08\' - INTERVAL 7 DAY",
          )},
-         "t/pt-query-digest/samples/slow033-since-2009-07-08.txt",
+         "t/mariadb-query-digest/samples/slow033-since-2009-07-08.txt",
          stderr => 1,
       ),
       '--since "\'2009-07-08\' - INTERVAL 7 DAY"',
@@ -139,7 +139,7 @@ SKIP: {
             "$sample_in/slow033.txt",
             "--until", "\'2009-07-28\' - INTERVAL 1 DAY",
          )},
-         "t/pt-query-digest/samples/slow033-until-date.txt",
+         "t/mariadb-query-digest/samples/slow033-until-date.txt",
          stderr => 1,
          ),
       '--until "\'2009-07-28\' - INTERVAL 1 DAY"',

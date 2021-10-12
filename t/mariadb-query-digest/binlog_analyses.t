@@ -12,7 +12,7 @@ use English qw(-no_match_vars);
 use Test::More tests => 4;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 # #############################################################################
 # Issue 476: parse binary logs.
@@ -25,21 +25,21 @@ my $sample = "$trunk/t/lib/samples/binlogs/";
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'binlog001.txt') },
-      "t/pt-query-digest/samples/binlog001.txt"
+      "t/mariadb-query-digest/samples/binlog001.txt"
    ),
    'Analysis for binlog001',
 ) or diag($test_diff);
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'binlog002.txt') },
-      "t/pt-query-digest/samples/binlog002.txt"
+      "t/mariadb-query-digest/samples/binlog002.txt"
    ),
    'Analysis for binlog002',
 ) or diag($test_diff);
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'binlog011.txt') },
-      "t/pt-query-digest/samples/binlog011.txt"
+      "t/mariadb-query-digest/samples/binlog011.txt"
    ),
    'Analysis for binlog011 - Handles 5.6 binlog with checksum CRC32',
 ) or diag($test_diff);

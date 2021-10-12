@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -24,15 +24,15 @@ if ( !$dbh ) {
 }
 
 my $output;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
 # Add path to samples to Perl's INC so the tool can find the module.
-my $cmd = "perl -I $trunk/t/pt-archiver/samples $trunk/bin/pt-archiver";
+my $cmd = "perl -I $trunk/t/mariadb-archiver/samples $trunk/bin/mariadb-archiver";
 
 # #############################################################################
 # First run without the plugin to get a reference for how the tables should
 # be after a normal bulk insert run.
 # #############################################################################
-$sb->load_file('master', "t/pt-archiver/samples/bulk_regular_insert.sql");
+$sb->load_file('master', "t/mariadb-archiver/samples/bulk_regular_insert.sql");
 $dbh->do('use bri');
 
 output(
@@ -67,7 +67,7 @@ is_deeply(
 # #############################################################################
 # Do it again with the plugin.  The tables should be identical.
 # #############################################################################
-$sb->load_file('master', "t/pt-archiver/samples/bulk_regular_insert.sql");
+$sb->load_file('master', "t/mariadb-archiver/samples/bulk_regular_insert.sql");
 $dbh->do('use bri');
 
 `$cmd --source F=$cnf,D=bri,t=t,L=1 --dest t=t_arch,m=bulk_regular_insert --where "1=1" --bulk-insert --limit 3`;

@@ -17,9 +17,9 @@ use PerconaTest;
 # Issue 462: Filter out all but first N of each
 # #############################################################################
 ok(
-   no_diff("$trunk/bin/pt-query-digest $trunk/t/lib/samples/slowlogs/slow006.txt "
+   no_diff("$trunk/bin/mariadb-query-digest $trunk/t/lib/samples/slowlogs/slow006.txt "
       . '--no-report --output slowlog --sample 2',
-      "t/pt-query-digest/samples/slow006-first2.txt"),
+      "t/mariadb-query-digest/samples/slow006-first2.txt"),
    'Print only first N unique occurrences with explicit --group-by',
 );
 
@@ -27,9 +27,9 @@ ok(
 # Issue 470: mk-query-digest --sample does not work with --report ''
 # #############################################################################
 ok(
-   no_diff("$trunk/bin/pt-query-digest $trunk/t/lib/samples/slowlogs/slow006.txt "
+   no_diff("$trunk/bin/mariadb-query-digest $trunk/t/lib/samples/slowlogs/slow006.txt "
       . '--no-report --output slowlog --sample 2',
-      "t/pt-query-digest/samples/slow006-first2.txt"),
+      "t/mariadb-query-digest/samples/slow006-first2.txt"),
    'Print only first N unique occurrences, --no-report',
 );
 

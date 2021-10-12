@@ -13,7 +13,7 @@ use Test::More tests => 1;
 
 use PerconaTest;
 
-my $run_with = "$trunk/bin/pt-query-digest --max-hostname-length 0 --max-line-length 100 --report-format=query_report --limit 10 $trunk/t/lib/samples/slowlogs/";
+my $run_with = "$trunk/bin/mariadb-query-digest --max-hostname-length 0 --max-line-length 100 --report-format=query_report --limit 10 $trunk/t/lib/samples/slowlogs/";
 
 # #############################################################################
 # Issue 232: mk-query-digest does not properly handle logs with an empty Schema:

@@ -19,8 +19,8 @@ use Test::More tests => 2;
 for my $i (2..3) {
    ok(
       no_diff(
-         sub { print `$trunk/bin/pt-summary --read-samples "$trunk/t/pt-summary/samples/Linux/00$i/" | tail -n+3` },
-         "t/pt-summary/samples/Linux/output_00$i.txt"),
+         sub { print `$trunk/bin/mariadb-system-summary --read-samples "$trunk/t/mariadb-system-summary/samples/Linux/00$i/" | tail -n+3` },
+         "t/mariadb-system-summary/samples/Linux/output_00$i.txt"),
       "--read-samples samples/Linux/00$i works",
    );
 }

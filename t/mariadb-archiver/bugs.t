@@ -14,7 +14,7 @@ use Data::Dumper;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -25,14 +25,14 @@ if ( !$master_dbh ) {
 }
 
 my $output;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
-my $cmd = "$trunk/bin/pt-archiver";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-archiver";
 
 $sb->create_dbs($master_dbh, ['test']);
-$sb->load_file('master', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 
 # ###########################################################################
-# pt-archiver deletes data despite --dry-run
+# mariadb-archiver deletes data despite --dry-run
 # https://bugs.launchpad.net/percona-toolkit/+bug/1199589
 # ###########################################################################
 

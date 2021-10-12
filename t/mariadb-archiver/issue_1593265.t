@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -31,7 +31,7 @@ my $output;
 # #############################################################################
 # Issue 1152: mk-archiver columns option resulting in null archived table data
 # #############################################################################
-$sb->load_file('master', 't/pt-archiver/samples/issue_1593265.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/issue_1593265.sql');
 
 $dbh->do('set names "utf8"');
 

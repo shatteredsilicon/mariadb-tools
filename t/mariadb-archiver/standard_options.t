@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp   = new DSNParser(opts=>$dsn_opts);
 my $sb   = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -28,9 +28,9 @@ elsif ( !$dbh2 ) {
 }
 
 my $output;
-my $cnf      = "/tmp/12345/my.sandbox.cnf";
-my $pid_file = "/tmp/pt-archiver-test.pid.$PID";
-my $sentinel = "/tmp/pt-archiver-test.sentinel.$PID";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";cnf";
+my $pid_file = "/tmp/mariadb-archiver-test.pid.$PID";
+my $sentinel = "/tmp/mariadb-archiver-test.sentinel.$PID";
 
 $sb->create_dbs($dbh, [qw(test)]);
 
@@ -41,13 +41,13 @@ ok(
             qw(--no-check-charset --purge --dry-run --port 12345),
             "--where", "film_id < 100")
       },
-      "t/pt-archiver/samples/issue-248.txt",
+      "t/mariadb-archiver/samples/issue-248.txt",
    ),
    'DSNs inherit from standard connection options (issue 248)'
 );
 
 # Test with a sentinel file
-$sb->load_file('master', 't/pt-archiver/samples/table1.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/table1.sql');
 diag(`touch $sentinel`);
 
 $output = output(
@@ -112,7 +112,7 @@ diag(`rm -f $pid_file`);
 # #############################################################################
 
 # This test will achive rows from dbh:test.table_1 to dbh2:test.table_2.
-$sb->load_file('master', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 
 # Change passwords so defaults files won't work.
 $sb->do_as_root(

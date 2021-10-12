@@ -34,7 +34,7 @@ SKIP: {
     $timeout = wait_for(
         sub {
             $start = time;
-            `$trunk/bin/pt-query-digest --read-timeout 2 --pid $pid_file 2>/dev/null`;
+            `$trunk/bin/mariadb-query-digest --read-timeout 2 --pid $pid_file 2>/dev/null`;
             return;
         },
         5,
@@ -55,12 +55,12 @@ SKIP: {
 
 unlink $pid_file if -f $pid_file;
 mkfifo $fifo, 0700;
-system("$trunk/t/pt-query-digest/samples/write-to-fifo.pl $fifo 4 &");
+system("$trunk/t/mariadb-query-digest/samples/write-to-fifo.pl $fifo 4 &");
 
 $timeout = wait_for(
    sub {
       $start = time;
-      `$trunk/bin/pt-query-digest --read-timeout 2 --pid $pid_file $fifo`;
+      `$trunk/bin/mariadb-query-digest --read-timeout 2 --pid $pid_file $fifo`;
       return;
    },
    5,

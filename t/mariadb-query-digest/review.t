@@ -14,7 +14,7 @@ use Test::More;
 use PerconaTest;
 use Sandbox;
 use SqlModes;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -47,7 +47,7 @@ my $output;
 my $cmd;
 
 $sb->create_dbs($dbh, ['test']);
-$sb->load_file('master', 't/pt-query-digest/samples/query_review.sql');
+$sb->load_file('master', 't/mariadb-query-digest/samples/query_review.sql');
 
 # Test --create-review
 $output = run_with("slow006.txt", qw(--create-review-table),
@@ -102,7 +102,7 @@ $output = run_with("slow006.txt",
                    '--review', "$dsn,D=test,t=query_review" );
 # 3
 ok(
-   no_diff($output, "t/pt-query-digest/samples/slow006_AR_1.txt", cmd_output => 1),
+   no_diff($output, "t/mariadb-query-digest/samples/slow006_AR_1.txt", cmd_output => 1),
    'Analyze-review pass 1 reports not-reviewed queries'
 );
 
@@ -115,7 +115,7 @@ $output = run_with("slow006.txt",
                    '--review', "$dsn,D=test,t=query_review");
 # 4
 ok(
-   no_diff($output, "t/pt-query-digest/samples/slow006_AR_2.txt", cmd_output => 1),
+   no_diff($output, "t/mariadb-query-digest/samples/slow006_AR_2.txt", cmd_output => 1),
    'Analyze-review pass 2 does not report the reviewed query'
 );
 
@@ -125,7 +125,7 @@ ok(
 $output = run_with("slow006.txt", '--report-all',
                    '--review', "$dsn,D=test,t=query_review");
 ok(
-   no_diff($output, "t/pt-query-digest/samples/slow006_AR_4.txt", cmd_output => 1),
+   no_diff($output, "t/mariadb-query-digest/samples/slow006_AR_4.txt", cmd_output => 1),
    'Analyze-review pass 4 with --report-all reports reviewed query'
 );
 
@@ -137,7 +137,7 @@ $dbh->do('UPDATE test.query_review
 $output = run_with("slow006.txt",
                    '--review', "$dsn,D=test,t=query_review");
 ok(
-   no_diff($output, "t/pt-query-digest/samples/slow006_AR_5.txt", cmd_output => 1),
+   no_diff($output, "t/mariadb-query-digest/samples/slow006_AR_5.txt", cmd_output => 1),
    'Analyze-review pass 5 reports new review info column'
 );
 
@@ -188,7 +188,7 @@ unlike($output, qr/Use of uninitialized value/, 'no crash due to totally missing
 # #############################################################################
 # --review --no-report
 # #############################################################################
-$sb->load_file('master', 't/pt-query-digest/samples/query_review.sql');
+$sb->load_file('master', 't/mariadb-query-digest/samples/query_review.sql');
 $output = run_with("slow006.txt", '--no-report',
                    '--review', "$dsn,D=test,t=query_review");
 

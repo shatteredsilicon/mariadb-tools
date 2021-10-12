@@ -13,7 +13,7 @@ use Test::More tests => 9;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 my $sample = "$trunk/t/lib/samples/pl/";
 my @args   = qw(--test-matching);
@@ -128,11 +128,11 @@ is(
 ok(
    no_diff(
       sub { pt_kill::main(@args, "$sample/recset011.txt",
-         "--filter", "$trunk/t/pt-kill/samples/filter001.txt",
+         "--filter", "$trunk/t/mariadb-kill/samples/filter001.txt",
          qw(--group-by comment --query-count 2 --each-busy-time 5),
          qw(--match-user foo --victims all --print --no-strip-comments));
       },
-      "t/pt-kill/samples/kill-recset011-001.txt",
+      "t/mariadb-kill/samples/kill-recset011-001.txt",
       sed => [ "-e 's/^# [^ ]* //g'" ],
    ),
    "--filter and custom --group-by"

@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -28,14 +28,14 @@ else {
 
 my $output;
 my $rows;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
 
 $sb->create_dbs($dbh, ['test']);
 
 # #############################################################################
 # Issue 524: mk-archiver --no-delete --dry-run prints out DELETE statement
 # #############################################################################
-$sb->load_file('master', 't/pt-archiver/samples/issue_131.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/issue_131.sql');
 $output = output(
    sub { pt_archiver::main(qw(--where 1=1 --dry-run --no-delete), "--source",  "F=$cnf,D=test,t=issue_131_src", qw(--dest t=issue_131_dst)) },
 );

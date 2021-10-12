@@ -34,7 +34,7 @@ my $output;
 
 # This is a poor test because sometimes it will catch queries on the proclist
 # and other times it won't.
-$output = `$trunk/bin/pt-query-digest --processlist 127.1,P=12345,u=msandbox,p=msandbox --run-time 1 --port 12345`;
+$output = `$trunk/bin/mariadb-query-digest --processlist 127.1,P=12345,u=msandbox,p=msandbox --run-time 1 --port 12345`;
 like(
    $output,
    qr/(?:Rank\s+Query ID|No events processed)/,

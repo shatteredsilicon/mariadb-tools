@@ -15,7 +15,7 @@ use threads;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 use Data::Dumper;
 $Data::Dumper::Indent    = 1;
@@ -24,7 +24,7 @@ $Data::Dumper::Quotekeys = 0;
 
 
 my $o = new OptionParser(description => 'Diskstats',
-   file        => "$trunk/bin/pt-kill",
+   file        => "$trunk/bin/mariadb-kill",
 );
 $o->get_specs("$trunk/bin/pt-table-checksum");
 $o->get_opts();

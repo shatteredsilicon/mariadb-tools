@@ -33,9 +33,9 @@ else {
 # #############################################################################
 # Issue 611: EXPLAIN PARTITIONS in mk-query-digest if partitions are used
 # #############################################################################
-diag(`/tmp/12345/use < $trunk/t/pt-query-digest/samples/issue_611.sql`);
+diag(`/tmp/12345/use < $trunk/t/mariadb-query-digest/samples/issue_611.sql`);
 
-my $output = `$trunk/bin/pt-query-digest $trunk/t/pt-query-digest/samples/slow-issue-611.txt --explain h=127.1,P=12345,u=msandbox,p=msandbox 2>&1`;
+my $output = `$trunk/bin/mariadb-query-digest $trunk/t/mariadb-query-digest/samples/slow-issue-611.txt --explain h=127.1,P=12345,u=msandbox,p=msandbox 2>&1`;
 like(
    $output,
    qr/partitions: p\d/,

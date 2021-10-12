@@ -12,19 +12,19 @@ use English qw(-no_match_vars);
 use Test::More tests => 1;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 # #############################################################################
 # Issue 736: mk-query-digest doesn't handle badly distilled queries
 # #############################################################################
 
 my @args   = qw(--report-format=profile --limit 10);
-my $sample = "$trunk/t/pt-query-digest/samples/";
+my $sample = "$trunk/t/mariadb-query-digest/samples/";
 
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'cannot-distill.log') },
-      "t/pt-query-digest/samples/cannot-distill-profile.txt",
+      "t/mariadb-query-digest/samples/cannot-distill-profile.txt",
    ),
    'Distill nonsense and non-SQL'
 );

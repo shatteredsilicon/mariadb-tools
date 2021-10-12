@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -31,9 +31,9 @@ else {
 
 my $output;
 my $rows;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
 
-$sb->load_file('master', 't/pt-archiver/samples/issue_1152.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/issue_1152.sql');
 
 # #############################################################################
 # Issue 1152: mk-archiver columns option resulting in null archived table data

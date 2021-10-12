@@ -14,7 +14,7 @@ use Test::More;
 use Sandbox;
 use PerconaTest;
 
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -37,11 +37,11 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args,
          "$trunk/t/lib/samples/slowlogs/slow007.txt") },
-      ( $sandbox_version ge '8.0' ? "t/pt-query-digest/samples/slow007_explain_1-80.txt"
-      : $sandbox_version ge '5.7' ? "t/pt-query-digest/samples/slow007_explain_1-57.txt"
-      : $sandbox_version ge '5.5' ? "t/pt-query-digest/samples/slow007_explain_1-55.txt"
-      : $sandbox_version ge '5.1' ? "t/pt-query-digest/samples/slow007_explain_1-51.txt"
-      :                             "t/pt-query-digest/samples/slow007_explain_1.txt"),
+      ( $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/slow007_explain_1-80.txt"
+      : $sandbox_version ge '5.7' ? "t/mariadb-query-digest/samples/slow007_explain_1-57.txt"
+      : $sandbox_version ge '5.5' ? "t/mariadb-query-digest/samples/slow007_explain_1-55.txt"
+      : $sandbox_version ge '5.1' ? "t/mariadb-query-digest/samples/slow007_explain_1-51.txt"
+      :                             "t/mariadb-query-digest/samples/slow007_explain_1.txt"),
    ),
    'Analysis for slow007 with --explain, no rows',
 );
@@ -52,10 +52,10 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args,
          "$trunk/t/lib/samples/slowlogs/slow007.txt") },
-      ( $sandbox_version ge '8.0' ? "t/pt-query-digest/samples/slow007_explain_2-80.txt"
-      : $sandbox_version ge '5.7' ? "t/pt-query-digest/samples/slow007_explain_2-57.txt"
-      : $sandbox_version ge '5.1' ? "t/pt-query-digest/samples/slow007_explain_2-51.txt"
-                                  : "t/pt-query-digest/samples/slow007_explain_2.txt"),
+      ( $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/slow007_explain_2-80.txt"
+      : $sandbox_version ge '5.7' ? "t/mariadb-query-digest/samples/slow007_explain_2-57.txt"
+      : $sandbox_version ge '5.1' ? "t/mariadb-query-digest/samples/slow007_explain_2-51.txt"
+                                  : "t/mariadb-query-digest/samples/slow007_explain_2.txt"),
    ),
    'Analysis for slow007 with --explain',
 );
@@ -67,7 +67,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args,
          "$trunk/t/lib/samples/slowlogs/slow007.txt", qw(--report-format profile)) },
-      "t/pt-query-digest/samples/slow007_explain_4.txt",
+      "t/mariadb-query-digest/samples/slow007_explain_4.txt",
    ),
    'EXPLAIN sparkline in profile'
 );
@@ -82,7 +82,7 @@ ok(
       sub { pt_query_digest::main(@args,
          '--report-format', 'query_report,profile',
          "$trunk/t/lib/samples/slowlogs/slow007.txt") },
-      "t/pt-query-digest/samples/slow007_explain_3.txt",
+      "t/mariadb-query-digest/samples/slow007_explain_3.txt",
       trf => "sed 's/at .* line [0-9]*/at line ?/'",
    ),
    'Analysis for slow007 with --explain, failed',
@@ -91,19 +91,19 @@ ok(
 # #############################################################################
 # Issue 1196: mk-query-digest --explain is broken
 # #############################################################################
-$sb->load_file('master', "t/pt-query-digest/samples/issue_1196.sql");
+$sb->load_file('master', "t/mariadb-query-digest/samples/issue_1196.sql");
 
 ok(
    no_diff(
       sub { pt_query_digest::main(@args,
          '--report-format', 'profile,query_report',
-         "$trunk/t/pt-query-digest/samples/issue_1196.log",)
+         "$trunk/t/mariadb-query-digest/samples/issue_1196.log",)
       },
-      (  $sandbox_version ge '8.0' ? "t/pt-query-digest/samples/issue_1196-output-8.0.txt"
-       : $sandbox_version ge '5.7' ? "t/pt-query-digest/samples/issue_1196-output-5.7.txt"
-       : $sandbox_version ge '5.6' ? "t/pt-query-digest/samples/issue_1196-output-5.6.txt"
-       : $sandbox_version ge '5.1' ? "t/pt-query-digest/samples/issue_1196-output.txt"
-       :                             "t/pt-query-digest/samples/issue_1196-output-5.0.txt"),
+      (  $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/issue_1196-output-8.0.txt"
+       : $sandbox_version ge '5.7' ? "t/mariadb-query-digest/samples/issue_1196-output-5.7.txt"
+       : $sandbox_version ge '5.6' ? "t/mariadb-query-digest/samples/issue_1196-output-5.6.txt"
+       : $sandbox_version ge '5.1' ? "t/mariadb-query-digest/samples/issue_1196-output.txt"
+       :                             "t/mariadb-query-digest/samples/issue_1196-output-5.0.txt"),
    ),
    "--explain sparkline uses event db and doesn't crash ea (issue 1196)"
 );

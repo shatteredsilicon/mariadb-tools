@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+!/usr/bin/env perl
 
 BEGIN {
    die "The PERCONA_TOOLKIT_BRANCH environment variable is not set.\n"
@@ -16,7 +16,7 @@ use Data::Dumper;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -30,8 +30,8 @@ else {
 }
 
 my $output;
-my $cnf = '/tmp/12345/my.sandbox.cnf';
-my $cmd = "$trunk/bin/pt-kill -F $cnf -h 127.1";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.1";
 
 # Shell out to a sleep(10) query and try to capture the query.
 # Backticks don't work here.
@@ -103,7 +103,7 @@ my $n_checks =()= $output =~ m/Checking processlist/g;
 is(
    $n_checks,
    4,
-   "pt-kill still checked the processlist 4 times"
+   "mariadb-kill still checked the processlist 4 times"
 ) or diag($output);
 
 # #############################################################################

@@ -16,7 +16,7 @@ use Fcntl      qw(:seek);
 use File::Temp qw(tempfile);
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $samples = "$trunk/t/lib/samples/slowlogs";
 my $output;

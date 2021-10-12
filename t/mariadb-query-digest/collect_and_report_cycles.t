@@ -26,7 +26,7 @@ else {
    plan tests => 4;
 }
 
-my $run_with = "$trunk/bin/pt-query-digest --report-format=query_report --limit 10 $trunk/t/lib/samples/slowlogs/";
+my $run_with = "$trunk/bin/mariadb-query-digest --report-format=query_report --limit 10 $trunk/t/lib/samples/slowlogs/";
 
 # #############################################################################
 # Issue 173: Make mk-query-digest do collect-and-report cycles
@@ -38,7 +38,7 @@ my $run_with = "$trunk/bin/pt-query-digest --report-format=query_report --limit 
 my $pid;
 my $output;
 
-system("$trunk/bin/pt-query-digest --processlist h=127.1,P=12345,u=msandbox,p=msandbox --run-time 2 --iterations 2 --port 12345 --pid /tmp/mk-query-digest.pid --daemonize 1>/dev/null 2>/dev/null");
+system("$trunk/bin/mariadb-query-digest --processlist h=127.1,P=12345,u=msandbox,p=msandbox --run-time 2 --iterations 2 --port 12345 --pid /tmp/mk-query-digest.pid --daemonize 1>/dev/null 2>/dev/null");
 chomp($pid = `cat /tmp/mk-query-digest.pid`);
 sleep 3;
 $output = `ps x | grep $pid | grep processlist | grep -v grep`;
@@ -59,7 +59,7 @@ ok(
 # entirely by the first iteration.
 ok(
    no_diff($run_with . 'slow002.txt --iterations 2   --report-format=query_report,profile --limit 1',
-   "t/pt-query-digest/samples/slow002_iters_2.txt",
+   "t/mariadb-query-digest/samples/slow002_iters_2.txt",
    ),
    '--iterations' ,
 );

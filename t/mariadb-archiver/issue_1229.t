@@ -16,7 +16,7 @@ use PerconaTest;
 use Sandbox;
 use utf8;
 
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -32,14 +32,14 @@ elsif ( $DBD::mysql::VERSION lt '4' ) {
 
 my $output;
 my $rows;
-my $cnf  = "/tmp/12345/my.sandbox.cnf";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";;
 my $file = "/tmp/mk-archiver-file.txt";
 
 # #############################################################################
 # Issue 1229: mk-archiver not creating UTF8 compatible file handles for
 # archive to file
 # #############################################################################
-$sb->load_file('master', 't/pt-archiver/samples/issue_1225.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/issue_1225.sql');
 
 $dbh->do('set names "utf8"');
 my $original_rows = $dbh->selectall_arrayref('select c from issue_1225.t where i in (1, 2)');
@@ -67,7 +67,7 @@ $got =~ s/^\d+//gsm;
 ok(
    no_diff(
       $got,
-      "t/pt-archiver/samples/issue_1229_file.txt",
+      "t/mariadb-archiver/samples/issue_1229_file.txt",
       cmd_output => 1,
    ),
    "Printed UTF8 data to --file"

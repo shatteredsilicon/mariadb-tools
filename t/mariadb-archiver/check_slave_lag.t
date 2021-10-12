@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp   = new DSNParser(opts=>$dsn_opts);
 my $sb   = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -35,14 +35,14 @@ elsif ( $sandbox_version ge '5.6' ) {
 
 my $output;
 my $sql;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
-my $cmd = "$trunk/bin/pt-archiver";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-archiver";
 
 # #############################################################################
 # Issue 758: Make mk-archiver wait for a slave
 # #############################################################################
 
-$sb->load_file('master', 't/pt-archiver/samples/issue_758.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/issue_758.sql');
 
 is_deeply(
    $dbh->selectall_arrayref('select * from issue_758.t'),

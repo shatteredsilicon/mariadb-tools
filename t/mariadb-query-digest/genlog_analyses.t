@@ -13,7 +13,7 @@ use Test::More tests => 5;
 
 use PerconaTest;
 
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 # #############################################################################
 # Issue 172: Make mk-query-digest able to read general logs
@@ -25,7 +25,7 @@ my $sample = "$trunk/t/lib/samples/genlogs/";
 # --help exists so don't run mqd as a module else --help's exit will
 # exit this test script.
 like(
-   `$trunk/bin/pt-query-digest --type genlog genlog001.txt --help`,
+   `$trunk/bin/mariadb-query-digest --type genlog genlog001.txt --help`,
    qr/--order-by\s+Query_time:cnt/,
    '--order-by defaults to Query_time:cnt for --type genlog',
 );
@@ -33,7 +33,7 @@ like(
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'genlog001.txt') },
-      "t/pt-query-digest/samples/genlog001.txt"
+      "t/mariadb-query-digest/samples/genlog001.txt"
    ),
    'Analysis for genlog001',
 );
@@ -41,7 +41,7 @@ ok(
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'genlog002.txt') },
-      "t/pt-query-digest/samples/genlog002.txt",
+      "t/mariadb-query-digest/samples/genlog002.txt",
    ),
    'Analysis for genlog002',
 );
@@ -49,7 +49,7 @@ ok(
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'genlog003.txt') },
-      "t/pt-query-digest/samples/genlog003.txt"
+      "t/mariadb-query-digest/samples/genlog003.txt"
    ),
    'Analysis for genlog003',
 );
@@ -57,7 +57,7 @@ ok(
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'genlog005.txt') },
-      "t/pt-query-digest/samples/genlog005.txt"
+      "t/mariadb-query-digest/samples/genlog005.txt"
    ),
    'Analysis for genlog005',
 );

@@ -14,7 +14,7 @@ use Test::More;
 use PerconaTest;
 use Sandbox;
 use Time::HiRes qw(sleep);
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -32,7 +32,7 @@ my @args;
 # #############################################################################
 # Issue 361: Add a --runfor (or something) option to mk-query-digest
 # #############################################################################
-`$trunk/bin/pt-query-digest --processlist h=127.1,P=12345,u=msandbox,p=msandbox --run-time 3 --port 12345 --log /tmp/mk-query-digest.log --pid /tmp/mk-query-digest.pid --daemonize 1>/dev/null 2>/dev/null`;
+`$trunk/bin/mariadb-query-digest --processlist h=127.1,P=12345,u=msandbox,p=msandbox --run-time 3 --port 12345 --log /tmp/mk-query-digest.log --pid /tmp/mk-query-digest.pid --daemonize 1>/dev/null 2>/dev/null`;
 chomp(my $pid = `cat /tmp/mk-query-digest.pid`);
 sleep 2;
 my $output = `ps x | grep $pid | grep processlist | grep -v grep`;
@@ -82,7 +82,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$trunk/t/lib/samples/slowlogs/slow033.txt",
          qw(--run-time-mode event --run-time 1h)) },
-      "t/pt-query-digest/samples/slow033-rtm-event-1h.txt"
+      "t/mariadb-query-digest/samples/slow033-rtm-event-1h.txt"
    ),
    "Run-time mode event 1h"
 );
@@ -93,7 +93,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$trunk/t/lib/samples/slowlogs/slow033.txt",
          qw(--run-time-mode event --run-time 1d)) },
-      "t/pt-query-digest/samples/slow033-rtm-event-1h.txt"
+      "t/mariadb-query-digest/samples/slow033-rtm-event-1h.txt"
    ),
    "Run-time mode event 1d"
 );
@@ -103,7 +103,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$trunk/t/lib/samples/slowlogs/slow033.txt",
          qw(--run-time-mode event --run-time 25h)) },
-      "t/pt-query-digest/samples/slow033-rtm-event-25h.txt"
+      "t/mariadb-query-digest/samples/slow033-rtm-event-25h.txt"
    ),
    "Run-time mode event 25h"
 );
@@ -114,7 +114,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$trunk/t/lib/samples/slowlogs/slow033.txt",
          qw(--run-time-mode interval --run-time 1d)) },
-      "t/pt-query-digest/samples/slow033-rtm-interval-1d.txt"
+      "t/mariadb-query-digest/samples/slow033-rtm-interval-1d.txt"
    ),
    "Run-time mode interval 1d"
 );
@@ -128,7 +128,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$trunk/t/lib/samples/slowlogs/slow033.txt",
          qw(--run-time-mode interval --run-time 30)) },
-      "t/pt-query-digest/samples/slow033-rtm-interval-30s.txt"
+      "t/mariadb-query-digest/samples/slow033-rtm-interval-30s.txt"
    ),
    "Run-time mode interval 30s"
 );
@@ -139,7 +139,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$trunk/t/lib/samples/slowlogs/slow033.txt",
          qw(--run-time-mode interval --run-time 30m)) },
-      "t/pt-query-digest/samples/slow033-rtm-interval-30m.txt",
+      "t/mariadb-query-digest/samples/slow033-rtm-interval-30m.txt",
    ),
    "Run-time mode interval 30m"
 );
@@ -152,7 +152,7 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$trunk/t/lib/samples/slowlogs/slow033.txt",
          qw(--run-time-mode interval --run-time 30 --iterations 3)) },
-      "t/pt-query-digest/samples/slow033-rtm-interval-30s-3iter.txt"
+      "t/mariadb-query-digest/samples/slow033-rtm-interval-30s-3iter.txt"
    ),
    "Run-time mode interval and --iterations"
 );

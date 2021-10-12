@@ -14,7 +14,7 @@ use Test::More;
 use Sandbox;
 use PerconaTest;
 
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -27,10 +27,10 @@ if ( !$dbh ) {
 my $output  = '';
 my $exit_status;
 my $cnf     = 'h=127.1,P=12345,u=msandbox,p=msandbox';
-my $samples = "$trunk/t/pt-query-digest/samples";
+my $samples = "$trunk/t/mariadb-query-digest/samples";
 
 # #############################################################################
-# pt-query-digest with custom --group-by throws error
+# mariadb-query-digest with custom --group-by throws error
 # https://bugs.launchpad.net/percona-toolkit/+bug/957442
 # #############################################################################
 

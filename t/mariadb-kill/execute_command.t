@@ -13,15 +13,15 @@ use Test::More tests => 9;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
 my $master_dbh = $sb->get_dbh_for('master');
 
 my $output;
-my $cnf ='/tmp/12345/my.sandbox.cnf';
-my $cmd = "$trunk/bin/pt-kill -F $cnf -h 127.1";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.1";
 my $out = "/tmp/mk-kill-test.txt";
 
 # #############################################################################
@@ -73,9 +73,9 @@ SKIP: {
    # Don't make zombies (https://bugs.launchpad.net/percona-toolkit/+bug/919819)
    $master_dbh->do("USE pt_kill_zombie_test");
 
-   my $sentinel = "/tmp/pt-kill-test.$PID.stop";
-   my $pid_file = "/tmp/pt-kill-test.$PID.pid";
-   my $log_file = "/tmp/pt-kill-test.$PID.log";
+   my $sentinel = "/tmp/mariadb-kill-test.$PID.stop";
+   my $pid_file = "/tmp/mariadb-kill-test.$PID.pid";
+   my $log_file = "/tmp/mariadb-kill-test.$PID.log";
    diag(`rm $sentinel 2>/dev/null`);
    diag(`rm $pid_file 2>/dev/null`);
    diag(`rm $log_file 2>/dev/null`);
@@ -100,7 +100,7 @@ SKIP: {
    sleep 1;
    ok(
       !-f $pid_file,
-      "pt-kill stopped"
+      "mariadb-kill stopped"
    );
    $output = `ps x | grep Z | grep -v grep`;
    is(

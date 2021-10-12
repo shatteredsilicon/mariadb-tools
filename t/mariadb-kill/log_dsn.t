@@ -14,7 +14,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 use Data::Dumper;
 $Data::Dumper::Indent    = 1;
@@ -47,7 +47,7 @@ $sb->create_dbs($master_dbh, [qw(kill_test)]);
 my $log_table = "kill_test.log_table";
 my $log_dsn   = "D=kill_test,t=log_table";
 my $log_sql   = OptionParser->read_para_after(
-   "$trunk/bin/pt-kill", qr/MAGIC_create_log_table/);
+   "$trunk/bin/mariadb-kill", qr/MAGIC_create_log_table/);
 $log_sql =~ s/kill_log/$log_table/;
 $master_dbh->do($log_sql);
 $sb->wait_for_slaves();
@@ -276,12 +276,12 @@ is(
 $master_dbh->do("TRUNCATE $log_table");
 $sb->wait_for_slaves();
 
-my $pid_file = "/tmp/pt-kill-test.$PID";
-my $log_file = "/tmp/pt-kill-test-log.$PID";
+my $pid_file = "/tmp/mariadb-kill-test.$PID";
+my $log_file = "/tmp/mariadb-kill-test-log.$PID";
 diag(`rm -f $pid_file $log_file >/dev/null 2>&1`);
 
 setup_target();
-system("$trunk/bin/pt-kill $master_dsn --daemonize --run-time 1 --kill-query --interval 1 --match-db $target_db --log-dsn $slave_dsn,$log_dsn --pid $pid_file --log $log_file");
+system("$trunk/bin/mariadb-kill $master_dsn --daemonize --run-time 1 --kill-query --interval 1 --match-db $target_db --log-dsn $slave_dsn,$log_dsn --pid $pid_file --log $log_file");
 PerconaTest::wait_for_files($pid_file);         # start
 # ...                                           # run
 PerconaTest::wait_until(sub { !-f $pid_file});  # stop
@@ -308,7 +308,7 @@ ok(
 $master_dbh->do("TRUNCATE $log_table");
 $sb->wait_for_slaves();
 
-my $cnf_file = "/tmp/pt-kill-test.cnf.$PID";
+my $cnf_file = "/tmp/mariadb-kill-test.cnf.$PID";
 diag(`rm -f $pid_file $log_file $cnf_file >/dev/null 2>&1`);
 
 open my $fh, '>', $cnf_file or die "Error opening $cnf_file: $OS_ERROR";
@@ -326,7 +326,7 @@ EOF
 close $fh;
 
 setup_target();
-system("$trunk/bin/pt-kill --config $cnf_file");
+system("$trunk/bin/mariadb-kill --config $cnf_file");
 PerconaTest::wait_for_files($pid_file);         # start
 # ...                                           # run
 PerconaTest::wait_until(sub { !-f $pid_file});  # stop

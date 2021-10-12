@@ -13,10 +13,10 @@ use Test::More tests => 1;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-kill";
+require "$trunk/bin/mariadb-kill";
 
 my $sample = "$trunk/t/lib/samples/pl";
-my $filter = "$trunk/t/pt-kill/samples";
+my $filter = "$trunk/t/mariadb-kill/samples";
 my @args   = qw(--test-matching);
 my $output;
 

@@ -13,7 +13,7 @@ use English qw(-no_match_vars);
 use Test::More;
 
 use PerconaTest;
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 no warnings 'once';
 local $JSONReportFormatter::sorted_json = 1;
@@ -21,7 +21,7 @@ local $JSONReportFormatter::pretty_json = 0;
 
 my @args    = qw(--output json);
 my $sample  = "$trunk/t/lib/samples";
-my $results = "t/pt-query-digest/samples/json";
+my $results = "t/mariadb-query-digest/samples/json";
 
 my $escaped_trunk = $trunk;
 $escaped_trunk =~ s/\//\\\\\//g;
@@ -30,7 +30,7 @@ $escaped_trunk =~ s/\//\\\\\//g;
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, "$sample/slowlogs/empty") },
-      "t/pt-query-digest/samples/empty_json_report.txt",
+      "t/mariadb-query-digest/samples/empty_json_report.txt",
    ),
    'json output for empty log'
 ) or diag($test_diff);
@@ -88,8 +88,8 @@ ok(
 ) or diag($test_diff);
 
 # #############################################################################
-# pt-query-digest support for Percona Server slow log rate limiting
-# https://blueprints.launchpad.net/percona-toolkit/+spec/pt-query-digest-rate-limit
+# mariadb-query-digest support for Percona Server slow log rate limiting
+# https://blueprints.launchpad.net/percona-toolkit/+spec/mariadb-query-digest-rate-limit
 # #############################################################################
 ok(
    no_diff(
@@ -97,7 +97,7 @@ ok(
                "$trunk/t/lib/samples/slowlogs/slow059.txt",
                qw(--output json))
       },
-      "t/pt-query-digest/samples/slow059_report02.txt",
+      "t/mariadb-query-digest/samples/slow059_report02.txt",
       sed => [ q/'s!"name":".*slow059.txt"!"name":"slow059.txt"!'/ ],
    ),
    'json output for slow059'

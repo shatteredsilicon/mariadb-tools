@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 
-my $output = `$trunk/bin/pt-stalk --help`;
+my $output = `$trunk/bin/mariadb-stat --help`;
 
 like(
    $output,

@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -25,11 +25,11 @@ if ( !$dbh ) {
 
 my $output;
 my $rows;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
-my $cmd = "$trunk/bin/pt-archiver";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-archiver";
 
 $sb->create_dbs($dbh, ['test']);
-$sb->load_file('master', 't/pt-archiver/samples/table1.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/table1.sql');
 
 # Archive to a file.
 `rm -f archive.test.table_1`;
@@ -51,7 +51,7 @@ EOF
 `rm -f archive.test.table_1`;
 
 # Archive to a file, but specify only some columns.
-$sb->load_file('master', 't/pt-archiver/samples/table1.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/table1.sql');
 `rm -f archive.test.table_1`;
 $output = output(
    sub { pt_archiver::main("-c", "b,c", qw(--where 1=1 --header), "--source", "D=test,t=table_1,F=$cnf", "--file", 'archive.%D.%t') },
@@ -74,7 +74,7 @@ EOF
 sub test_charset {
    my ($charset) = @_;
    
-   $sb->load_file('master', 't/pt-archiver/samples/table1.sql');
+   $sb->load_file('master', 't/mariadb-archiver/samples/table1.sql');
    local $@;
    my ($out, $exit_val) = full_output( sub {
       pt_archiver::main("-c", "b,c", qw(--where 1=1 --header),
@@ -98,7 +98,7 @@ for my $charset (qw(latin1 utf8 UTF8 )) {
 my $warning;
 local $SIG{__WARN__} = sub { $warning .= shift };
 my ($out) = full_output( sub {
-      $sb->load_file('master', 't/pt-archiver/samples/table1.sql');
+      $sb->load_file('master', 't/mariadb-archiver/samples/table1.sql');
       pt_archiver::main("-c", "b,c", qw(--where 1=1 --header),
             "--source", "D=test,t=table_1,F=$cnf",
             '--file', '/tmp/%Y-%m-%d-%D_%H:%i:%s.%t',
@@ -116,7 +116,7 @@ like(
 
 local $SIG{__WARN__} = undef;
 
-$sb->load_file('master', 't/pt-archiver/samples/table2.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/table2.sql');
 `rm -f archive.test.table_2`;
 $output = output(
     sub { pt_archiver::main(qw(--where 1=1 --output-format=csv), "--source", "D=test,t=table_2,F=$cnf", "--file", 'archive.%D.%t') },

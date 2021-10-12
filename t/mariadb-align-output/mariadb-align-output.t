@@ -12,14 +12,14 @@ use English qw(-no_match_vars);
 use Test::More tests => 2;
 
 use PerconaTest;
-require "$trunk/bin/pt-align";
+require "$trunk/bin/mariadb-align-output";
 
-foreach my $raw_file ( <$trunk/t/pt-align/samples/*-raw.txt> ) {
+foreach my $raw_file ( <$trunk/t/mariadb-align-output/samples/*-raw.txt> ) {
    my ($n) = $raw_file =~ m/(\d+)-raw\.txt/;
    ok(
       no_diff(
          sub { pt_align::main($raw_file) },
-         "t/pt-align/samples/$n-aligned.txt",
+         "t/mariadb-align-output/samples/$n-aligned.txt",
          keep_output => 1,
       ),
       "Align $n-raw.txt"

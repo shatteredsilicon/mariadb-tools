@@ -13,7 +13,7 @@ use Test::More tests => 2;
 
 use PerconaTest;
 
-require "$trunk/bin/pt-query-digest";
+require "$trunk/bin/mariadb-query-digest";
 
 # #############################################################################
 # Issue 172: Make mk-query-digest able to read raweral logs
@@ -25,7 +25,7 @@ my $sample = "$trunk/t/lib/samples/rawlogs/";
 # --help exists so don't run mqd as a module else --help's exit will
 # exit this test script.
 like(
-   `$trunk/bin/pt-query-digest --type rawlog rawlog001.txt --help`,
+   `$trunk/bin/mariadb-query-digest --type rawlog rawlog001.txt --help`,
    qr/--order-by\s+Query_time:cnt/,
    '--order-by defaults to Query_time:cnt for --type rawlog',
 );
@@ -33,7 +33,7 @@ like(
 ok(
    no_diff(
       sub { pt_query_digest::main(@args, $sample.'rawlog001.txt') },
-      "t/pt-query-digest/samples/rawlog001.txt"
+      "t/mariadb-query-digest/samples/rawlog001.txt"
    ),
    'Analysis for rawlog001',
 );

@@ -21,7 +21,7 @@ $ENV{PERCONA_TOOLKIT_TEST_USE_DSN_NAMES} = 1;
 use PerconaTest;
 use Sandbox;
 use Data::Dumper;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp = new DSNParser(opts=>$dsn_opts);
 my $sb = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -88,7 +88,7 @@ sub check_rows {
 # Purge rows.
 # ###########################################################################
 
-$sb->load_file('node1', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('node1', 't/mariadb-archiver/samples/tables1-4.sql');
 $node1_dbh->do("INSERT INTO test.table_2 SELECT * FROM test.table_1");
 
 # Since there's no auto-inc column, all rows should be purged on all nodes.
@@ -126,7 +126,7 @@ check_rows(
 # Do not purge rows.
 # ###########################################################################
 
-$sb->load_file('node1', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('node1', 't/mariadb-archiver/samples/tables1-4.sql');
 my $expected_rows = $node1_dbh->selectall_arrayref(
    "SELECT * FROM test.table_1 ORDER BY a");
 
@@ -175,7 +175,7 @@ check_rows(
 
 # To another node
 
-$sb->load_file('node1', 't/pt-archiver/samples/tables1-4.sql');
+$sb->load_file('node1', 't/mariadb-archiver/samples/tables1-4.sql');
 $expected_rows = $node1_dbh->selectall_arrayref(
    "SELECT * FROM test.table_1 ORDER BY a");
 
@@ -205,7 +205,7 @@ check_rows(
 
 # Same node
 
-$sb->load_file('node1', "t/pt-archiver/samples/bulk_regular_insert.sql");
+$sb->load_file('node1', "t/mariadb-archiver/samples/bulk_regular_insert.sql");
 $expected_rows = $node1_dbh->selectall_arrayref(
    "SELECT * FROM bri.t ORDER BY id");
 # The max auto-inc col won't be archived, so:
@@ -233,7 +233,7 @@ check_rows(
 
 # To another node
 
-$sb->load_file('node1', "t/pt-archiver/samples/bulk_regular_insert.sql");
+$sb->load_file('node1', "t/mariadb-archiver/samples/bulk_regular_insert.sql");
 
 output(
    sub {
@@ -262,7 +262,7 @@ check_rows(
 
 # Same node
 
-$sb->load_file('node2', 't/pt-archiver/samples/table5.sql');
+$sb->load_file('node2', 't/mariadb-archiver/samples/table5.sql');
 $expected_rows = $node1_dbh->selectall_arrayref(
    "SELECT * FROM test.table_5 ORDER BY a,b,c,d");
 
@@ -289,7 +289,7 @@ check_rows(
 
 # To another node
 
-$sb->load_file('node2', 't/pt-archiver/samples/table5.sql');
+$sb->load_file('node2', 't/mariadb-archiver/samples/table5.sql');
 
 $output = output(
    sub {
@@ -316,7 +316,7 @@ check_rows(
 # Repeat some of the above tests with MyISAM.
 # #############################################################################
 
-$sb->load_file('node1', 't/pt-archiver/samples/table14.sql');
+$sb->load_file('node1', 't/mariadb-archiver/samples/table14.sql');
 $expected_rows = $node1_dbh->selectall_arrayref(
    "SELECT * FROM test.table_1 ORDER BY a");
 $node1_dbh->do("INSERT INTO test.table_2 SELECT * FROM test.table_1");
@@ -356,7 +356,7 @@ check_rows(
 # Archive rows to another MyISAM table.
 
 # Same node
-$sb->load_file('node1', 't/pt-archiver/samples/table14.sql');
+$sb->load_file('node1', 't/mariadb-archiver/samples/table14.sql');
 $output = output(
    sub {
       pt_archiver::main(@args, '--source', "D=test,t=table_1,F=$node1_cnf",
@@ -378,7 +378,7 @@ check_rows(
 );
 
 # To another node
-$sb->load_file('node1', 't/pt-archiver/samples/table14.sql');
+$sb->load_file('node1', 't/mariadb-archiver/samples/table14.sql');
 
 $output = output(
    sub {

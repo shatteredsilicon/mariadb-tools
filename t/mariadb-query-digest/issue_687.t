@@ -17,7 +17,7 @@ use PerconaTest;
 # Issue 687: Test segfaults on old version of Perl
 # #############################################################################
 my $zcat = `uname` =~ m/Darwin/ ? 'gzcat' : 'zcat';
-my $output = `$zcat $trunk/t/lib/samples/slowlogs/slow039.txt.gz | $trunk/bin/pt-query-digest 2>/tmp/mqd-warnings.txt`;
+my $output = `$zcat $trunk/t/lib/samples/slowlogs/slow039.txt.gz | $trunk/bin/mariadb-query-digest 2>/tmp/mqd-warnings.txt`;
 like(
    $output,
    qr/Query 1:/,

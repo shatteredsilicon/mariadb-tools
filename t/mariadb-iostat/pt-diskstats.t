@@ -13,16 +13,16 @@ use Test::More;
 use File::Temp qw();
 
 use PerconaTest;
-require "$trunk/bin/pt-diskstats";
+require "$trunk/bin/mariadb-iostat";
 
 # Re-open STDIN to /dev/null before the tieing magic, to avoid
 # a bug in older Perls.
 open STDIN, "<", "/dev/null";
 
-# pt-diskstats is an interactive-only tool.  It waits for user input
+# mariadb-iostat is an interactive-only tool.  It waits for user input
 # (i.e. menu commands) via STDIN.  So we cannot just run it with input,
 # get ouput, then test that output.  We have to tie STDIN to these subs
-# so that we can fake sending pt-diskstats menu commands via STDIN.
+# so that we can fake sending mariadb-iostat menu commands via STDIN.
 # All we do is send 'q', the command to quit.  See the note in the bottom
 # of this file about *DATA. Please don't close it.
 my $called_seek_on_handle = 0;
@@ -70,7 +70,7 @@ my $called_seek_on_handle = 0;
 
 sub test_diskstats_file {
    my (%args)     = @_;
-   my $file       = "$trunk/t/pt-diskstats/samples/$args{file}";
+   my $file       = "$trunk/t/mariadb-iostat/samples/$args{file}";
    my @commands   = @{ $args{commands} || [qw( q )] };
    my $print_cmds = join "][",
                         map {
@@ -98,7 +98,7 @@ sub test_diskstats_file {
                   '--group-by', $groupby,
                   $file);
             },
-            "t/pt-diskstats/expected/$expect_file",
+            "t/mariadb-iostat/expected/$expect_file",
          ),
          "$args{file} --group-by $groupby, commands: [$print_cmds]"
       ) or diag($expect_file, $test_diff);
@@ -139,7 +139,7 @@ test_diskstats_file(
 # ###########################################################################
 
 my (undef, $tempfile) = File::Temp::tempfile(
-   "/tmp/pt-diskstats.test.XXXXXX",
+   "/tmp/mariadb-iostat.test.XXXXXX",
    OPEN => 0,
 );
 

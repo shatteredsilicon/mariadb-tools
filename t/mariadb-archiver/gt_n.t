@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-archiver";
+require "$trunk/bin/mariadb-archiver";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -28,13 +28,13 @@ else {
 
 my $output;
 my $rows;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
-my $cmd = "$trunk/bin/pt-archiver";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-archiver";
 
 # ###########################################################################
 # Test the custom plugin gt_n.
 # ###########################################################################
-$sb->load_file('master', 't/pt-archiver/samples/gt_n.sql');
+$sb->load_file('master', 't/mariadb-archiver/samples/gt_n.sql');
 my $sql = 'select status, count(*) from gt_n.t1 group by status';
 is_deeply(
    $dbh->selectall_arrayref($sql),
@@ -46,7 +46,7 @@ is_deeply(
 );
 
 # Add path to samples to Perl's INC so the tool can find the module.
-diag(`perl -I $trunk/t/pt-archiver/samples $cmd --where '1=1' --purge --source F=$cnf,D=gt_n,t=t1,m=gt_n 2>&1`);
+diag(`perl -I $trunk/t/mariadb-archiver/samples $cmd --where '1=1' --purge --source F=$cnf,D=gt_n,t=t1,m=gt_n 2>&1`);
 
 is_deeply(
    $dbh->selectall_arrayref($sql),
