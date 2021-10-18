@@ -8,6 +8,7 @@ services:
       - "./tmp/primary/data/:/var/lib/mysql/"
       - "./tmp/primary/configs/:/etc/mysql/"
       - "./tmp/primary/run/:/run/mysqld/"
+      - "../bin:/usr/local/bin/tools"
     ports:
      - "12345:3306"
   mariatertiary:
@@ -18,6 +19,7 @@ services:
       - "./tmp/tertiary/data/:/var/lib/mysql/"
       - "./tmp/tertiary/configs/:/etc/mysql/"
       - "./tmp/tertiary/run/:/run/mysqld/"
+      - "../bin:/usr/local/bin/tools"
     ports:
      - "12347:3306"
   mariasecondary:
@@ -28,5 +30,6 @@ services:
       - "./tmp/secondary/data/:/var/lib/mysql/"
       - "./tmp/secondary/configs/:/etc/mysql/"
       - "./tmp/secondary/run/:/run/mysqld/"
+      - "../bin:/usr/local/bin/tools"
     ports:
      - "12346:3306"

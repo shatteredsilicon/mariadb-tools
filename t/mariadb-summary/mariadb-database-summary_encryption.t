@@ -20,6 +20,7 @@ local $ENV{PTDEBUG} = "";
 
 my $dp         = new DSNParser(opts=>$dsn_opts);
 my $sb         = new Sandbox(basedir => '/tmp', DSNParser => $dp);
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
 my $master_dbh = $sb->get_dbh_for('master');
 my $has_keyring_plugin;
 
@@ -34,11 +35,13 @@ if ( $db_flavor =~ m/Percona Server/ ) {
     }
 }
 
-if ($has_keyring_plugin) {
-    plan skip_all => 'Keyring plugins are enabled.';
+if (!$has_keyring_plugin) {
+    plan skip_all => 'Keyring plugins are not enabled.';
+} elsif ( $sandbox_version lt '5.7' || $db_flavor !~ m/Percona Server/) {
+    plan skip_all => 'These tests need Percona Server 5.7+';
 }
 
-my ($tool) = $PROGRAM_NAME =~ m/([\w-]+)\.t$/;
+my ($tool) = $PROGRAM_NAME =~ m/([\w-]+)_encryption\.t$/;
 
 # mysqldump from earlier versions doesn't seem to work with 5.6,
 # so use the actual mysqldump from each MySQL bin which should
@@ -51,7 +54,7 @@ my $env = qq\CMD_MYSQLDUMP="$ENV{PERCONA_TOOLKIT_SANDBOX}/bin/mysqldump"\;
 
 my $dir = tempdir( "percona-testXXXXXXXX", CLEANUP => 1 );
 
-`$env $trunk/bin/$tool --sleep 1 --save-samples $dir -- --defaults-file=/tmp/12345/my.sandbox.cnf`;
+`$env $trunk/bin/$tool --sleep 1 --save-samples $dir -- --defaults-file=$cnf`;
 
 ok(
    -e $dir,
@@ -73,7 +76,7 @@ undef($dir);  # rm the dir because CLEANUP => 1
 # --databases
 #
 
-my $out = `$env $trunk/bin/$tool --sleep 1 --databases mysql 2>/dev/null -- --defaults-file=/tmp/12345/my.sandbox.cnf`;
+my $out = `$env $trunk/bin/$tool --sleep 1 --databases mysql 2>/dev/null -- --defaults-file=$cnf`;
 
 like(
    $out,
@@ -87,13 +90,9 @@ like(
    "InnoDB section present"
 );
 
-my $users_count = 2;
-if ($ENV{FORK} || "" eq 'mariadb') {
-    $users_count = 8;
-}
 like(
    $out,
-   qr/Users \| $users_count/,
+   qr/Users \| 2/,
    "Security works"
 );
 
@@ -103,11 +102,11 @@ for my $i (2..7) {
       no_diff(
          sub {
             local $ENV{_NO_FALSE_NEGATIVES} = 1;
-            print `$env $trunk/bin/$tool --read-samples $trunk/t/mariadb-database-summary/samples/temp00$i  -- --defaults-file=/tmp/12345/my.sandbox.cnf | tail -n+3 | perl -wlnpe 's/Skipping schema analysis.*/Specify --databases or --all-databases to dump and summarize schemas/' | grep -v jemalloc`
+            print `$env $trunk/bin/$tool --read-samples $trunk/t/mariadb-database-summary/samples/temp00$i  -- --defaults-file=$cnf | tail -n+3 | perl -wlnpe 's/Skipping schema analysis.*/Specify --databases or --all-databases to dump and summarize schemas/' | grep -v jemalloc`
          },
-         "t/mariadb-database-summary/samples/expected_output_temp00$i.txt",
+         "t/mariadb-database-summary/samples/expected_output_temp_enc00$i.txt",
       ),
-      "--read-samples works for t/mariadb-database-summary/temp00$i",
+      "--read-samples works for t/mariadb-database-summary/temp_enc00$i",
    ) or diag($test_diff);
 }
 
@@ -121,5 +120,43 @@ is(
    $bash,
    "--help works under sh and bash"
 );
+
+$master_dbh->do("DROP DATABASE IF EXISTS test");
+$master_dbh->do("CREATE DATABASE test");
+$master_dbh->do("CREATE TABLE test.t1(a INT PRIMARY KEY) ENCRYPTION='Y'");
+$master_dbh->do("CREATE TABLESPACE foo ADD DATAFILE 'foo.ibd' ENCRYPTION='Y'");
+$master_dbh->do("ALTER TABLE test.t1 TABLESPACE=foo");
+$master_dbh->do("CREATE TABLE test.t2(a INT PRIMARY KEY) ENCRYPTION='Y'");
+
+$out = `bash $trunk/bin/$tool --list-encrypted-tables`;
+
+like(
+   $out,
+   qr/Encryption/,
+   "Encryption section included in report"
+) or diag $out;
+
+like(
+   $out,
+   qr/Keyring plugins/,
+   "Keyring plugins included in report"
+) or diag $out;
+
+like(
+   $out,
+   qr/Encrypted tables/,
+   "Encrypted tables included in report"
+) or diag $out;
+
+like(
+   $out,
+   qr/Encrypted tablespaces/,
+   "Encrypted tablespaces included in report"
+) or diag $out;
+
+$master_dbh->do("DROP TABLE IF EXISTS test.t1");
+$master_dbh->do("DROP TABLE IF EXISTS test.t2");
+$master_dbh->do("DROP DATABASE IF EXISTS test");
+$master_dbh->do("DROP TABLESPACE foo");
 
 done_testing;

@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl 
 
 BEGIN {
    die "The PERCONA_TOOLKIT_BRANCH environment variable is not set.\n"
@@ -35,7 +35,9 @@ my $cnf  = "/tmp/12345/configs/mariadb-client.cnf";
 my $cmd  = "$trunk/bin/mariadb-archiver";
 my @args = qw(--dry-run --where 1=1);
 
+$sb->_d("Prepping master with test-specific schema, will ensure slaves have received downstream...");
 $sb->create_dbs($master_dbh, ['test']);
+$sb->_d('Loading table schema...');
 $sb->load_file('master', 't/mariadb-archiver/samples/tables1-4.sql');
 $sb->wait_for_slaves();
 
@@ -45,6 +47,7 @@ $sb->wait_for_slaves();
 # ###########################################################################
 
 # Test --for-update
+$sb->_d('Starting --for-update');
 $output = output(sub {pt_archiver::main(@args, '--source', "D=test,t=table_1,F=$cnf", qw(--for-update --purge)) });
 like($output, qr/SELECT .*? FOR UPDATE/, '--for-update');
 
@@ -230,9 +233,9 @@ SKIP: {
       "Bug 903387: slave still has rows"
    ) or diag(Dumper($rows));
 }
-# #############################################################################
+#############################################################################
 # Done.
-# #############################################################################
+#############################################################################
 $sb->wipe_clean($master_dbh);
 ok($sb->ok(), "Sandbox servers") or BAIL_OUT(__FILE__ . " broke the sandbox");
 

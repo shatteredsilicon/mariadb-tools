@@ -20,6 +20,12 @@ my $sb   = new Sandbox(basedir => '/tmp', DSNParser => $dp);
 my $dbh  = $sb->get_dbh_for('master');
 my $dbh2 = $sb->get_dbh_for('slave1');
 
+# $sb->_d("Sandbox Version detected as: ",$sandbox_version);
+# my $vers = $dbh->selectrow_array("select version() as ver");
+# my @sndbox = split('-',$vers);
+# my @sndboxver = split("\.",$sndbox[0]);
+# $sb->_d("Sandbox Version detected as: ",$sndboxver);
+
 if ( !$dbh ) {
    plan skip_all => 'Cannot connect to sandbox master';
 }
@@ -30,7 +36,7 @@ elsif ( $sb->is_cluster_mode ) {
    plan skip_all => 'Not for PXC',
 }
 elsif ( $sandbox_version ge '5.6' ) {
-   plan skip_all => 'Slave trick does not work on MySQL 5.6+';
+   plan skip_all => 'Slave trick does not work on MySQL 5.6+'; // TODO: force this to check Select version(); instead of test-env version.
 }
 
 my $output;

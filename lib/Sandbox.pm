@@ -132,13 +132,14 @@ sub create_dbs {
 }
    
 sub get_dbh_for {
-   my ( $self, $server, $cxn_ops, $user ) = @_;
+   my ( $self, $server, $cxn_ops, $user, $pass) = @_;
    _check_server($server);
    $cxn_ops ||= { AutoCommit => 1, mysql_enable_utf8 => 1 };
    $user    ||= 'msandbox';
+   $pass    ||= 'msandbox';
    PTDEBUG && _d('dbh for', $server, 'on port', $port_for{$server});
    my $dp = $self->{DSNParser};
-   my $dsn = $dp->parse("h=127.0.0.1,u=$user,p=msandbox,P=" . $port_for{$server});
+   my $dsn = $dp->parse("h=127.0.0.1,u=$user,p=$pass,P=" . $port_for{$server});
    my $dbh;
    # This is primarily for the benefit of CompareResults, but it's
    # also quite convenient when using an affected OS
@@ -166,7 +167,9 @@ sub load_file {
 
    my $use = $self->_use_for($server) . " $d < $file";
    PTDEBUG && _d('Loading', $file, 'on', $server, ':', $use);
+   _d('Loading', $file, 'on', $server, ':', $use);
    my $out = `$use 2>&1`;
+   _d('Output: ',$out,' exit status:', $?);
    if ( $? >> 8 ) {
       die "Failed to execute $file on $server: $out";
    }
@@ -349,7 +352,7 @@ sub wait_for_slaves {
          my ($pong) = $slave2_dbh->selectrow_array(
             "SELECT ping FROM mariadb_test.sentinel WHERE id=1 /* wait_for_slaves */");
          return $ping eq ($pong || '');
-      }, undef, 300
+      }, undef, 180
    );
 }
 
@@ -570,7 +573,7 @@ sub config_file_for {
 
 sub do_as_root {
    my ($self, $server, @queries) = @_;
-   my $dbh = $self->get_dbh_for($server, undef, 'root');
+   my $dbh = $self->get_dbh_for($server, undef, 'root', 'skysql');
    my $ok = 1;
    eval {
       foreach my $query ( @queries ) {

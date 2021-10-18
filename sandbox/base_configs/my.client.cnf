@@ -1,0 +1,8 @@
+[client]
+user     = msandbox
+password = msandbox
+port     = PORT
+protocol = tcp
+host = 127.0.0.1
+
+

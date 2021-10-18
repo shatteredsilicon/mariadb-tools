@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This program is copyright 2009-2011 Percona Inc.
+# This program is copyright 2009-2021 Percona Inc and 2021 MariaDB Corporation
 # Feedback and improvements are welcome.
 #
 # THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -18,9 +18,9 @@
 # Place, Suite 330, Boston, MA  02111-1307  USA.
 
 # This program is intended to be run after loading Sakila into our test
-# database, when starting the "sandbox" MySQL instances. It will store the
+# database, when starting the "sandbox" MariaDB instances. It will store the
 # checksums of all of the mysql and sakila tables into a magical
-# percona_test.checksums table on instance 12345. Afterwards, one can verify the
+# mariadb_test.checksums table on instance 12345. Afterwards, one can verify the
 # integrity of all of these tables by running
 # lib/Sandbox.pm::verify_test_data_integrity() which will checksum the master
 # and all of the slaves, and make sure all are OK.
@@ -40,21 +40,21 @@ my $dbh = DBI->connect(
       #      mysql_local_infile => 1,
    });
 
-$dbh->do("CREATE TABLE IF NOT EXISTS percona_test.load_data (i int)");
+$dbh->do("CREATE TABLE IF NOT EXISTS mariadb_test.load_data (i int)");
 
 `echo 1 > /tmp/load_data_test.$$`;
 
 eval {
-    $dbh->do("LOAD DATA INFILE '/tmp/load_data_test.$$' INTO TABLE percona_test.load_data");
+    $dbh->do("LOAD DATA INFILE '/tmp/load_data_test.$$' INTO TABLE mariadb_test.load_data");
 };
 
 if ( $EVAL_ERROR ) {
-   $dbh->do("INSERT INTO percona_test.load_data (i) VALUES (0)");
+   $dbh->do("INSERT INTO mariadb_test.load_data (i) VALUES (0)");
 }
 
 unlink "/tmp/load_data_test.$$";
 
-my ($val) = $dbh->selectrow_array("SELECT i FROM percona_test.load_data");
+my ($val) = $dbh->selectrow_array("SELECT i FROM mariadb_test.load_data");
 
 if ( ($val || 0) == 1 ) {
    print "LOAD DATA LOCAL INFILE is enabled\n";

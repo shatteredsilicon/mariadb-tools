@@ -28,7 +28,7 @@ elsif ( !$dbh2 ) {
 }
 
 my $output;
-my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";cnf";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
 my $pid_file = "/tmp/mariadb-archiver-test.pid.$PID";
 my $sentinel = "/tmp/mariadb-archiver-test.sentinel.$PID";
 

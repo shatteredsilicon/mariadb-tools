@@ -1,0 +1,26 @@
+[mysqld]
+skip-host-cache
+skip-name-resolve
+log-bin
+server_id=ID
+log-basename=NAME
+binlog-format=row
+socket = /run/mysqld/mysqld.sock
+port                       = 3306
+pid-file                   = /var/lib/mysql/mysql_sandboxPORT.pid
+datadir                    = /var/lib/mysql
+key_buffer_size            = 16M
+innodb_buffer_pool_size    = 16M
+innodb_data_home_dir       = /var/lib/mysql
+innodb_log_group_home_dir  = /var/lib/mysql
+innodb_data_file_path      = ibdata1:10M:autoextend
+innodb_log_file_size       = 64M
+relay_log                  = mysql-relay-bin
+log_slave_updates
+report-host                = 127.0.0.1
+report-port                = 3306
+log-error                  = /var/lib/mysql/mysqld.log
+innodb_lock_wait_timeout   = 3
+general_log
+general_log_file           = /var/lib/mysql/genlog
+performance_schema         = ON
