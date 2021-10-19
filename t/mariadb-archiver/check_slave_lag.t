@@ -36,7 +36,7 @@ elsif ( $sb->is_cluster_mode ) {
    plan skip_all => 'Not for PXC',
 }
 elsif ( $sandbox_version ge '5.6' ) {
-   plan skip_all => 'Slave trick does not work on MySQL 5.6+'; // TODO: force this to check Select version(); instead of test-env version.
+   plan skip_all => 'Slave trick does not work on MySQL 5.6+';  ## TODO: force this to check Select version(); instead of test-env version.
 }
 
 my $output;

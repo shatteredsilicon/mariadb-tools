@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+.0#!/usr/bin/env perl
 
 BEGIN {
    die "The PERCONA_TOOLKIT_BRANCH environment variable is not set.\n"
@@ -160,7 +160,7 @@ SKIP: {
    my $repl_thd_ids = join("|", @repl_thds);
 
    $output = output(
-      sub { pt_kill::main(qw(-F /tmp/12346/my.sandbox.cnf --match-user system --print --run-time 1 --interval 1)); }
+      sub { pt_kill::main(qw(-F /tmp/12346/configs/mariadb-client.cnf --match-user system --print --run-time 1 --interval 1)); }
    );
    is(
       $output,
@@ -169,7 +169,7 @@ SKIP: {
    );
 
    $output = output(
-      sub { pt_kill::main(qw(-F /tmp/12346/my.sandbox.cnf --match-user system --print --replication-threads --run-time 1 --interval 1)); }
+      sub { pt_kill::main(qw(-F /tmp/12346/configs/mariadb-client.cnf --match-user system --print --replication-threads --run-time 1 --interval 1)); }
    );
    like(
       $output,

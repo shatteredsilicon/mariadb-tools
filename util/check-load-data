@@ -42,17 +42,17 @@ my $dbh = DBI->connect(
 
 $dbh->do("CREATE TABLE IF NOT EXISTS mariadb_test.load_data (i int)");
 
-`echo 1 > /tmp/load_data_test.$$`;
+`echo 1 > /tmp/12345/data/load_data_test`;
 
 eval {
-    $dbh->do("LOAD DATA INFILE '/tmp/load_data_test.$$' INTO TABLE mariadb_test.load_data");
+    $dbh->do("LOAD DATA INFILE '/var/lib/mysql/load_data_test' INTO TABLE mariadb_test.load_data");
 };
 
 if ( $EVAL_ERROR ) {
    $dbh->do("INSERT INTO mariadb_test.load_data (i) VALUES (0)");
 }
 
-unlink "/tmp/load_data_test.$$";
+unlink "/tmp/12345/data/load_data_test";
 
 my ($val) = $dbh->selectrow_array("SELECT i FROM mariadb_test.load_data");
 

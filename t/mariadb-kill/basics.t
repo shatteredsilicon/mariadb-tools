@@ -1,4 +1,4 @@
-!/usr/bin/env perl
+#!/usr/bin/env perl
 
 BEGIN {
    die "The PERCONA_TOOLKIT_BRANCH environment variable is not set.\n"
@@ -31,7 +31,7 @@ else {
 
 my $output;
 my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
-my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.1";
+my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.0.0.1";
 
 # Shell out to a sleep(10) query and try to capture the query.
 # Backticks don't work here.
@@ -49,6 +49,7 @@ $output = `$cmd --busy-time 1s --print --run-time 10`;
 # 2009-05-27T22:19:46 KILL 5 (Query 7 sec) select sleep(10)
 # 2009-05-27T22:19:47 KILL 5 (Query 8 sec) select sleep(10)
 # 2009-05-27T22:19:48 KILL 5 (Query 9 sec) select sleep(10)
+$sb->_d("test output: $output");
 my @times = $output =~ m/\(Query (\d+) sec\)/g;
 ok(
    @times > 2 && @times < 7,

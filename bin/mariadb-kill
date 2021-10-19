@@ -1979,6 +1979,7 @@ sub parse_options {
           grep { $o->has($_) && $o->get($_) }
           keys %{$self->{opts}}
         );
+   _d("opts: ".keys %{$self->{opts}});
    PTDEBUG && _d('DSN string made from options:', $dsn_string);
    return $self->parse($dsn_string);
 }
@@ -5289,7 +5290,7 @@ sub new {
    my $prev_dsn     = $args{prev_dsn};
    my $dsn          = $args{dsn};
    if ( !$dsn ) {
-      $args{dsn_string} ||= 'h=' . ($dsn_defaults->{h} || 'localhost');
+      $args{dsn_string} ||= 'h=' . ($dsn_defaults->{h} || '127.0.0.1');
 
       $dsn = $dp->parse(
          $args{dsn_string}, $prev_dsn, $dsn_defaults);
@@ -5662,7 +5663,7 @@ sub _split_url {
     $scheme     = lc $scheme;
     $path_query = "/$path_query" unless $path_query =~ m<\A/>;
 
-    my $host = (length($authority)) ? lc $authority : 'localhost';
+    my $host = (length($authority)) ? lc $authority : '127.0.0.1';
        $host =~ s/\A[^@]*@//;   # userinfo
     my $port = do {
        $host =~ s/:([0-9]*)\z// && length $1
@@ -6723,6 +6724,8 @@ sub main {
          } # CLASS
          msg('Matched ' . scalar @queries . ' queries');
 
+         my $query = "placeholder";
+
          MATCHING_QUERY:
          foreach my $query ( @queries ) {
             if ( $o->get('print') ) {
@@ -6770,7 +6773,7 @@ sub main {
                }
             }
          }
-      }
+      
       else {
          msg('Processlist returned no queries');
       }
