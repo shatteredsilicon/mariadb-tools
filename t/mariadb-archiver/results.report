@@ -1,0 +1,565 @@
+../t/mariadb-archiver/archive_using_channels.t .. skipped: Only on MySQL 5.7+
+../t/mariadb-archiver/basics.t .................. 
+# main:38 95822 Sandbox=HASH(0x7fe3db0fe508) Prepping master with test-specific schema, will ensure slaves have received downstream...
+# main:40 95822 Sandbox=HASH(0x7fe3db0fe508) Loading table schema...
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+# PerconaTest:245 95822 sleep for  180
+# main:50 95822 Sandbox=HASH(0x7fe3db0fe508) Starting --for-update
+ok 1 - --for-update
+ok 2 - --share-lock
+ok 3 - --quick-delete
+ok 4 - --low-priority-delete
+ok 5 - --low-priority-insert
+ok 6 - --delay-insert
+ok 7 - --replace
+ok 8 - --high-priority-select
+ok 9 - Only got specified columns
+ok 10 - --primary-key-only works
+ok 11 - Column check throws error
+ok 12 - I can disable the check OK
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 13 - Start timestamp
+ok 14 - source
+ok 15 - row counts
+ok 16 - Exit reason
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 17 - OPTIMIZE did not fail
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 18 - Empty table OK
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 19 - Progress output looks okay
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 20 - Stats print OK
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 21 - --no-delete implies strict ascending
+ok 22 - --no-delete implies strict ascending
+ok 23 - All 4 rows are still there
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/gt_n.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/gt_n.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 24 - --sleep between SELECT (bug 979092)
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/gt_n.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/gt_n.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+ok 25 - --sleep between SELECT --bulk-delete (bug 979092)
+# Sandbox:170 95822 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql
+# Sandbox:172 95822 Output:    exit status: 0
+# PerconaTest:245 95822 sleep for  180
+# PerconaTest:245 95822 sleep for  180
+ok 26 - Bug 903387: slave has rows
+ok 27 - Bug 903387: rows deleted on master
+ok 28 - Bug 903387: slave still has rows
+# PerconaTest:245 95822 sleep for  180
+# PerconaTest:245 95822 sleep for  180
+ok 29 - Sandbox servers
+1..29
+ok
+../t/mariadb-archiver/bugs.t .................... 
+# Sandbox:170 19913 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 19913 Output:    exit status: 0
+# PerconaTest:245 19913 sleep for  180
+ok 1 - --optimize does not consume --dry-run (bug 1199589)
+# PerconaTest:245 19913 sleep for  180
+# PerconaTest:245 19913 sleep for  180
+ok 2 - Sandbox servers
+1..2
+ok
+../t/mariadb-archiver/bulk_delete.t ............. 
+1..14
+# Sandbox:170 25028 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql
+# Sandbox:172 25028 Output:    exit status: 0
+# PerconaTest:245 25028 sleep for  180
+ok 1 - Fetched 105 rows
+ok 2 - Deleted 105 rows
+ok 3 - Issued only 3 DELETE statements
+ok 4 - Bulk delete removed all rows
+ok 5 - Generic plugin worked
+ok 6 - WHERE clause is jailed
+ok 7 - WHERE clause is jailed
+# Sandbox:170 25028 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql
+# Sandbox:172 25028 Output:    exit status: 0
+# PerconaTest:245 25028 sleep for  180
+ok 8 - Fetched 105 rows
+ok 9 - Deleted 105 rows
+ok 10 - Inserted 105 rows
+ok 11 - Issued only 3 DELETE statements
+ok 12 - Bulk delete removed all rows
+ok 13 - Bulk delete works OK with normal insert
+# PerconaTest:245 25028 sleep for  180
+# PerconaTest:245 25028 sleep for  180
+ok 14 - Sandbox servers
+ok
+../t/mariadb-archiver/bulk_insert.t ............. 
+# PerconaTest:245 31824 sleep for  180
+# Sandbox:170 31824 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql
+# Sandbox:172 31824 Output:    exit status: 0
+# PerconaTest:245 31824 sleep for  180
+ok 1 - Fetched 105 rows
+ok 2 - Deleted 105 rows
+ok 3 - Inserted 105 rows
+ok 4 - Issued only 3 DELETE statements
+ok 5 - Bulk delete removed all rows
+ok 6 - Bulk insert works
+ok 7 - copy checksum
+# Sandbox:170 31824 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql
+# Sandbox:172 31824 Output:    exit status: 0
+# PerconaTest:245 31824 sleep for  180
+ok 8 - --bulk-insert left 3 rows (issue 1260)
+ok 9 - --bulk-insert archived 7 rows (issue 1260)
+# Sandbox:170 31824 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bug_1127450.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bug_1127450.sql
+# Sandbox:172 31824 Output:    exit status: 0
+# PerconaTest:245 31824 sleep for  180
+ok 10 - --bulk-insert inserted the data
+ok 11 - --bulk-insert can handle ニ
+ok 12 - no wide character warnings
+ok 13 - Warns about the UTF-8 bug in DBD::mysql::VERSION lt '4', quiet otherwise
+# Sandbox:170 31824 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bug_1127450.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bug_1127450.sql
+# Sandbox:172 31824 Output:    exit status: 0
+# PerconaTest:245 31824 sleep for  180
+ok 14 - --bulk-insert inserted the data
+ok 15 - --bulk-insert can handle ß
+ok 16 - no wide character warnings
+ok 17 - Warns about the UTF-8 bug in DBD::mysql::VERSION lt '4', quiet otherwise
+# PerconaTest:245 31824 sleep for  180
+# PerconaTest:245 31824 sleep for  180
+ok 18 - Sandbox servers
+1..18
+ok
+../t/mariadb-archiver/bulk_regular_insert.t ..... 
+# Sandbox:170 43673 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql
+# Sandbox:172 43673 Output:    exit status: 0
+# PerconaTest:245 43673 sleep for  180
+ok 1 - Table after normal bulk insert
+ok 2 - Archive table after normal bulk insert
+# Sandbox:170 43673 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/bulk_regular_insert.sql
+# Sandbox:172 43673 Output:    exit status: 0
+# PerconaTest:245 43673 sleep for  180
+ok 3 - Table after bulk_regular_insert
+ok 4 - Archive table after bulk_regular_insert
+# PerconaTest:245 43673 sleep for  180
+# PerconaTest:245 43673 sleep for  180
+ok 5 - Sandbox servers
+1..5
+ok
+../t/mariadb-archiver/check_slave_lag.t ......... 
+Bareword found where operator expected at ../t/mariadb-archiver/check_slave_lag.t line 39, near "// TODO"
+Dubious, test returned 1 (wstat 256, 0x100)
+No subtests run 
+../t/mariadb-archiver/compact_col_vals.t ........ 
+1..4
+# Sandbox:170 50508 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/compact_col_vals.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/compact_col_vals.sql
+# Sandbox:172 50508 Output:    exit status: 0
+# PerconaTest:245 50508 sleep for  180
+ok 1 - Table before compacting
+ok 2 - Compacted values
+ok 3 - Reset AUTO_INCREMENT
+# PerconaTest:245 50508 sleep for  180
+# PerconaTest:245 50508 sleep for  180
+ok 4 - Sandbox servers
+ok
+../t/mariadb-archiver/delete_more.t ............. 
+1..19
+# Sandbox:170 55647 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql
+# Sandbox:172 55647 Output:    exit status: 0
+# PerconaTest:245 55647 sleep for  180
+ok 1 - main_table-123 data before archiving
+ok 2 - other_table-123 data before archiving
+ok 3 - main_table-123 data after archiving (limit 2)
+ok 4 - other_table-123 data after archiving (limit 2)
+ok 5 - Slave main_table-123 not changed
+ok 6 - Slave other_table-123 not changed
+# Sandbox:170 55647 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql
+# Sandbox:172 55647 Output:    exit status: 0
+# PerconaTest:245 55647 sleep for  180
+ok 7 - Reset slave main_table-123
+ok 8 - Reset slave other_table-123
+ok 9 - Slave main_table-123 changed
+ok 10 - Slave other_table-123 changed
+# Sandbox:170 55647 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql
+# Sandbox:172 55647 Output:    exit status: 0
+# PerconaTest:245 55647 sleep for  180
+ok 11 - main_table-123 data before archiving
+ok 12 - other_table-123 data before archiving
+ok 13 - main_table-123 data after archiving (limit 100)
+ok 14 - other_table-123 data after archiving (limit 100)
+# Sandbox:170 55647 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/delete_more.sql
+# Sandbox:172 55647 Output:    exit status: 0
+# PerconaTest:245 55647 sleep for  180
+ok 15 - main_table-123 data before archiving
+ok 16 - other_table-123 data before archiving
+ok 17 - main_table-123 data after archiving (single delete)
+ok 18 - other_table-123 data after archiving (single delete)
+# PerconaTest:245 55647 sleep for  180
+# PerconaTest:245 55647 sleep for  180
+ok 19 - Sandbox servers
+ok
+../t/mariadb-archiver/dest.t .................... 
+# Sandbox:170 65836 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 65836 Output:    exit status: 0
+# PerconaTest:245 65836 sleep for  180
+ok 1 - No output for archiving to another table
+ok 2 - Purged all rows ok
+ok 3 - Found rows in new table OK when archiving to another table
+# Sandbox:170 65836 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 65836 Output:    exit status: 0
+# PerconaTest:245 65836 sleep for  180
+ok 4 - No output for archiving only some cols to another table
+ok 5 - Purged all rows ok
+ok 6 - Found rows in new table OK when archiving only some columns to another table
+# Sandbox:170 65836 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 65836 Output:    exit status: 0
+# PerconaTest:245 65836 sleep for  180
+ok 7 - Commit every 0 rows worked OK
+ok 8 - Purged all rows ok
+ok 9 - Found rows in new table OK when archiving to another table with autocommit
+# Sandbox:170 65836 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 65836 Output:    exit status: 0
+# PerconaTest:245 65836 sleep for  180
+ok 10 - Commit every 2 rows worked OK
+ok 11 - Purged all rows ok
+ok 12 - Found rows in new table OK when archiving to another table with commit every 2 rows
+# Sandbox:170 65836 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 65836 Output:    exit status: 0
+# PerconaTest:245 65836 sleep for  180
+ok 13 - Rows got archived
+# PerconaTest:245 65836 sleep for  180
+# PerconaTest:245 65836 sleep for  180
+ok 14 - Sandbox servers
+1..14
+ok
+../t/mariadb-archiver/file.t .................... 
+# Sandbox:170 77735 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 77735 Output:    exit status: 0
+# PerconaTest:245 77735 sleep for  180
+ok 1 - No output for archiving to a file
+ok 2 - Purged all rows ok
+ok 3 - Archive file written OK
+ok 4 - File has the right stuff
+# Sandbox:170 77735 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 77735 Output:    exit status: 0
+# PerconaTest:245 77735 sleep for  180
+ok 5 - File has the right stuff with only some columns
+# Sandbox:170 77735 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 77735 Output:    exit status: 0
+# PerconaTest:245 77735 sleep for  180
+ok 6 - --charset latin1 works
+# Sandbox:170 77735 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 77735 Output:    exit status: 0
+# PerconaTest:245 77735 sleep for  180
+ok 7 - --charset utf8 works
+# Sandbox:170 77735 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 77735 Output:    exit status: 0
+# PerconaTest:245 77735 sleep for  180
+ok 8 - --charset UTF8 works
+ok 9 - ..but an unknown charset fails
+# Sandbox:170 77735 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table2.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table2.sql
+# Sandbox:172 77735 Output:    exit status: 0
+# PerconaTest:245 77735 sleep for  180
+ok 10 - --output-format=csv
+# PerconaTest:245 77735 sleep for  180
+# PerconaTest:245 77735 sleep for  180
+ok 11 - Sandbox servers
+1..11
+ok
+../t/mariadb-archiver/gt_n.t .................... 
+1..3
+# Sandbox:170 92901 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/gt_n.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/gt_n.sql
+# Sandbox:172 92901 Output:    exit status: 0
+# PerconaTest:245 92901 sleep for  180
+ok 1 - gt_n.t has 12 ok before archive
+ok 2 - gt_n.t has max 5 ok after archive
+# PerconaTest:245 92901 sleep for  180
+# PerconaTest:245 92901 sleep for  180
+ok 3 - Sandbox servers
+ok
+../t/mariadb-archiver/indexes.t ................. 
+1..18
+# PerconaTest:245 97992 sleep for  180
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 1 - Uses PRIMARY index
+ok 2 - Does not die with ascending index
+ok 3 - Ascended key OK
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 4 - Got bad-index error OK
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 5 - Got no error with a NULLable index
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 6 - Got need-PK-error OK
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 7 - No output for ascending index explicitly
+ok 8 - Ascended explicit key OK
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table11.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table11.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 9 - No output while dealing with out-of-order PK
+ok 10 - Ascended out-of-order PK OK
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table6.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table6.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 11 - No errors purging table_6
+ok 12 - Did not purge last row
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 13 - No errors in larger table
+ok 14 - Purged completely on multi-column ascending index
+ok 15 - --no-ascend makes fetch-first and fetch-next identical
+# Sandbox:170 97992 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql
+# Sandbox:172 97992 Output:    exit status: 0
+# PerconaTest:245 97992 sleep for  180
+ok 16 - No output when --no-ascend
+ok 17 - Can ascend just first column
+# PerconaTest:245 97992 sleep for  180
+# PerconaTest:245 97992 sleep for  180
+ok 18 - Sandbox servers
+ok
+../t/mariadb-archiver/issue_1152.t .............. skipped: issue 1152
+../t/mariadb-archiver/issue_1166.t .............. 
+1..4
+# Sandbox:170 18905 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql
+# Sandbox:172 18905 Output:    exit status: 0
+# PerconaTest:245 18905 sleep for  180
+# Sandbox:170 18905 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1166.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1166.sql
+# Sandbox:172 18905 Output:    exit status: 0
+# PerconaTest:245 18905 sleep for  180
+ok 1 - No LIMIT 1 with unique index (issue 1166)
+ok 2 - LIMIT 1 with non-unique index (issue 1166)
+# Sandbox:170 18905 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql
+# Sandbox:172 18905 Output:    exit status: 0
+# PerconaTest:245 18905 sleep for  180
+ok 3 - No LIMIT with bulk delete (issue 1170)
+# PerconaTest:245 18905 sleep for  180
+# PerconaTest:245 18905 sleep for  180
+ok 4 - Sandbox servers
+ok
+../t/mariadb-archiver/issue_1225.t .............. 
+1..5
+# Sandbox:170 27392 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1225.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1225.sql
+# Sandbox:172 27392 Output:    exit status: 0
+# PerconaTest:245 27392 sleep for  180
+ok 1 - Inserted UTF8 data
+ok 2 - --check-charset
+ok 3 - UTF8 characters lost when cxn isn't also UTF8
+# Sandbox:170 27392 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1225.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1225.sql
+# Sandbox:172 27392 Output:    exit status: 0
+# PerconaTest:245 27392 sleep for  180
+ok 4 - UTF8 characters preserved when cxn is also UTF8
+# PerconaTest:245 27392 sleep for  180
+# PerconaTest:245 27392 sleep for  180
+ok 5 - Sandbox servers
+ok
+../t/mariadb-archiver/issue_1229.t .............. 
+# Sandbox:170 34157 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1225.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1225.sql
+# Sandbox:172 34157 Output:    exit status: 0
+# PerconaTest:245 34157 sleep for  180
+ok 1 - Inserted UTF8 data
+ok 2 - Printed UTF8 data to --file
+# PerconaTest:245 34157 sleep for  180
+# PerconaTest:245 34157 sleep for  180
+ok 3 - Sandbox servers
+1..3
+ok
+../t/mariadb-archiver/issue_131.t ............... 
+1..2
+# Sandbox:170 39266 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql
+# Sandbox:172 39266 Output:    exit status: 0
+# PerconaTest:245 39266 sleep for  180
+ok 1 - Dest table has different column order (issue 131)
+# PerconaTest:245 39266 sleep for  180
+# PerconaTest:245 39266 sleep for  180
+ok 2 - Sandbox servers
+ok
+../t/mariadb-archiver/issue_1593265.t ........... 
+1..3
+# Sandbox:170 44372 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1593265.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_1593265.sql
+# Sandbox:172 44372 Output:    exit status: 0
+# PerconaTest:245 44372 sleep for  180
+ok 1 - Rows were left on the original table
+ok 2 - Rows were archived into the new table
+# PerconaTest:245 44372 sleep for  180
+# PerconaTest:245 44372 sleep for  180
+ok 3 - Sandbox servers
+ok
+../t/mariadb-archiver/issue_524.t ............... 
+1..2
+# Sandbox:170 49476 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/issue_131.sql
+# Sandbox:172 49476 Output:    exit status: 0
+# PerconaTest:245 49476 sleep for  180
+ok 1 - No DELETE with --no-delete --dry-run (issue 524)
+# PerconaTest:245 49476 sleep for  180
+# PerconaTest:245 49476 sleep for  180
+ok 2 - Sandbox servers
+ok
+../t/mariadb-archiver/issue_655.t ............... 
+1..3
+ok 1 - No error using --primary-key-only on table without pk (issue 655)
+ok 2 - Says that table doesn't have a pk (issue 655)
+# PerconaTest:245 54606 sleep for  180
+# PerconaTest:245 54606 sleep for  180
+ok 3 - Sandbox servers
+ok
+../t/mariadb-archiver/plugin.t .................. 
+1..18
+# Sandbox:170 58024 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 58024 Output:    exit status: 0
+# PerconaTest:245 58024 sleep for  180
+ok 1 - Loading a blank plugin worked OK
+ok 2 - Purged no rows ok b/c of blank plugin
+# Sandbox:170 58024 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table5.sql
+# Sandbox:172 58024 Output:    exit status: 0
+# PerconaTest:245 58024 sleep for  180
+ok 3 - No errors with strictly ascending index
+ok 4 - Purged completely with strictly ascending index
+# Sandbox:170 58024 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 58024 Output:    exit status: 0
+# PerconaTest:245 58024 sleep for  180
+ok 5 - Running with plugin did not die
+ok 6 - Purged all rows ok with plugin
+ok 7 - Plugin archived all rows to table_2 OK
+# Sandbox:170 58024 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables7-9.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables7-9.sql
+# Sandbox:172 58024 Output:    exit status: 0
+# PerconaTest:245 58024 sleep for  180
+ok 8 - Loading plugin worked OK
+ok 9 - Purged all rows ok with plugin
+ok 10 - Plugin archived all rows to table_8 OK
+ok 11 - ODKU made one row
+ok 12 - ODKU added rows up
+# Sandbox:170 58024 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table10.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table10.sql
+# Sandbox:172 58024 Output:    exit status: 0
+# PerconaTest:245 58024 sleep for  180
+ok 13 - Loading plugin worked OK
+ok 14 - Plugin archived all rows to table_10 OK
+# Sandbox:170 58024 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table10.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table10.sql
+# Sandbox:172 58024 Output:    exit status: 0
+# PerconaTest:245 58024 sleep for  180
+# Sandbox:170 58024 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table13.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table13.sql
+# Sandbox:172 58024 Output:    exit status: 0
+# PerconaTest:245 58024 sleep for  180
+ok 15 - Loading plugin worked OK
+ok 16 - Plugin archived all rows to table_even OK
+ok 17 - Plugin archived all rows to table_odd OK
+# PerconaTest:245 58024 sleep for  180
+# PerconaTest:245 58024 sleep for  180
+ok 18 - Sandbox servers
+ok
+../t/mariadb-archiver/pt-143.t .................. 
+1..3
+# Sandbox:170 73297 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/pt-143.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/pt-143.sql
+# Sandbox:172 73297 Output:    exit status: 0
+# PerconaTest:245 73297 sleep for  180
+ok 1 - PT-143 exit status OK
+ok 2 - PT-143 Archived rows match original rows
+# PerconaTest:245 73297 sleep for  180
+# PerconaTest:245 73297 sleep for  180
+ok 3 - Sandbox servers
+ok
+../t/mariadb-archiver/purge.t ................... 
+1..8
+# Sandbox:170 78416 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 78416 Output:    exit status: 0
+# PerconaTest:245 78416 sleep for  180
+ok 1 - Basic test run did not die
+ok 2 - Purged ok
+# Sandbox:170 78416 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 78416 Output:    exit status: 0
+# PerconaTest:245 78416 sleep for  180
+ok 3 - Commit-each did not die
+ok 4 - Purged ok with --commit-each
+# Sandbox:170 78416 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 78416 Output:    exit status: 0
+# PerconaTest:245 78416 sleep for  180
+ok 5 - No output for archiving only part of a table
+ok 6 - Purged some rows ok
+# Sandbox:170 78416 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/pt_157.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/pt_157.sql
+# Sandbox:172 78416 Output:    exit status: 0
+# PerconaTest:245 78416 sleep for  180
+ok 7 - Fail if --primary-key was specified and there is no PK
+# PerconaTest:245 78416 sleep for  180
+# PerconaTest:245 78416 sleep for  180
+ok 8 - Sandbox servers
+ok
+../t/mariadb-archiver/pxc.t ..................... skipped: PXC tests
+../t/mariadb-archiver/res_fk.t .................. 
+1..8
+# Sandbox:170 88541 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/res_fk.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/res_fk.sql
+# Sandbox:172 88541 Output:    exit status: 0
+# PerconaTest:245 88541 sleep for  180
+ok 1 - Have company2 before archive (res_fk plugin)
+ok 2 - No company2 archived yet (res_fk plugin)
+ok 3 - company2 gone archive (res_fk plugin)
+ok 4 - test_archived.comp (res_fk plugin)
+ok 5 - test_archived.user (res_fk plugin)
+ok 6 - test_archived.prod (res_fk plugin)
+ok 7 - test_archived.prod_details (res_fk plugin)
+# PerconaTest:245 88541 sleep for  180
+# PerconaTest:245 88541 sleep for  180
+ok 8 - Sandbox servers
+ok
+../t/mariadb-archiver/safe_auto_increment.t ..... 
+1..5
+# Sandbox:170 93664 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table12.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table12.sql
+# Sandbox:172 93664 Output:    exit status: 0
+# PerconaTest:245 93664 sleep for  180
+ok 1 - Purge worked OK
+ok 2 - Did not touch the max auto_increment
+# Sandbox:170 93664 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table12.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table12.sql
+# Sandbox:172 93664 Output:    exit status: 0
+# PerconaTest:245 93664 sleep for  180
+ok 3 - Disabled safeautoinc worked OK
+ok 4 - Disabled safeautoinc purged whole table
+# PerconaTest:245 93664 sleep for  180
+# PerconaTest:245 93664 sleep for  180
+ok 5 - Sandbox servers
+ok
+../t/mariadb-archiver/standard_options.t ........ 
+ok 1 - DSNs inherit from standard connection options (issue 248)
+# Sandbox:170 948 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/table1.sql
+# Sandbox:172 948 Output:    exit status: 0
+# PerconaTest:245 948 sleep for  180
+ok 2 - Exits because of sentinel
+ok 3 - No rows were deleted
+ok 4 - Created the sentinel OK
+ok 5 - Dies if PID file already exists (issue 391)
+# Sandbox:170 948 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-archiver/samples/tables1-4.sql
+# Sandbox:172 948 Output:    exit status: 0
+# PerconaTest:245 948 sleep for  180
+# PerconaTest:245 948 sleep for  180
+ok 6 - --dest inherited from --source
+# PerconaTest:245 948 sleep for  180
+# PerconaTest:245 948 sleep for  180
+ok 7 - Sandbox servers
+1..7
+ok
+
+Test Summary Report
+-------------------
+../t/mariadb-archiver/check_slave_lag.t       (Wstat: 256 Tests: 0 Failed: 0)
+  Non-zero exit status: 1
+  Parse errors: No plan found in TAP output
+Files=28, Tests=208, 23877 wallclock secs ( 0.12 usr  0.07 sys + 35.25 cusr 20.88 csys = 56.32 CPU)
+Result: FAIL
+exit code: 1

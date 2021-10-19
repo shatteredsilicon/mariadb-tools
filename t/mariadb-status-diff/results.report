@@ -1,0 +1,67 @@
+../t/mariadb-status-diff/pt-mext.t .. 
+ok 1 - It runs
+not ok 2 - mext-001
+
+#   Failed test 'mext-001'
+#   at ../t/mariadb-status-diff/pt-mext.t line 25.
+# 49a50
+# > Compression                                   0    0    0    0
+# 110d110
+# < Compression                                   0    0    0    0
+# 163d162
+# < Innodb_page_size                          16384    0    0    0
+# 164a164
+# > Innodb_page_size                          16384    0    0    0
+# 189a190
+# > Opened_tables                              1698    0    0    0
+# 193d193
+# < Opened_tables                              1698    0    0    0
+not ok 3 - mext-002 -r
+
+#   Failed test 'mext-002 -r'
+#   at ../t/mariadb-status-diff/pt-mext.t line 34.
+# 49a50
+# > Compression                                   0        0        0        0
+# 110d110
+# < Compression                                   0        0        0        0
+# 163d162
+# < Innodb_page_size                          16384        0        0        0
+# 164a164
+# > Innodb_page_size                          16384        0        0        0
+# 189a190
+# > Opened_tables                              1698        0        0        0
+# 193d193
+# < Opened_tables                              1698        0        0        0
+not ok 4 - having rsa key
+
+#   Failed test 'having rsa key'
+#   at ../t/mariadb-status-diff/pt-mext.t line 43.
+# 130d129
+# < Com_show_table_status                         0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0
+# 131a131
+# > Com_show_table_status                         0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0
+# 226d225
+# < Innodb_page_size                          16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384
+# 227a227
+# > Innodb_page_size                          16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384    16384
+# 254a255,257
+# > Opened_files                                470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470
+# > Opened_table_definitions                    223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223
+# > Opened_tables                               198      201      203      203      203      205      207      209      209      211      211      213      213      213      215      217      217      217      217      217      217      217      217      217      219      219      219      219      219
+# 259,261d261
+# < Opened_files                                470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470      470
+# < Opened_table_definitions                    223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223      223
+# < Opened_tables                               198      201      203      203      203      205      207      209      209      211      211      213      213      213      215      217      217      217      217      217      217      217      217      217      219      219      219      219      219
+1..4
+# Looks like you failed 3 tests of 4.
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 3/4 subtests 
+
+Test Summary Report
+-------------------
+../t/mariadb-status-diff/pt-mext.t (Wstat: 768 Tests: 4 Failed: 3)
+  Failed tests:  2-4
+  Non-zero exit status: 3
+Files=1, Tests=4,  4 wallclock secs ( 0.03 usr  0.01 sys +  1.69 cusr  2.63 csys =  4.36 CPU)
+Result: FAIL
+exit code: 1

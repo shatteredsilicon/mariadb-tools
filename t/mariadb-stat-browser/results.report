@@ -1,0 +1,7 @@
+../t/mariadb-stat-browser/pt-sift.t .. 
+1..1
+ok 1
+ok
+All tests successful.
+Files=1, Tests=1,  0 wallclock secs ( 0.02 usr  0.00 sys +  0.09 cusr  0.03 csys =  0.14 CPU)
+Result: PASS

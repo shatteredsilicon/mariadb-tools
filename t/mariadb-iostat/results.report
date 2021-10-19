@@ -1,0 +1,46 @@
+../t/mariadb-iostat/mariadb-iostat.t .. 
+ok 1 - diskstats-001.txt --group-by all, commands: [q]
+ok 2 - diskstats-001.txt --group-by disk, commands: [q]
+ok 3 - diskstats-001.txt --group-by sample, commands: [q]
+ok 4 - diskstats-002.txt --group-by all, commands: [q]
+ok 5 - diskstats-002.txt --group-by disk, commands: [q]
+ok 6 - diskstats-002.txt --group-by sample, commands: [q]
+ok 7 - diskstats-003.txt --group-by all, commands: [q]
+ok 8 - diskstats-003.txt --group-by disk, commands: [q]
+ok 9 - diskstats-003.txt --group-by sample, commands: [q]
+ok 10 - diskstats-004.txt --group-by all, commands: [q]
+ok 11 - diskstats-004.txt --group-by disk, commands: [q]
+ok 12 - diskstats-004.txt --group-by sample, commands: [q]
+ok 13 - diskstats-005.txt --group-by all, commands: [q]
+ok 14 - diskstats-005.txt --group-by disk, commands: [q]
+ok 15 - diskstats-005.txt --group-by sample, commands: [q]
+ok 16 - switch_to_sample.txt --group-by all, commands: [S][q]
+ok 17 - switch_to_sample.txt --group-by disk, commands: [S][q]
+ok 18 - switch_to_sample.txt --group-by sample, commands: [S][q]
+ok 19 - commands.txt --group-by all, commands: [i][/][cciss\n][q]
+ok 20 - commands.txt --group-by disk, commands: [i][/][cciss\n][q]
+ok 21 - commands.txt --group-by sample, commands: [i][/][cciss\n][q]
+ok 22 - small.txt --group-by all, commands: [q]
+ok 23 - small.txt --group-by disk, commands: [q]
+ok 24 - small.txt --group-by sample, commands: [q]
+ok 25 - bug-1035311.txt --group-by all, commands: [S][/][xvdb1][q]
+ok 26 - bug-1035311.txt --group-by disk, commands: [S][/][xvdb1][q]
+ok 27 - bug-1035311.txt --group-by sample, commands: [S][/][xvdb1][q]
+tempfile(): temporary filename requested but not opened.
+Possibly unsafe, consider using tempfile() with OPEN set to true
+Cannot open /proc/diskstats: No such file or directory at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-iostat line 3384.
+Use of uninitialized value $count in numeric eq (==) at ../t/mariadb-iostat/mariadb-iostat.t line 165.
+Cannot open /tmp/mariadb-iostat.test.7pAwD_: No such file or directory at ../t/mariadb-iostat/mariadb-iostat.t line 157.
+# Tests were run but no plan was declared and done_testing() was not seen.
+# Looks like your test exited with 2 just after 27.
+Dubious, test returned 2 (wstat 512, 0x200)
+All 27 subtests passed 
+
+Test Summary Report
+-------------------
+../t/mariadb-iostat/mariadb-iostat.t (Wstat: 512 Tests: 27 Failed: 0)
+  Non-zero exit status: 2
+  Parse errors: No plan found in TAP output
+Files=1, Tests=27,  3 wallclock secs ( 0.02 usr  0.01 sys +  1.78 cusr  0.41 csys =  2.22 CPU)
+Result: FAIL
+exit code: 1

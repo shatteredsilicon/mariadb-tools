@@ -1,0 +1,218 @@
+../t/mariadb-query-digest/attrib_inheritance.t ............ 
+1..2
+ok 1 - Analysis for slow034 with inheritance
+ok 2 - Analysis for slow034 without default ts inheritance
+ok
+../t/mariadb-query-digest/binlog_analyses.t ............... 
+1..4
+not ok 1 - Analysis for binlog001
+
+#   Failed test 'Analysis for binlog001'
+#   at ../t/mariadb-query-digest/binlog_analyses.t line 28.
+# 219,226c219,226
+# < # Rank Query ID                            Response time    Calls R/Call  
+# < # ==== =================================== ================ ===== ========
+# < #    1 0xE82A828B855B8A64CD948EAF18BC614E  20704.0000 16.7%     1 20704.0000  0.00 REPLACE SELECT test?.tbl? test?.tblo test?.tbl?
+# < #    2 0xF16F3C71626070A8C356FD9EFD7D799E  20675.0000 16.7%     1 20675.0000  0.00 UPDATE test?.tblo test?.tbl?
+# < #    3 0xD2CB5CE49F609121B5E55291C7DE1096  20664.0000 16.7%     1 20664.0000  0.00 UPDATE test?.tblo test?.tbl?
+# < #    4 0x8D589AFA4DFAEEED85FFF5AA78E5FF6A  20664.0000 16.7%     1 20664.0000  0.00 BEGIN
+# < #    5 0xCCEBC6F06883270EED69B13F3D0161D0  20661.0000 16.7%     1 20661.0000  0.00 UPDATE test?.tbl?
+# < #    6 0xB80726C1C01E650979BFEA84D0CED05F  20661.0000 16.7%     1 20661.0000  0.00 INSERT UPDATE test?.tbl?
+# ---
+# > # Rank Query ID                           Response time    Calls R/Call   
+# > # ==== ================================== ================ ===== =========
+# > #    1 0xE82A828B855B8A64CD948EAF18BC614E 20704.0000 16.7%     1 20704.0000  0.00 REPLACE SELECT test?.tbl? test?.tblo test?.tbl?
+# > #    2 0xF16F3C71626070A8C356FD9EFD7D799E 20675.0000 16.7%     1 20675.0000  0.00 UPDATE test?.tblo test?.tbl?
+# > #    3 0xD2CB5CE49F609121B5E55291C7DE1096 20664.0000 16.7%     1 20664.0000  0.00 UPDATE test?.tblo test?.tbl?
+# > #    4 0x8D589AFA4DFAEEED85FFF5AA78E5FF6A 20664.0000 16.7%     1 20664.0000  0.00 BEGIN
+# > #    5 0xCCEBC6F06883270EED69B13F3D0161D0 20661.0000 16.7%     1 20661.0000  0.00 UPDATE test?.tbl?
+# > #    6 0xB80726C1C01E650979BFEA84D0CED05F 20661.0000 16.7%     1 20661.0000  0.00 INSERT UPDATE test?.tbl?
+not ok 2 - Analysis for binlog002
+
+#   Failed test 'Analysis for binlog002'
+#   at ../t/mariadb-query-digest/binlog_analyses.t line 35.
+# 98,102c98,102
+# < # Rank Query ID                            Response time Calls R/Call V/M 
+# < # ==== =================================== ============= ===== ====== ====
+# < #    1 0x184C72455CBE7450F579EC4A9633EEA0   0.0000  0.0%     1 0.0000  0.00 INSERT foo
+# < #    2 0x4C73A3608535A07A03409022EB8A4AE7   0.0000  0.0%     1 0.0000  0.00 CREATE TABLE foo
+# < #    3 0x3EDE13F29C785C9EF25D6D5AC7C18FF3   0.0000  0.0%     1 0.0000  0.00 CREATE DATABASE d
+# ---
+# > # Rank Query ID                           Response time Calls R/Call V/M  
+# > # ==== ================================== ============= ===== ====== =====
+# > #    1 0x184C72455CBE7450F579EC4A9633EEA0  0.0000  0.0%     1 0.0000  0.00 INSERT foo
+# > #    2 0x4C73A3608535A07A03409022EB8A4AE7  0.0000  0.0%     1 0.0000  0.00 CREATE TABLE foo
+# > #    3 0x3EDE13F29C785C9EF25D6D5AC7C18FF3  0.0000  0.0%     1 0.0000  0.00 CREATE DATABASE d
+not ok 3 - Analysis for binlog011 - Handles 5.6 binlog with checksum CRC32
+
+#   Failed test 'Analysis for binlog011 - Handles 5.6 binlog with checksum CRC32'
+#   at ../t/mariadb-query-digest/binlog_analyses.t line 42.
+# 683,705c683,705
+# < # Rank Query ID                            Response time Calls R/Call V/M 
+# < # ==== =================================== ============= ===== ====== ====
+# < #    1 0x8D589AFA4DFAEEED85FFF5AA78E5FF6A  19.0000 33.3%    22 0.8636  3.67 BEGIN
+# < #    2 0xD1D19A39A5189A3A693F5F4CA1A936BA   7.0000 12.3%     2 3.5000  7.00 INSERT rental
+# < #    3 0x6692BFEDE6AB56814677E4CEDF8EA4E2   5.0000  8.8%     2 2.5000  5.00 INSERT payment
+# < #    4 0x266D117CFD8ED7C1AAECC8184D17D799   3.0000  5.3%     1 3.0000  0.00 INSERT film
+# < #    5 0x5D2F650658D1B9C51A3BF395BD4C2AC5   2.0000  3.5%     1 2.0000  0.00 CREATE TABLE store `store`
+# < #    6 0xCBD4B02B76FCD5BCD8657A03D0724524   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE payment `payment`
+# < #    7 0x1B49B966156BD5391405E69931A1FC8D   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE language `language`
+# < #    8 0x0DE767BB5A2112B83B0263BE3363F7DF   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE actor `actor`
+# < #    9 0xC7D5A4E49E422A5209482CA2620152A7   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE city `city`
+# < #   10 0x06B95BC192D493BF80F6ECA81D5F0D25   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE category `category`
+# < #   11 0x2191F33283A3743FAE6D99E149CE09C6   1.0000  1.8%     1 1.0000  0.00 INSERT inventory
+# < #   12 0xFFDE0605772D1BD0E771A1D1EAD499BA   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE inventory `inventory`
+# < #   13 0x1161695D97D5E56D8A38006583244505   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE film_text `film_text`
+# < #   14 0xE9F9A7EE464D666B0FD12A9C9BF3E41F   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE film_category `film_category`
+# < #   15 0x28F5E254B8810D1293E5C17055D970BE   1.0000  1.8%     1 1.0000  0.00 INSERT film_actor
+# < #   16 0xB25BC072BED6DE4E7677746C22CD9F16   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE film_actor `film_actor`
+# < #   17 0x45781B86D83AE665EE462EEBC76A46F2   1.0000  1.8%     1 1.0000  0.00 CREATE TABLE percona_test.checksums
+# < #   18 0x2F981A9FC6992839C5F99E5B57D2D6DB   1.0000  1.8%     1 1.0000  0.00 
+# < #   19 0xC16F5DCD62BA36A15C6D8C73D42AE624   1.0000  1.8%     1 1.0000  0.00 CREATE payment rental inventory store address city country staff
+# < #   20 0x6846663BC60B4FF9D62F1A6D5A67AFA8   1.0000  1.8%     1 1.0000  0.00 INSERT address
+# < # MISC 0xMISC                               6.0000 10.5%    95 0.0632   0.0 <72 ITEMS>
+# ---
+# > # Rank Query ID                         Response time Calls R/Call V/M   I
+# > # ==== ================================ ============= ===== ====== ===== =
+# > #    1 0x8D589AFA4DFAEEED85FFF5AA78E... 19.0000 33.3%    22 0.8636  3.67 BEGIN
+# > #    2 0xD1D19A39A5189A3A693F5F4CA1A...  7.0000 12.3%     2 3.5000  7.00 INSERT rental
+# > #    3 0x6692BFEDE6AB56814677E4CEDF8...  5.0000  8.8%     2 2.5000  5.00 INSERT payment
+# > #    4 0x266D117CFD8ED7C1AAECC8184D1...  3.0000  5.3%     1 3.0000  0.00 INSERT film
+# > #    5 0x5D2F650658D1B9C51A3BF395BD4...  2.0000  3.5%     1 2.0000  0.00 CREATE TABLE store `store`
+# > #    6 0xCBD4B02B76FCD5BCD8657A03D07...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE payment `payment`
+# > #    7 0x1B49B966156BD5391405E69931A...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE language `language`
+# > #    8 0x0DE767BB5A2112B83B0263BE336...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE actor `actor`
+# > #    9 0xC7D5A4E49E422A5209482CA2620...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE city `city`
+# > #   10 0x06B95BC192D493BF80F6ECA81D5...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE category `category`
+# > #   11 0x2191F33283A3743FAE6D99E149C...  1.0000  1.8%     1 1.0000  0.00 INSERT inventory
+# > #   12 0xFFDE0605772D1BD0E771A1D1EAD...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE inventory `inventory`
+# > #   13 0x1161695D97D5E56D8A380065832...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE film_text `film_text`
+# > #   14 0xE9F9A7EE464D666B0FD12A9C9BF...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE film_category `film_category`
+# > #   15 0x28F5E254B8810D1293E5C17055D...  1.0000  1.8%     1 1.0000  0.00 INSERT film_actor
+# > #   16 0xB25BC072BED6DE4E7677746C22C...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE film_actor `film_actor`
+# > #   17 0x45781B86D83AE665EE462EEBC76...  1.0000  1.8%     1 1.0000  0.00 CREATE TABLE percona_test.checksums
+# > #   18 0x2F981A9FC6992839C5F99E5B57D...  1.0000  1.8%     1 1.0000  0.00 
+# > #   19 0xC16F5DCD62BA36A15C6D8C73D42...  1.0000  1.8%     1 1.0000  0.00 CREATE payment rental inventory store address city country staff
+# > #   20 0x6846663BC60B4FF9D62F1A6D5A6...  1.0000  1.8%     1 1.0000  0.00 INSERT address
+# > # MISC 0xMISC                            6.0000 10.5%    95 0.0632   0.0 <72 ITEMS>
+ok 4 - Refuses to parse raw binlog file
+# Looks like you failed 3 tests of 4.
+Dubious, test returned 3 (wstat 768, 0x300)
+Failed 3/4 subtests 
+../t/mariadb-query-digest/bugs.t .......................... 
+ok 1 - Bug 957442: No error with a custom --filter & --group-by=page
+# PerconaTest:245 35137 sleep for  180
+# PerconaTest:245 35137 sleep for  180
+ok 2 - Sandbox servers
+1..2
+ok
+../t/mariadb-query-digest/collect_and_report_cycles.t ..... 
+1..4
+ok 1 - Still running for --iterations (issue 173)
+ok 2 - No longer running for --iterations (issue 173)
+not ok 3 - --iterations
+
+#   Failed test '--iterations'
+#   at ../t/mariadb-query-digest/collect_and_report_cycles.t line 60.
+# PerconaTest:245 38511 sleep for  180
+# PerconaTest:245 38511 sleep for  180
+ok 4 - Sandbox servers
+# Looks like you failed 1 test of 4.
+Dubious, test returned 1 (wstat 256, 0x100)
+Failed 1/4 subtests 
+../t/mariadb-query-digest/continue_on_error.t ............. 
+1..3
+ok 1 - Does not continue on error with --no-continue-on-error
+ok 2 - Continues on error by default
+ok 3 - Report crashed, but no infinite loop (bug 888114)
+ok
+../t/mariadb-query-digest/daemon.t ........................ 
+1..7
+ok 1 - Dies if PID file exists (--pid without --daemonize) (issue 391)
+ok 2 - It is running
+ok 3 - PID file created
+ok 4 - PID file has correct PID
+ok 5 - It is not running
+ok 6 - Removes its PID file
+# PerconaTest:245 41972 sleep for  180
+ok 7 - Sandbox servers
+ok
+../t/mariadb-query-digest/explain.t ....................... 
+not ok 1 - Analysis for slow007 with --explain, no rows
+
+#   Failed test 'Analysis for slow007 with --explain, no rows'
+#   at ../t/mariadb-query-digest/explain.t line 40.
+not ok 2 - Analysis for slow007 with --explain
+
+#   Failed test 'Analysis for slow007 with --explain'
+#   at ../t/mariadb-query-digest/explain.t line 55.
+not ok 3 - EXPLAIN sparkline in profile
+
+#   Failed test 'EXPLAIN sparkline in profile'
+#   at ../t/mariadb-query-digest/explain.t line 70.
+not ok 4 - Analysis for slow007 with --explain, failed
+
+#   Failed test 'Analysis for slow007 with --explain, failed'
+#   at ../t/mariadb-query-digest/explain.t line 85.
+# Sandbox:170 43714 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-query-digest/samples/issue_1196.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-query-digest/samples/issue_1196.sql
+# Sandbox:172 43714 Output:    exit status: 0
+# PerconaTest:245 43714 sleep for  180
+not ok 5 - --explain sparkline uses event db and doesn't crash ea (issue 1196)
+
+#   Failed test '--explain sparkline uses event db and doesn't crash ea (issue 1196)'
+#   at ../t/mariadb-query-digest/explain.t line 102.
+# PerconaTest:245 43714 sleep for  180
+# PerconaTest:245 43714 sleep for  180
+ok 6 - Sandbox servers
+1..6
+# Looks like you failed 5 tests of 6.
+Dubious, test returned 5 (wstat 1280, 0x500)
+Failed 5/6 subtests 
+../t/mariadb-query-digest/explain_partitions.t ............ 
+1..2
+ok 1 - EXPLAIN /*!50100 PARTITIONS */ (issue 611)
+# PerconaTest:245 48772 sleep for  180
+# PerconaTest:245 48772 sleep for  180
+ok 2 - Sandbox servers
+ok
+../t/mariadb-query-digest/genlog_analyses.t ............... 
+1..5
+ok 1 - --order-by defaults to Query_time:cnt for --type genlog
+not ok 2 - Analysis for genlog001
+
+#   Failed test 'Analysis for genlog001'
+#   at ../t/mariadb-query-digest/genlog_analyses.t line 36.
+not ok 3 - Analysis for genlog002
+
+#   Failed test 'Analysis for genlog002'
+#   at ../t/mariadb-query-digest/genlog_analyses.t line 44.
+not ok 4 - Analysis for genlog003
+
+#   Failed test 'Analysis for genlog003'
+#   at ../t/mariadb-query-digest/genlog_analyses.t line 52.
+not ok 5 - Analysis for genlog005
+
+#   Failed test 'Analysis for genlog005'
+#   at ../t/mariadb-query-digest/genlog_analyses.t line 60.
+# Looks like you failed 4 tests of 5.
+Dubious, test returned 4 (wstat 1024, 0x400)
+Failed 4/5 subtests 
+../t/mariadb-query-digest/group_by_order_by.t ............. 
+1..3
+ok 1 - --group-by cascades to --order-by
+ok 2 - Default --group-by with --no-report
+ok 3 - --group-by does not change distro chart (issue 984)
+ok
+../t/mariadb-query-digest/history.t ....................... 
+# Sandbox:170 52199 Loading /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-query-digest/samples/query_review.sql on master : /tmp/12345/use  < /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/t/mariadb-query-digest/samples/query_review.sql
+# Sandbox:172 52199 Output:    exit status: 0
+# PerconaTest:245 52199 sleep for  180
+ok 1 - --create-history-table
+ok 2 - Adds/updates queries to query review history table
+DBD::mysql::db selectrow_array failed: Unknown database 'percona_schema' [for Statement "show tables from percona_schema like 'query_history'"] at ../t/mariadb-query-digest/history.t line 154.
+# Tests were run but no plan was declared and done_testing() was not seen.
+# Looks like your test exited with 35 just after 2.
+Dubious, test returned 35 (wstat 8960, 0x2300)
+All 2 subtests passed 
+Bailout called.  Further testing stopped:  ../t/mariadb-query-digest/issue_1186.t broke the sandbox
+exit code: 255

@@ -1,0 +1,8 @@
+../t/mariadb-align-output/mariadb-align-output.t .. 
+1..2
+ok 1 - Align 001-raw.txt
+ok 2 - Align 002-raw.txt
+ok
+All tests successful.
+Files=1, Tests=2,  0 wallclock secs ( 0.03 usr  0.01 sys +  0.13 cusr  0.05 csys =  0.22 CPU)
+Result: PASS

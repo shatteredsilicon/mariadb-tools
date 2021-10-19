@@ -1,0 +1,75 @@
+../t/mariadb-stat/mariadb-stat.t ... 
+ok 1 - Cannot connect to MySQL
+ok 2 - Exit 1
+ok 3 - Parent exit 0
+# PerconaTest:245 57748 sleep for  30
+ok 4 - Creates PID file
+ok 5 - Creates log file
+ok 6 - Creates --dest (collect) dir
+ok 7 - mariadb-stat is running
+# PerconaTest:245 57748 sleep for  15
+# PerconaTest:245 57748 sleep for  15
+ok 8 - Non-matching results not logged because --verbose=2
+# PerconaTest:245 57748 sleep for  30
+ok 9 - Removes PID file
+ok 10 - Caught signal logged
+# PerconaTest:245 57748 sleep for  30
+# PerconaTest:245 57748 sleep for  30
+# PerconaTest:245 57748 sleep for  15
+ok 11 - Matching results logged with --verbose 3
+# PerconaTest:245 57748 sleep for  30
+# PerconaTest:245 57748 sleep for  15
+# PerconaTest:245 57748 sleep for  15
+ok 12 - Warning logged (--verbose 1)
+ok 13 - No run info log (--verbose 1)
+# PerconaTest:245 57748 sleep for  30
+ok 14 - Collect triggered
+ok 15 - Collect ran for --run-time
+# PerconaTest:245 57748 sleep for  30
+ok 16 - mariadb-stat is not running
+ok 17 - Trigger file logs how mariadb-stat was ran
+ok 18 - Collector PID logged
+# PerconaTest:245 57748 sleep for  30
+ok 19 - Collect triggered
+ok 20 - No files collected
+# PerconaTest:245 57748 sleep for  30
+ok 21 - mariadb-stat is not running
+# PerconaTest:245 57748 sleep for  30
+ok 22 - Killed mariadb-stat
+ok 23 - Read default config file
+# PerconaTest:245 57748 sleep for  30
+ok 24 - Not stalking, collect triggered
+ok 25 - Not stalking, collect ran for --run-time
+ok 26 # skip vmstat is not installed
+ok 27 - Not stalking, collect gathered data
+# PerconaTest:245 57748 sleep for  30
+ok 28 - Not stalking, mariadb-stat is not running
+ok 29 - Bug 942114: no bad find usage
+ok 30 - Accepts floating point values as treshold variable
+ok 31 # skip Only test on mysql 5.7
+ok 32 # skip Only test on mysql 5.7
+ok 33 # skip Only test on mysql 5.6
+ok 34 # skip Only test on MySQL 5.7
+# PerconaTest:245 57748 sleep for  180
+ok 35 - Sandbox servers
+1..35
+ok
+../t/mariadb-stat/option_sanity.t .. 
+ok 1 - Default --verbose=2
+1..1
+ok
+../t/mariadb-stat/plugin.t ......... 
+# PerconaTest:245 64726 sleep for  30
+ok 1 - Exit 0
+ok 2 - before_stalk hook called
+ok 3 - before_collect hook called
+ok 4 - after_collect hook called
+ok 5 - after_collect_sleep hook called
+ok 6 - after_stalk hook called
+# PerconaTest:245 64726 sleep for  180
+ok 7 - Sandbox servers
+1..7
+ok
+All tests successful.
+Files=3, Tests=43, 425 wallclock secs ( 0.04 usr  0.02 sys +  5.42 cusr  6.25 csys = 11.73 CPU)
+Result: PASS

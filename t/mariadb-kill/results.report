@@ -1,0 +1,310 @@
+../t/mariadb-kill/basics.t ............ 
+1..6
+# DSNParser:1982 18347 opts: 9
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792.
+# main:52 18325 Sandbox=HASH(0x7fe05ab80070) test output: 
+not ok 1 - There were 2 to 5 captures
+
+#   Failed test 'There were 2 to 5 captures'
+#   at ../t/mariadb-kill/basics.t line 54.
+# 
+# DSNParser:1982 18360 opts: 9
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792.
+not ok 2 - Approximately 9 or 10 captures with --iterations 0
+
+#   Failed test 'Approximately 9 or 10 captures with --iterations 0'
+#   at ../t/mariadb-kill/basics.t line 66.
+# 
+# DSNParser:1982 18325 opts: 9
+DBI connect(';mysql_read_default_file=/tmp/12345/configs/mariadb-client.cnf;host=localhost;mysql_read_default_group=client','',...) failed: Can't connect to local server through socket '/tmp/mysql.sock' (2) at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 2087.
+not ok 3 - --verbose
+
+#   Failed test '--verbose'
+#   at ../t/mariadb-kill/basics.t line 78.
+#                   ''
+#     doesn't match '(?^:Checking processlist)'
+not ok 4 - kill-mysql-process says it reconnected
+
+#   Failed test 'kill-mysql-process says it reconnected'
+#   at ../t/mariadb-kill/basics.t line 97.
+#                   '# DSNParser:1982 18325 opts: 9
+# DBI connect('pt_kill_test;mysql_read_default_file=/tmp/12345/configs/mariadb-client.cnf;host=localhost;mysql_read_default_group=client','',...) failed: Can't connect to local server through socket '/tmp/mysql.sock' (2) at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 2087.
+# '
+#     doesn't match '(?^:Reconnected)'
+not ok 5 - mariadb-kill still checked the processlist 4 times
+
+#   Failed test 'mariadb-kill still checked the processlist 4 times'
+#   at ../t/mariadb-kill/basics.t line 104.
+#          got: '0'
+#     expected: '4'
+# # DSNParser:1982 18325 opts: 9
+# DBI connect('pt_kill_test;mysql_read_default_file=/tmp/12345/configs/mariadb-client.cnf;host=localhost;mysql_read_default_group=client','',...) failed: Can't connect to local server through socket '/tmp/mysql.sock' (2) at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 2087.
+# PerconaTest:245 18325 sleep for  180
+# PerconaTest:245 18325 sleep for  180
+ok 6 - Sandbox servers
+# Looks like you failed 5 tests of 6.
+Dubious, test returned 5 (wstat 1280, 0x500)
+Failed 5/6 subtests 
+../t/mariadb-kill/execute_command.t ... 
+1..9
+ok 1 - No output without --print
+ok 2 - --execute-command
+# DSNParser:1982 21901 opts: 9
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792.
+not ok 3 - --print with --execute-command
+
+#   Failed test '--print with --execute-command'
+#   at ../t/mariadb-kill/execute_command.t line 56.
+#                   ''
+#     doesn't match '(?^:KILL .+ select sleep\(2\))'
+not ok 4 - --execute-command (online)
+
+#   Failed test '--execute-command (online)'
+#   at ../t/mariadb-kill/execute_command.t line 63.
+#          got: ''
+#     expected: 'batty'
+# DSNParser:1982 21923 opts: 9
+# PerconaTest:245 21881 sleep for  30
+not ok 5 - Executed zombie command
+
+#   Failed test 'Executed zombie command'
+#   at ../t/mariadb-kill/execute_command.t line 86.
+#                   ''
+#     doesn't match '(?^:Executed echo zombie)'
+not ok 6 - No zombies
+
+#   Failed test 'No zombies'
+#   at ../t/mariadb-kill/execute_command.t line 93.
+#          got: '  762   ??  Z      0:00.00 (uname)
+# '
+#     expected: ''
+ok 7 - mariadb-kill stopped
+not ok 8 - No zombies
+
+#   Failed test 'No zombies'
+#   at ../t/mariadb-kill/execute_command.t line 106.
+#          got: '  762   ??  Z      0:00.00 (uname)
+# '
+#     expected: ''
+# PerconaTest:245 21881 sleep for  180
+# PerconaTest:245 21881 sleep for  180
+ok 9 - Sandbox servers
+# Looks like you failed 5 tests of 9.
+Dubious, test returned 5 (wstat 1280, 0x500)
+Failed 5/9 subtests 
+../t/mariadb-kill/filter_plugin.t ..... 
+1..1
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792, <$fh> line 1.
+not ok 1 - basic --filter function works
+
+#   Failed test 'basic --filter function works'
+#   at ../t/mariadb-kill/filter_plugin.t line 34.
+# Looks like you failed 1 test of 1.
+Dubious, test returned 1 (wstat 256, 0x100)
+Failed 1/1 subtests 
+../t/mariadb-kill/group_by.t .......... 
+1..9
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792, <$fh> line 1.
+not ok 1 - Kill all but oldest
+
+#   Failed test 'Kill all but oldest'
+#   at ../t/mariadb-kill/group_by.t line 33.
+#                   ''
+#     doesn't match '(?^:# \S+ KILL 3 \(Query 9 sec\) select c from t where id='foo';\n# \S+ KILL 2 \(Query 9 sec\) select c from t where id='foo';\n# \S+ KILL 4 \(Query 5 sec\) select c from t where id='foo';)'
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792, <$fh> line 1.
+not ok 2 - Kill all but oldest, matching specific user
+
+#   Failed test 'Kill all but oldest, matching specific user'
+#   at ../t/mariadb-kill/group_by.t line 45.
+#                   ''
+#     doesn't match '(?^:# \S+ KILL 3 \(Query 9 sec\) select c from t where id='foo';\n# \S+ KILL 2 \(Query 9 sec\) select c from t where id='foo';)'
+ok 3 - Any busy time doesn't match
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792, <$fh> line 1.
+not ok 4 - Any busy time matches
+
+#   Failed test 'Any busy time matches'
+#   at ../t/mariadb-kill/group_by.t line 71.
+#                   ''
+#     doesn't match '(?^:# \S+ KILL 1 \(Query 10 sec\))'
+ok 5 - Each busy time doesn't match
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792, <$fh> line 1.
+not ok 6 - Each busy time matches
+
+#   Failed test 'Each busy time matches'
+#   at ../t/mariadb-kill/group_by.t line 95.
+#                   ''
+#     doesn't match '(?^:# \S+ KILL 3 \(Query 9 sec\) select c from t where id='foo';\n# \S+ KILL 2 \(Query 9 sec\) select c from t where id='foo';)'
+ok 7 - Query count doesn't match
+ok 8 - Queries don't match unless comments are stripped
+Option fingerprint does not exist at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 792, <$fh> line 1.
+not ok 9 - --filter and custom --group-by
+
+#   Failed test '--filter and custom --group-by'
+#   at ../t/mariadb-kill/group_by.t line 135.
+# Looks like you failed 5 tests of 9.
+Dubious, test returned 5 (wstat 1280, 0x500)
+Failed 5/9 subtests 
+../t/mariadb-kill/group_queries.t ..... 
+1..3
+ok 1 - Group by Info
+ok 2 - Group by Info with similar fingerprints
+ok 3 - Group by fingerprint
+ok
+../t/mariadb-kill/kill.t .............. 
+ok 1 - Got proc id of sleeping query
+# DSNParser:1982 25627 opts: 9
+DBI connect(';mysql_read_default_file=/tmp/12345/configs/mariadb-client.cnf;host=localhost;mysql_read_default_group=client','',...) failed: Can't connect to local server through socket '/tmp/mysql.sock' (2) at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 2087.
+not ok 2 - --kill
+
+#   Failed test '--kill'
+#   at ../t/mariadb-kill/kill.t line 65.
+#                   ''
+#     doesn't match '(?^:KILL 915 )'
+not ok 3 - Killed connection
+
+#   Failed test 'Killed connection'
+#   at ../t/mariadb-kill/kill.t line 75.
+ok 4 - Got proc id of sleeping query
+# DSNParser:1982 25627 opts: 9
+DBI connect(';mysql_read_default_file=/tmp/12345/configs/mariadb-client.cnf;host=localhost;mysql_read_default_group=client','',...) failed: Can't connect to local server through socket '/tmp/mysql.sock' (2) at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 2087.
+not ok 5 - --kill-query
+
+#   Failed test '--kill-query'
+#   at ../t/mariadb-kill/kill.t line 104.
+#                   ''
+#     doesn't match '(?^:KILL QUERY 917 )'
+ok 6 - Killed query, not connection
+not ok 7 - Connection is still alive
+
+#   Failed test 'Connection is still alive'
+#   at ../t/mariadb-kill/kill.t line 119.
+#          got: 'select sleep(5)'
+#     expected: 'select sleep(3)'
+# PerconaTest:245 25627 sleep for  180
+# PerconaTest:245 25627 sleep for  180
+ok 8 - Sandbox servers
+1..8
+# Looks like you failed 4 tests of 8.
+Dubious, test returned 4 (wstat 1024, 0x400)
+Failed 4/8 subtests 
+../t/mariadb-kill/log_dsn.t ........... 
+# PerconaTest:245 29058 sleep for  180
+# DSNParser:1982 29058 opts: 9
+# DSNParser:1982 29058 opts: 9
+ok 1 - --log-dsn croaks if missing D and t
+# DSNParser:1982 29058 opts: 9
+# DSNParser:1982 29058 opts: 9
+ok 2 - --log-dsn croaks if missing D
+# DSNParser:1982 29058 opts: 9
+# DSNParser:1982 29058 opts: 9
+ok 3 - --log-dsn croaks if missing t
+# DSNParser:1982 29058 opts: 9
+# DSNParser:1982 29058 opts: 9
+# DSNParser:1982 29058 opts: 9
+not ok 4 - --log-dsn with existing log table, no error
+
+#   Failed test '--log-dsn with existing log table, no error'
+#   at ../t/mariadb-kill/log_dsn.t line 106.
+#          got: 'Can't use string ("placeholder") as a HASH ref while "strict refs" in use at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 6846.
+# '
+#     expected: ''
+not ok 5 - ... which contains one row
+
+#   Failed test '... which contains one row'
+#   at ../t/mariadb-kill/log_dsn.t line 134.
+#          got: '0'
+#     expected: '1'
+# $VAR1 = [];
+not ok 6 - ... got the target db
+
+#   Failed test '... got the target db'
+#   at ../t/mariadb-kill/log_dsn.t line 142.
+#          got: undef
+#     expected: 'x29058'
+# $VAR1 = [
+#   {}
+# ];
+not ok 7 - ... on the correct server
+
+#   Failed test '... on the correct server'
+#   at ../t/mariadb-kill/log_dsn.t line 148.
+#          got: undef
+#     expected: '12345'
+# $VAR1 = [
+#   {}
+# ];
+not ok 8 - ... correct kill reason
+
+#   Failed test '... correct kill reason'
+#   at ../t/mariadb-kill/log_dsn.t line 154.
+#          got: undef
+#     expected: 'Query matches db spec'
+# $VAR1 = [
+#   {}
+# ];
+not ok 9 - ... timestamp is correct (bug 1086259)
+
+#   Failed test '... timestamp is correct (bug 1086259)'
+#   at ../t/mariadb-kill/log_dsn.t line 167.
+#                   undef
+#     doesn't match '(?^:\A2021\-10\-19\ 12\:.{5}\Z)'
+Use of uninitialized value $trimmed_result{"host"} in substitution (s///) at ../t/mariadb-kill/log_dsn.t line 181.
+# Tests were run but no plan was declared and done_testing() was not seen.
+# Looks like your test exited with 35 just after 9.
+Dubious, test returned 35 (wstat 8960, 0x2300)
+Failed 6/9 subtests 
+../t/mariadb-kill/match.t ............. 
+Semicolon seems to be missing at ../t/mariadb-kill/match.t line 2.
+syntax error at ../t/mariadb-kill/match.t line 3, near "BEGIN "
+syntax error at ../t/mariadb-kill/match.t line 7, near "}"
+BEGIN not safe after errors--compilation aborted at ../t/mariadb-kill/match.t line 9.
+Dubious, test returned 255 (wstat 65280, 0xff00)
+No subtests run 
+../t/mariadb-kill/pt_167.t ............ 
+Cannot open /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/pt-table-checksum: No such file or directory at /Users/cheat117/Documents/scripting/GitHub/mariadb-tools/bin/mariadb-kill line 262.
+Dubious, test returned 2 (wstat 512, 0x200)
+No subtests run 
+../t/mariadb-kill/standard_options.t .. 
+1..6
+# DSNParser:1982 30766 opts: 9
+ok 1 - It lives daemonized
+ok 2 - PID file created
+ok 3 - Log file created
+# PerconaTest:245 30748 sleep for  30
+ok 4 - PID file removed
+ok 5 - Dies if PID file already exists (--pid without --daemonize) (issue 391)
+# PerconaTest:245 30748 sleep for  180
+# PerconaTest:245 30748 sleep for  180
+ok 6 - Sandbox servers
+ok
+
+Test Summary Report
+-------------------
+../t/mariadb-kill/basics.t          (Wstat: 1280 Tests: 6 Failed: 5)
+  Failed tests:  1-5
+  Non-zero exit status: 5
+../t/mariadb-kill/execute_command.t (Wstat: 1280 Tests: 9 Failed: 5)
+  Failed tests:  3-6, 8
+  Non-zero exit status: 5
+../t/mariadb-kill/filter_plugin.t   (Wstat: 256 Tests: 1 Failed: 1)
+  Failed test:  1
+  Non-zero exit status: 1
+../t/mariadb-kill/group_by.t        (Wstat: 1280 Tests: 9 Failed: 5)
+  Failed tests:  1-2, 4, 6, 9
+  Non-zero exit status: 5
+../t/mariadb-kill/kill.t            (Wstat: 1024 Tests: 8 Failed: 4)
+  Failed tests:  2-3, 5, 7
+  Non-zero exit status: 4
+../t/mariadb-kill/log_dsn.t         (Wstat: 8960 Tests: 9 Failed: 6)
+  Failed tests:  4-9
+  Non-zero exit status: 35
+  Parse errors: No plan found in TAP output
+../t/mariadb-kill/match.t           (Wstat: 65280 Tests: 0 Failed: 0)
+  Non-zero exit status: 255
+  Parse errors: No plan found in TAP output
+../t/mariadb-kill/pt_167.t          (Wstat: 512 Tests: 0 Failed: 0)
+  Non-zero exit status: 2
+  Parse errors: No plan found in TAP output
+Files=10, Tests=51, 1752 wallclock secs ( 0.06 usr  0.03 sys +  4.72 cusr  2.50 csys =  7.31 CPU)
+Result: FAIL
+exit code: 1
