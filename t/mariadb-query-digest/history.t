@@ -44,7 +44,7 @@ sub run_with {
    }, stderr => 1);
 }
 
-my $dsn      = 'h=127.1,P=12345,u=msandbox,p=msandbox';
+my $dsn      = 'h=127.0.0.1,P=12345,u=msandbox,p=msandbox';
 my $output;
 my $cmd;
 
@@ -149,11 +149,11 @@ is_deeply(
 );
 
 run_with("slow006.txt", '--create-history-table',
-                   '--history', "$dsn");
+                   '--history query_history', "$dsn");
 
 ($table) = $dbh->selectrow_array(
-   "show tables from percona_schema like 'query_history'");
-is($table, 'query_history', '--create-history-table creates both percona_schema and query_history');
+   "show tables from mariadb_test like 'query_history'");
+is($table, 'query_history', '--create-history-table creates both mariadb_test and query_history');
 
 # #############################################################################
 # Issue 1149: Add Percona attributes to mk-query-digest history table
@@ -161,7 +161,7 @@ is($table, 'query_history', '--create-history-table creates both percona_schema 
 $dbh->do('truncate table test.query_review_history');
 
 run_with("slow002.txt",
-         '--history', "$dsn,D=test,t=query_review_history",
+         '--history query_review_history', "$dsn,D=test,t=query_review_history",
          '--no-report', '--filter', '$event->{arg} =~ m/foo\.bar/');
 
 $res = $dbh->selectall_arrayref( 'SELECT * FROM test.query_review_history',
@@ -290,7 +290,7 @@ $dbh->do($min_tbl);
 
 $output = output(
    sub { pt_query_digest::main(
-      '--history', "$dsn,D=test,t=query_review_history",
+      '--history query_review_history', "$dsn,D=test,t=query_review_history",
       qw(--no-report --no-continue-on-error),
       "$trunk/t/lib/samples/slowlogs/slow002.txt")
    },

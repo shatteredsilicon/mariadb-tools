@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-duplicate-key-checker";
+require "$trunk/bin/mariadb-index-checker";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -24,10 +24,10 @@ if ( !$dbh ) {
 }
 
 my $output;
-my $sample = "t/pt-duplicate-key-checker/samples/";
-my $cnf    = "/tmp/12345/my.sandbox.cnf";
-my $cmd    = "$trunk/bin/pt-duplicate-key-checker -F $cnf -h 127.1";
-my @args   = ('-F', $cnf, qw(-h 127.1));
+my $sample = "t/mariadb-index-checker/samples/";
+my $cnf    = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd    = "$trunk/bin/mariadb-index-checker -F $cnf -h 127.0.0.1";
+my @args   = ('-F', $cnf, qw(-h 127.0.0.1));
 
 $sb->wipe_clean($dbh);
 $sb->create_dbs($dbh, ['test']);

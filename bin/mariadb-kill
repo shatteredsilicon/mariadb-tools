@@ -1979,7 +1979,6 @@ sub parse_options {
           grep { $o->has($_) && $o->get($_) }
           keys %{$self->{opts}}
         );
-   _d("opts: ".keys %{$self->{opts}});
    PTDEBUG && _d('DSN string made from options:', $dsn_string);
    return $self->parse($dsn_string);
 }
@@ -2051,6 +2050,8 @@ sub fill_in_dsn {
 
 sub get_dbh {
    my ( $self, $cxn_string, $user, $pass, $opts ) = @_;
+   my $i = 1;
+
    $opts ||= {};
    my $defaults = {
       AutoCommit         => 0,
@@ -6349,6 +6350,7 @@ sub main {
          dsn_string   => shift @ARGV,
          NAME_lc      => 0,
          parent       => $o->get('daemonize'),
+         host         => '127.0.0.1',
          DSNParser    => $dp,
          OptionParser => $o,
       );
@@ -6375,7 +6377,7 @@ sub main {
                # The 1st pattern means that MariaDB itself died or was stopped.
                # The 2nd pattern means that our cxn was killed (KILL <id>).
                if (    $error =~ m/MySQL server has gone away/
-                    || $error =~ m/Lost connection to MySQL server/ ) {
+                    || $error =~ m/Lost connection to server/ ) {
                   eval {
                      $dbh      = $cxn->connect();
                      $proc_sth = $dbh->prepare('SHOW FULL PROCESSLIST');
@@ -6730,7 +6732,7 @@ sub main {
          foreach my $query ( @queries ) {
             if ( $o->get('print') ) {
                my $qinfo = ($query->{Info} || 'NULL' );
-               if( $o->get('fingerprint') && $qinfo ne 'NULL' ) {
+               if( $o->get('query-id') && $qinfo ne 'NULL' ) {
                         $qinfo = $qr->fingerprint($query->{'Info'});
                }
 

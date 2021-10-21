@@ -170,7 +170,8 @@ like(
 
 my $against = {
    user    => 'msandbox',
-   host    => 'localhost',
+   host    => '127.0.0.1',
+   port    => '12345',
    db      => $target_db,
    command => 'Sleep',
    state   => '', #($sandbox_version lt '5.1' ? "executing" : "User sleep"),
@@ -178,7 +179,7 @@ my $against = {
 };
 my %trimmed_result;
 @trimmed_result{ keys %$against } = @{$rows->[0]}{ keys %$against };
-$trimmed_result{host} =~ s/localhost:[0-9]+/localhost/;
+$trimmed_result{host} =~ s/127.0.0.1:[0-9]+/127.0.0.1/;
 
 is_deeply(
    \%trimmed_result,

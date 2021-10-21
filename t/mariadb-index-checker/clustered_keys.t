@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-duplicate-key-checker";
+require "$trunk/bin/mariadb-index-checker";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -23,9 +23,9 @@ if ( !$dbh ) {
    plan skip_all => 'Cannot connect to sandbox master';
 }
 
-my $cnf    = "/tmp/12345/my.sandbox.cnf";
-my $sample = "t/pt-duplicate-key-checker/samples/";
-my @args   = ('-F', $cnf, qw(-h 127.1));
+my $cnf    = "/tmp/12345/configs/mariadb-client.cnf";
+my $sample = "t/mariadb-index-checker/samples/";
+my @args   = ('-F', $cnf, qw(-h 127.0.0.1));
 
 $sb->wipe_clean($dbh);
 $sb->create_dbs($dbh, ['test']);
@@ -33,7 +33,7 @@ $sb->create_dbs($dbh, ['test']);
 # #############################################################################
 # Issue 295: Enhance rules for clustered keys in mk-duplicate-key-checker
 # #############################################################################
-$sb->load_file('master', 't/pt-duplicate-key-checker/samples/issue_295.sql', 'test');
+$sb->load_file('master', 't/mariadb-index-checker/samples/issue_295.sql', 'test');
 ok(
    no_diff(
       sub { pt_duplicate_key_checker::main(@args, qw(-d issue_295)) },
@@ -47,7 +47,7 @@ ok(
 # Error if InnoDB table has no PK or unique indexes
 # https://bugs.launchpad.net/percona-toolkit/+bug/1036804
 # #############################################################################
-$sb->load_file('master', "t/pt-duplicate-key-checker/samples/idb-no-uniques-bug-894140.sql");
+$sb->load_file('master', "t/mariadb-index-checker/samples/idb-no-uniques-bug-894140.sql");
 
 # PTDEBUG was auto-vivifying $clustered_key:
 #
@@ -72,7 +72,7 @@ $sb->load_file('master', "t/pt-duplicate-key-checker/samples/idb-no-uniques-bug-
 #          my $key = $keys->[$i]->{colnames};
 #          if ( $key =~ m/$ck_cols$/ ) {
 
-my $output = `PTDEBUG=1 $trunk/bin/pt-duplicate-key-checker F=$cnf -d bug_1036804 2>&1`;
+my $output = `PTDEBUG=1 $trunk/bin/mariadb-index-checker F=$cnf -d bug_1036804 2>&1`;
 
 unlike(
    $output,
@@ -84,9 +84,9 @@ unlike(
 # 
 # https://bugs.launchpad.net/percona-toolkit/+bug/1201443
 # #############################################################################
-$sb->load_file('master', "t/pt-duplicate-key-checker/samples/fk_chosen_index_bug_1201443.sql");
+$sb->load_file('master', "t/mariadb-index-checker/samples/fk_chosen_index_bug_1201443.sql");
 
-$output = `$trunk/bin/pt-duplicate-key-checker F=$cnf -d fk_chosen_index_bug_1201443 2>&1`;
+$output = `$trunk/bin/mariadb-index-checker F=$cnf -d fk_chosen_index_bug_1201443 2>&1`;
 
 unlike(
    $output,

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # This program is part of MariaDB client tools
 # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal

@@ -36,8 +36,10 @@ my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.0.0.1";
 # Shell out to a sleep(10) query and try to capture the query.
 # Backticks don't work here.
 system("/tmp/12345/use -e 'select sleep(5)' >/dev/null &");
+$sb->_d("/tmp/12345/use -e 'select sleep(5)' executed.");
 
 $output = `$cmd --busy-time 1s --print --run-time 10`;
+$sb->_d("test command: $cmd --busy-time 1s --print --run-time 10");
 
 # $output ought to be something like
 # 2009-05-27T22:19:40 KILL 5 (Query 1 sec) select sleep(10)
@@ -72,7 +74,7 @@ ok(
 # --verbose
 # ############################################################################
 $output = output(
-   sub { pt_kill::main('-F', $cnf, qw(--run-time 2s --busy-time 1 --print),
+   sub { pt_kill::main('-F', $cnf, qw(--host 127.0.0.1 --run-time 2s --busy-time 1 --print),
       qw(--verbose)) },
 );
 like(
@@ -86,10 +88,10 @@ like(
 # #############################################################################
 $master_dbh->do("CREATE DATABASE IF NOT EXISTS pt_kill_test");
 
-system(qq($trunk/util/kill-mysql-process db=pt_kill_test wait=2 &));
+system(qq($trunk/util/kill-mysql-process h=127.0.0.1 db=pt_kill_test wait=2 &));
 
 $output = output(
-   sub { pt_kill::main('-F', $cnf, qw(-D pt_kill_test),
+   sub { pt_kill::main('-F', $cnf, qw(-D pt_kill_test --host 127.0.0.1),
       qw(--run-time 4 --interval 1 --print --verbose)) },
    stderr => 1,
 );
