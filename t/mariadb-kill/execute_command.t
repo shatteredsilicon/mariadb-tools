@@ -21,7 +21,7 @@ my $master_dbh = $sb->get_dbh_for('master');
 
 my $output;
 my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
-my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.1";
+my $cmd = "$trunk/bin/mariadb-kill -F $cnf -h 127.0.0.1";
 my $out = "/tmp/mk-kill-test.txt";
 
 # #############################################################################

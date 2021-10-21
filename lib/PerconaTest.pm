@@ -74,7 +74,7 @@ our $trunk = $ENV{PERCONA_TOOLKIT_BRANCH};
 
 our $sandbox_version = '';
 eval {
-   chomp(my $v = `$trunk/sandbox/test-env version 2>/dev/null`);
+   chomp(my $v = `/tmp/12345/use -ss -e "SELECT VERSION()"| cut -d'.' -f1,2`); # This will always return the stood-up version.
    $sandbox_version = $v if $v;
 };
 

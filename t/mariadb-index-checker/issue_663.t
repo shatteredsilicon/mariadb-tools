@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-duplicate-key-checker";
+require "$trunk/bin/mariadb-index-checker";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -26,25 +26,23 @@ else {
    plan tests => 2;
 }
 
-my $cnf    = "/tmp/12345/my.sandbox.cnf";
-my $sample = "t/pt-duplicate-key-checker/samples/";
-my @args   = ('-F', $cnf, qw(-h 127.1));
+my $output;
+my $cnf = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-index-checker -F $cnf -h 127.0.0.1";
 
 $sb->wipe_clean($dbh);
 $sb->create_dbs($dbh, ['test']);
 
 # #############################################################################
-# Issue 331: mk-duplicate-key-checker crashes getting size of foreign keys
+# Issue 663: Index length prefix gives uninitialized value
 # #############################################################################
-
-$sb->load_file('master', 't/pt-duplicate-key-checker/samples/issue_331.sql', 'test');
-ok(
-   no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d issue_331)) },
-      't/pt-duplicate-key-checker/samples/issue_331.txt'
-   ),
-   'Issue 331 crash on fks'
-) or diag($test_diff);
+$sb->load_file('master', 't/mariadb-index-checker/samples/issue_663.sql');
+$output = `$cmd -d issue_663`;
+like(
+   $output,
+   qr/`xmlerror` text/,
+   'Prints dupe key with prefixed column (issue 663)'
+);
 
 # #############################################################################
 # Done.

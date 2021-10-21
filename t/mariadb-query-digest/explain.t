@@ -30,14 +30,15 @@ $dbh->do('use food');
 $dbh->do('create table trees (fruit varchar(24), unique index (fruit))');
 
 my $output = '';
-my @args   = ('--explain', 'h=127.1,P=12345,u=msandbox,p=msandbox,D=food', qw(--report-format=query_report --limit 10));
-
+my @args   = ('--explain', 'h=127.0.0.1,P=12345,u=msandbox,p=msandbox,D=food', qw(--host 127.0.0.1 --report-format=query_report --limit 10));
+print($sandbox_version."\n");
 # The table has no rows so EXPLAIN will return NULL for most values.
 ok(
    no_diff(
       sub { pt_query_digest::main(@args,
          "$trunk/t/lib/samples/slowlogs/slow007.txt") },
-      ( $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/slow007_explain_1-80.txt"
+      ( $sandbox_version ge '10.4' ? "t/mariadb-query-digest/samples/slow007_explain_1-106.txt"
+      : $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/slow007_explain_1-80.txt"
       : $sandbox_version ge '5.7' ? "t/mariadb-query-digest/samples/slow007_explain_1-57.txt"
       : $sandbox_version ge '5.5' ? "t/mariadb-query-digest/samples/slow007_explain_1-55.txt"
       : $sandbox_version ge '5.1' ? "t/mariadb-query-digest/samples/slow007_explain_1-51.txt"
@@ -52,7 +53,8 @@ ok(
    no_diff(
       sub { pt_query_digest::main(@args,
          "$trunk/t/lib/samples/slowlogs/slow007.txt") },
-      ( $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/slow007_explain_2-80.txt"
+      ( $sandbox_version ge '10.4' ? "t/mariadb-query-digest/samples/slow007_explain_2-106.txt"
+      : $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/slow007_explain_2-80.txt"
       : $sandbox_version ge '5.7' ? "t/mariadb-query-digest/samples/slow007_explain_2-57.txt"
       : $sandbox_version ge '5.1' ? "t/mariadb-query-digest/samples/slow007_explain_2-51.txt"
                                   : "t/mariadb-query-digest/samples/slow007_explain_2.txt"),
@@ -99,7 +101,8 @@ ok(
          '--report-format', 'profile,query_report',
          "$trunk/t/mariadb-query-digest/samples/issue_1196.log",)
       },
-      (  $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/issue_1196-output-8.0.txt"
+      (  $sandbox_version ge '10.4' ? "t/mariadb-query-digest/samples/issue_1196-output-10.6.txt"
+       : $sandbox_version ge '8.0' ? "t/mariadb-query-digest/samples/issue_1196-output-8.0.txt"  
        : $sandbox_version ge '5.7' ? "t/mariadb-query-digest/samples/issue_1196-output-5.7.txt"
        : $sandbox_version ge '5.6' ? "t/mariadb-query-digest/samples/issue_1196-output-5.6.txt"
        : $sandbox_version ge '5.1' ? "t/mariadb-query-digest/samples/issue_1196-output.txt"

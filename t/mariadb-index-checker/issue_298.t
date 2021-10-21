@@ -13,7 +13,7 @@ use Test::More;
 
 use PerconaTest;
 use Sandbox;
-require "$trunk/bin/pt-duplicate-key-checker";
+require "$trunk/bin/mariadb-index-checker";
 
 my $dp  = new DSNParser(opts=>$dsn_opts);
 my $sb  = new Sandbox(basedir => '/tmp', DSNParser => $dp);
@@ -27,25 +27,16 @@ else {
 }
 
 my $output;
-my $cnf = "/tmp/12345/my.sandbox.cnf";
-my $cmd = "$trunk/bin/pt-duplicate-key-checker -F $cnf -h 127.1";
+my $cnf = "/tmp/12345/configs/mariadb-client.cnf";
+my $cmd = "$trunk/bin/mariadb-index-checker -F $cnf -h 127.0.0.1";
 
 $sb->wipe_clean($dbh);
-$sb->create_dbs($dbh, ['issue_1192']);
 
 # #############################################################################
-# Issue 1192: DROP/ADD leaves structure unchanged
+# Issue 298: mk-duplicate-key-checker crashes
 # #############################################################################
-$sb->load_file('master', "t/lib/samples/dupekeys/issue-1192.sql", "issue_1192");
-
-ok(
-   no_diff(
-      "$cmd -d issue_1192 --no-summary",
-      "t/pt-duplicate-key-checker/samples/issue_1192.txt",
-      sed => ["'s/  (/ (/g'"],
-   ),
-   "Keys are sorted lc so left-prefix magic works (issue 1192)"
-);
+$output = `$cmd -d mysql -t columns_priv 2>&1`;
+unlike($output, qr/Use of uninitialized var/, 'Does not crash on undef var');
 
 # #############################################################################
 # Done.
