@@ -56,10 +56,6 @@ Kill MariaDB queries that match certain criteria.
 
 MySQL partition management script
 
-=item mariadb-parted-fat
-
-MySQL partition management script
-
 =item mariadb-query-digest
 
 Analyze MariaDB queries from logs, processlist, and tcpdump.
