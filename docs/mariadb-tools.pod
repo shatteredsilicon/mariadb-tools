@@ -34,12 +34,15 @@ Archive rows from a MariaDB table into another table or a file.
 
 =item mariadb-backup-manager
 
-Backup manager is a script that supports several different backup tools and
-allows you to manage and/or schedule any of them to your liking.
 
-=item mariadb-config-diff
 
-Diff MariaDB configuration files and server variables.
+=item mariadb-database-summary
+
+Summarize MariaDB information nicely.
+
+=item mariadb-index-checker
+
+Find duplicate indexes and foreign keys on MariaDB tables.
 
 =item mariadb-iostat
 
@@ -49,17 +52,17 @@ An interactive I/O monitoring tool for GNU/Linux.
 
 Kill MariaDB queries that match certain criteria.
 
+=item mariadb-parted
+
+MySQL partition management script
+
+=item mariadb-parted-fat
+
+MySQL partition management script
+
 =item mariadb-query-digest
 
 Analyze MariaDB queries from logs, processlist, and tcpdump.
-
-=item mariadb-status-diff
-
-Look at many samples of MariaDB C<SHOW GLOBAL STATUS> side-by-side.
-
-=item mariadb-summary
-
-Summarize MariaDB information nicely.
 
 =item mariadb-schema-change
 
@@ -69,15 +72,30 @@ ALTER tables without locking them.
 
 Aggregate GDB stack traces for a selected program.
 
-=item mariadb-stat-browser
-
-Browses files created by pt-stalk.
-
 =item mariadb-stat
 
 Collect forensic data about MariaDB when problems occur.
 
+=item mariadb-stat-browser
+
+Browses files created by mariadb-stat.
+
+=item mariadb-status-diff
+
+Look at many samples of MariaDB C<SHOW GLOBAL STATUS> side-by-side.
+
+=item mariadb-summary
+
+Summarize system information nicely.
+
+=item mariadb-system-summary
+
+Summarize system information nicely.
+
 =back
+
+For more free, open-source software developed by MariaDB Foundation, visit
+L<http://www.mariadb.com/downloads/>.
 
 =head1 SPECIAL OPTION TYPES
 
@@ -437,7 +455,7 @@ Many people have contributed code over the years.  See each tool's
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -456,6 +474,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-MariaDB Tools v1.0.0 released 2019-08-30
+MariaDB Tools v6.0.0a released 2021-10-29
 
 =cut

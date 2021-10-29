@@ -1,7 +1,16 @@
 MariaDB Tools
 *************
 
-v6.0.0a - 2021-09-28 - alpha
-==========================
+v6.0.0a released 2021-10-29
+===========================
 
-This is the first Release Candidate for MariaDB Tools
+MariaDB Tools
+*************
+
+
+
+Changelog
+---------
+
+
+

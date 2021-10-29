@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME      => 'mariadb-tools',
-    VERSION   => '1.0.0', # PT 3.3.1
+    VERSION   => '6.0.0a', # PT 3.3.1
     EXE_FILES => [ <bin/*> ],
     MAN1PODS  => {
       'docs/mariadb-tools.pod' => 'blib/man1/mariadb-tools.1p',

@@ -1,13 +1,13 @@
-.. program:: mariadb-parted
+.. program:: mariadb-parted-fat
 
-=========================
-:program:`mariadb-parted`
-=========================
+=============================
+:program:`mariadb-parted-fat`
+=============================
 
 NAME
 ====
 
-:program:`mariadb-parted` - MySQL partition management script
+mariadb-parted - MySQL partition management script
 
 EXAMPLES
 ========
@@ -47,7 +47,7 @@ EXAMPLES
 SYNOPSIS
 ========
 
-:program:`mariadb-parted` [options] ACTION TIMESPEC DSN
+mariadb-parted [options] ACTION TIMESPEC DSN
 
 This tool assists in the creation of partitions in regular intervals.
 It creates partitions in regular intervals up to some maximum future date.
@@ -351,5 +351,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-parted` 6.0.0a
+mariadb-parted 6.0.0a
 

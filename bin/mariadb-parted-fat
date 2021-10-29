@@ -11631,7 +11631,7 @@ PalominoDB's pdb-parted in 2019.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2009-2013 PalominoDB, Inc.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
