@@ -7210,8 +7210,7 @@ Used with L<"--file"> to specify the output format.
 
 Valid formats are:
   dump: MariaDB dump format using tabs as field separator (default)
-  csv : Dump rows using ',' as separator and optionally enclosing fields by '"'.
-        This format is equivalent to FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'.
+  csv : Dump rows using ',' as separator and optionally enclosing fields by '"'. This format is equivalent to FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'.
 
 =item --password
 
