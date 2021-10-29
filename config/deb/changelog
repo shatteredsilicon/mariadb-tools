@@ -1,5 +1,11 @@
 mariadb-tools (6.0.0a-1) unstable; urgency=low
 
+Initial Release Candidate. In Alpha.
+
+ -- MariaDB Tools Developers <tools@mariadb.com>  Fri, 29 Oct 2021 00:18:25 +0000
+
+mariadb-tools (6.0.0a-1) unstable; urgency=low
+
 
  -- MariaDB Tools Developers <tools@mariadb.com>  Fri, 29 Oct 2021 00:09:17 +0000
 

@@ -12,5 +12,6 @@ MariaDB Tools
 Changelog
 ---------
 
+Initial Release Candidate. In Alpha.
 
 
