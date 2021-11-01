@@ -42,7 +42,7 @@ sub run_with {
    }, stderr => 1);
 }
 
-my $dsn      = 'h=127.1,P=12345,u=msandbox,p=msandbox';
+my $dsn      = 'h=127.0.0.1,P=12345,u=msandbox,p=msandbox';
 my $output;
 my $cmd;
 

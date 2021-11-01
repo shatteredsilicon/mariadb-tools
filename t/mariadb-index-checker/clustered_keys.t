@@ -36,7 +36,7 @@ $sb->create_dbs($dbh, ['test']);
 $sb->load_file('master', 't/mariadb-index-checker/samples/issue_295.sql', 'test');
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d issue_295)) },
+      sub { mariadb_index_checker::main(@args, qw(-d issue_295)) },
       ($sandbox_version ge '5.1' ? "$sample/issue_295-51.txt"
                                  : "$sample/issue_295.txt")
    ),

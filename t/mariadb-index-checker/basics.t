@@ -44,21 +44,21 @@ $sb->load_file('master', 't/lib/samples/dupe_key.sql', 'test');
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d test)) },
+      sub { mariadb_index_checker::main(@args, qw(-d test)) },
       "$sample/basic_output.txt"),
    'Default output'
 );
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d test --nosql)) },
+      sub { mariadb_index_checker::main(@args, qw(-d test --nosql)) },
       "$sample/nosql_output.txt"),
    '--nosql'
 );
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d test --nosummary)) },
+      sub { mariadb_index_checker::main(@args, qw(-d test --nosummary)) },
       "$sample/nosummary_output.txt"),
    '--nosummary'
 );
@@ -67,7 +67,7 @@ $sb->load_file('master', 't/lib/samples/uppercase_names.sql', 'test');
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d test -t UPPER_TEST)) },
+      sub { mariadb_index_checker::main(@args, qw(-d test -t UPPER_TEST)) },
       ($sandbox_version ge '5.1' ? "$sample/uppercase_names-51.txt"
                                  : "$sample/uppercase_names.txt")
    ),
@@ -78,7 +78,7 @@ $sb->load_file('master', 't/lib/samples/issue_269-1.sql', 'test');
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d test -t a)) },
+      sub { mariadb_index_checker::main(@args, qw(-d test -t a)) },
       "$sample/issue_269.txt"),
    'No dupes for issue 269'
 );
@@ -87,7 +87,7 @@ $sb->wipe_clean($dbh);
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d test)) },
+      sub { mariadb_index_checker::main(@args, qw(-d test)) },
       "$sample/nonexistent_db.txt"),
    'No results for nonexistent db'
 );
@@ -97,7 +97,7 @@ $sb->load_file('master', 't/lib/samples/dupekeys/dupe-cluster-bug-894140.sql', '
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-d test)) },
+      sub { mariadb_index_checker::main(@args, qw(-d test)) },
       "$sample/bug-894140.txt",
       sed => [ "-e 's/  */ /g'" ],
     ),
@@ -111,7 +111,7 @@ ok(
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args,
+      sub { mariadb_index_checker::main(@args,
          qw(-d sakila --key-types k)) },
       "$sample/key-types-k.txt"),
    '--key-types k'
@@ -119,7 +119,7 @@ ok(
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args,
+      sub { mariadb_index_checker::main(@args,
          qw(-d sakila --key-types f)) },
       "$sample/key-types-f.txt"),
    '--key-types f'
@@ -127,7 +127,7 @@ ok(
 
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args,
+      sub { mariadb_index_checker::main(@args,
          qw(-d sakila --key-types fk)) },
       "$sample/key-types-fk.txt"),
    '--key-types fk (explicit)'
@@ -143,7 +143,7 @@ $sb->load_file('master', 't/lib/samples/dupekeys/simple_dupe_bug_1217013.sql', '
 my $want = $sandbox_version lt '8.0' ? "$sample/simple_dupe_bug_1217013.txt" : "$sample/simple_dupe_bug_1217013_80.txt";
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-t test.domains -v)) },
+      sub { mariadb_index_checker::main(@args, qw(-t test.domains -v)) },
       $want),
    'Exact unique dupes (bug 1217013)'
 ) or diag($test_diff);
@@ -156,7 +156,7 @@ ok(
 $want = $sandbox_version lt '8.0' ? "$sample/simple_dupe_bug_1402730.txt" : "$sample/simple_dupe_bug_1402730_80.txt";
 ok(
    no_diff(
-      sub { pt_duplicate_key_checker::main(@args, qw(-t test.domains --verbose)) },
+      sub { mariadb_index_checker::main(@args, qw(-t test.domains --verbose)) },
       "$want", keep_output=>1),
    q[--verbose option doesn't skip dupes reporting (bug 1402730)]
 ) or diag($test_diff);

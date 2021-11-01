@@ -149,7 +149,7 @@ is_deeply(
 );
 
 run_with("slow006.txt", '--create-history-table',
-                   '--history query_history', "$dsn");
+                   '--history', "$dsn,D=mariadb_test,t=query_history");
 
 ($table) = $dbh->selectrow_array(
    "show tables from mariadb_test like 'query_history'");
@@ -161,7 +161,7 @@ is($table, 'query_history', '--create-history-table creates both mariadb_test an
 $dbh->do('truncate table test.query_review_history');
 
 run_with("slow002.txt",
-         '--history query_review_history', "$dsn,D=test,t=query_review_history",
+         '--history', "$dsn,D=test,t=query_review_history",
          '--no-report', '--filter', '$event->{arg} =~ m/foo\.bar/');
 
 $res = $dbh->selectall_arrayref( 'SELECT * FROM test.query_review_history',
@@ -290,7 +290,7 @@ $dbh->do($min_tbl);
 
 $output = output(
    sub { pt_query_digest::main(
-      '--history query_review_history', "$dsn,D=test,t=query_review_history",
+      '--history', "$dsn,D=test,t=query_review_history",
       qw(--no-report --no-continue-on-error),
       "$trunk/t/lib/samples/slowlogs/slow002.txt")
    },

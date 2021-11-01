@@ -9,6 +9,19 @@
 # of this so it will not try to load the module from @INC.  See the tool's
 # documentation for a full list of dependencies.
 
+BEGIN {
+   $INC{$_} = __FILE__ for map { (my $pkg = "$_.pm") =~ s!::!/!g; $pkg } (qw(
+    DateTime
+    Mail::Send
+    Digest::MD5
+    ProcessLog
+    DSN
+    TablePartitions
+    Timespec
+    IniFile
+   ));
+}
+
 use strict;
 use warnings FATAL => 'all';
 

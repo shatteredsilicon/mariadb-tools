@@ -32,7 +32,7 @@ my @args;
 # #############################################################################
 # Issue 361: Add a --runfor (or something) option to mk-query-digest
 # #############################################################################
-`$trunk/bin/mariadb-query-digest --processlist h=127.1,P=12345,u=msandbox,p=msandbox --run-time 3 --port 12345 --log /tmp/mk-query-digest.log --pid /tmp/mk-query-digest.pid --daemonize 1>/dev/null 2>/dev/null`;
+`$trunk/bin/mariadb-query-digest --processlist h=127.0.0.1,P=12345,u=msandbox,p=msandbox --run-time 3 --port 12345 --log /tmp/mk-query-digest.log --pid /tmp/mk-query-digest.pid --daemonize 1>/dev/null 2>/dev/null`;
 chomp(my $pid = `cat /tmp/mk-query-digest.pid`);
 sleep 2;
 my $output = `ps x | grep $pid | grep processlist | grep -v grep`;

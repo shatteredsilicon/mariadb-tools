@@ -28,7 +28,7 @@ if ( !$dbh ) {
    plan skip_all => 'Cannot connect to sandbox master';
 }
 
-my @args = qw(-F /tmp/12345/my.sandbox.cnf --processlist h=127.1 --report-format query_report);
+my @args = qw(-F /tmp/12345/my.sandbox.cnf --processlist h=127.0.0.1 -u msandbox -pmsandbox -P 12345 --report-format query_report);
 
 system("/tmp/12345/use -e 'select sleep(3)' >/dev/null 2>&1 &");
 system("/tmp/12345/use -e 'select sleep(4)' >/dev/null 2>&1 &");

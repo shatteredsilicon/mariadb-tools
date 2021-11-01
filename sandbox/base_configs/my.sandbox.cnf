@@ -17,7 +17,7 @@ innodb_data_file_path      = ibdata1:10M:autoextend
 innodb_log_file_size       = 64M
 relay_log                  = mysql-relay-bin
 log_slave_updates
-report-host                = NAME
+report-host                = 127.0.0.1
 report-port                = PORT
 log-error                  = /var/lib/mysql/mysqld.log
 innodb_lock_wait_timeout   = 3

@@ -16,6 +16,8 @@ if [[ ! -f /tmp/12345 ]]; then
 	ln -s `pwd`/tmp/tertiary /tmp/12347                                                                    # TODO: Genercize location by using variables.
 fi
 
+porthost=([12345]=primary [12346]=secondary [12347]=tertiary)
+
 let id=1
 for i in 12345 12346 12347; do
 # unpack initial datas
@@ -23,6 +25,7 @@ cp ./base_configs/my.client.cnf /tmp/$i/configs/mariadb-client.cnf
 cp ./base_configs/my.sandbox.cnf /tmp/$i/configs/my.cnf
 sed -i'' "s:PORT:$i:g" /tmp/$i/configs/my.cnf
 sed -i'' "s:NAME:maria$i:g" /tmp/$i/configs/my.cnf
+sed -i'' "s:DBNAME:$porthost[$i]:g" /tmp/$i/configs/my.cnf
 sed -i'' "s:ID:$id:g" /tmp/$i/configs/my.cnf
 sed -i'' "s:PORT:$i:g" /tmp/$i/configs/mariadb-client.cnf
 chmod 755 /tmp/$i/configs/mariadb-client.cnf
