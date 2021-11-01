@@ -1,5 +1,5 @@
 
-v1.0.0 released 2020-01-08
+v6.0.0a released 2021-11-03
 ==========================
 
 This is the first Release Candidate for MariaDB Tools

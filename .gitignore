@@ -1,5 +1,6 @@
 # Cole Results
 results.report
+*.bak
 
 !Build/
 .last_cover_stats
