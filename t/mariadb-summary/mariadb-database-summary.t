@@ -35,6 +35,10 @@ if ( $db_flavor =~ m/Percona Server/ ) {
     }
 }
 
+if (!defined $ENV{FORK}){
+   local $ENV{FORK} = "mariadb"; # THIS. IS. MARIADB! -cb
+}
+
 if ($has_keyring_plugin) {
     plan skip_all => 'Keyring plugins are enabled.';
 }

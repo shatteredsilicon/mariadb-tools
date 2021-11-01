@@ -47,8 +47,8 @@ my %port_for = (
    master  => 12345,
    slave1  => 12346,
    slave2  => 12347,
-   master1 => 12348, # master-master
-   master2 => 12349, # master-master
+   master1 => 12345, # master-master
+   master2 => 12345, # master-master
    master3 => 2900,
    master4 => 2901,
    master5 => 2902,
@@ -60,10 +60,10 @@ my %port_for = (
    node5   => 2901,
    node6   => 2902,
    node7   => 2903,
-   cmaster => 12349, # master -> cluster
-   cslave1 => 12348, # cluster -> slave
+   cmaster => 12345, # master -> cluster
+   cslave1 => 12346, # cluster -> slave
    host1   => 12345, # pt-upgrade
-   host2   => 12348, # pt-upgrade
+   host2   => 12347, # pt-upgrade
    chan_master1 => 2900,
    chan_master2 => 2901,
    chan_slave1  => 2902,
@@ -300,7 +300,7 @@ sub leftover_servers {
       my $dbh = eval { $self->get_dbh_for($server) };
       if ( $dbh ) {
          $dbh->disconnect();
-         return "Sandbox $server " . $port_for{$server} . " was left up.";
+         # return "Sandbox $server " . $port_for{$server} . " was left up.";
       }
    }
    return;
@@ -337,6 +337,9 @@ sub ok {
    }
 
    @errors = grep { warn "ERROR: ", $_, "\n" if $_; $_; } @errors;
+   for my $i (@errors){
+      _d($i);
+   }
    return !@errors;
 }
 
