@@ -1081,11 +1081,10 @@ collect_mysql_info () {
 # ###########################################################################
 # report_mysql_info package
 # This package is a copy without comments from the original.  The original
-# with comments and its test file can be found in the Bazaar repository at,
+# with comments and its test file can be found in the repository at,
 #   lib/bash/report_mysql_info.sh
 #   t/lib/bash/report_mysql_info.sh
 # ###########################################################################
-
 
 set -u
 POSIXLY_CORRECT=1

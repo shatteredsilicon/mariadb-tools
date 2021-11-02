@@ -565,7 +565,7 @@ main () { local PTFUNCNAME=main;
 
    dbsummary_cmd="$PR_databasesummary"
    for option in "all-databases" "ask-pass" "config" "databases" "defaults-file" \
-      "host" "list-encrypted-tables" "password" "port" "read-samples" \
+      "host" "password" "port" "read-samples" \
       "save-samples" "sleep" "socket" "user"
    do
       option_val=$(echo "OPT_$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')
@@ -699,13 +699,6 @@ Print help and exit.
 short form: -h; type: string
 
 Host to connect to.
-
-=item --list-encrypted-tables
-
-default: false
-
-Include a list of the encrypted tables in all databases. This can cause slowdowns since
-querying Information Schema tables can be slow.
 
 =item --password
 

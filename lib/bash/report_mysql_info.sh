@@ -20,21 +20,15 @@
 
 # Package: report_mysql_info
 # Report various aspects of MySQL
-
 set -u
 POSIXLY_CORRECT=1
 
-# Accepts a number of seconds, and outputs a d+h:m:s formatted string
 secs_to_time () {
    awk -v sec="$1" 'BEGIN {
       printf( "%d+%02d:%02d:%02d", sec / 86400, (sec % 86400) / 3600, (sec % 3600) / 60, sec % 60);
    }'
 }
 
-# Returns "Enabled", "Disabled", or "Not Supported" depending on whether the
-# variable exists and is ON or enabled.  You can pass 2nd and 3rd variables to
-# control whether the variable should be 'gt' (numeric greater than) or 'eq'
-# (string equal) to some value.
 feat_on() {
    local file="$1"
    local varname="$2"
@@ -64,7 +58,7 @@ feat_on() {
          echo "Disabled"
       fi
    else
-      echo "Not Supported"
+      echo "Not Installed or Available"
    fi
 }
 
@@ -97,7 +91,6 @@ get_table_cache () {
    echo ${table_cache:-0}
 }
 
-# Gets the status of a plugin, or returns "Not found"
 get_plugin_status () {
    local file="$1"
    local plugin="$2"
@@ -116,19 +109,11 @@ collect_encrypted_tables() {
 }
 
 collect_encrypted_tablespaces() {
-# I_S.INNODB_SYS_TABLESPACES has a "flag" field. Encrypted tablespace has bit 14 set. You can check it with "flag & 8192". 
-# And seems like MySQL is capable of bitwise operations. https://dev.mysql.com/doc/refman/5.7/en/bit-functions.html
     $CMD_MYSQL $EXT_ARGV --table -ss -e "SELECT SPACE, NAME, SPACE_TYPE from INFORMATION_SCHEMA.INNODB_SYS_TABLESPACES where FLAG&8192 = 8192;"
 }
 
 
-# ##############################################################################
-# Functions for parsing specific files and getting desired info from them.
-# These are called from within main() and are separated so they can be tested
-# easily.
-# ##############################################################################
 
-# Parses the output of 'ps -e -o args | grep mysqld' or 'ps auxww...'
 _NO_FALSE_NEGATIVES=""
 parse_mysqld_instances () {
    local file="$1"
@@ -147,8 +132,6 @@ parse_mysqld_instances () {
    grep '/mysqld ' "$file" | while read line; do
       local pid=$(echo "$line" | awk '{print $1;}')
       for word in ${line}; do
-         # Some grep doesn't have -o, so I have to pull out the words I want by
-         # looking at each word
          if echo "${word}" | grep -- "--socket=" > /dev/null; then
             socket="$(echo "${word}" | cut -d= -f2)"
          fi
@@ -171,14 +154,12 @@ parse_mysqld_instances () {
 
       local nice="$(get_var "internal::nice_of_$pid" "$variables_file")"
       local oom="$(get_var "internal::oom_of_$pid" "$variables_file")"
-      # Only used during testing
       if [ -n "${_NO_FALSE_NEGATIVES}" ]; then
          nice="?"
          oom="?"
       fi
       printf "  %5s %-26s %-4s %-3s %s\n" "${port}" "${datadir}" "${nice:-"?"}" "${oom:-"?"}" "${socket}"
       
-      # Need to unset all of them in case the next process uses --defaults-file
       defaults_file=""
       socket=""
       port=""
@@ -186,7 +167,6 @@ parse_mysqld_instances () {
    done
 }
 
-# Gets the MySQL system time.  Uses input from $MYSQL_VARIABLES_FILE.
 get_mysql_timezone () {
    local file="$1"
 
@@ -199,7 +179,6 @@ get_mysql_timezone () {
    echo "${tz}"
 }
 
-# Gets the MySQL system version.
 get_mysql_version () {
    local file="$1"
 
@@ -207,7 +186,6 @@ get_mysql_version () {
    name_val "Built On" "$(get_var version_compile_os "${file}") $(get_var version_compile_machine "${file}")"
 }
 
-# Gets the system start and uptime in human readable format.
 get_mysql_uptime () {
    local uptime="$1"
    local restart="$2"
@@ -215,7 +193,6 @@ get_mysql_uptime () {
    echo "${restart} (up ${uptime})"
 }
 
-# Summarizes the output of SHOW MASTER LOGS.
 summarize_binlogs () {
    local file="$1"
 
@@ -233,7 +210,6 @@ format_users () {
    awk '{printf "%d users, %d anon, %d w/o pw, %d old pw\n", $1, $2, $3, $4}' "${file}"
 }
 
-# Print out binlog_do_db and binlog_ignore_db
 format_binlog_filters () {
    local file="$1"
    [ -e "$file" ] || return
@@ -241,15 +217,10 @@ format_binlog_filters () {
    name_val "binlog_ignore_db" "$(cut -f4 "$file")"
 }
 
-# Takes as input a file that has two samples of SHOW STATUS, columnized next to
-# each other.  Outputs fuzzy-ed numbers:
-# absolute, all-time per second, and per-second over the interval between the
-# samples.  Omits any rows that are all zeroes.
 format_status_variables () {
    local file="$1"
    [ -e "$file" ] || return
 
-   # First, figure out the intervals.
    utime1="$(awk '/Uptime /{print $2}' "$file")";
    utime2="$(awk '/Uptime /{print $3}' "$file")";
    awk "
@@ -281,11 +252,6 @@ format_status_variables () {
          persec = int(persec);
          nowsec = int(nowsec);
          if ( perday + persec + nowsec > 0 ) {
-            # We do the format in this roundabout way because we want two clashing
-            # behaviors: If something is zero, just print the space padding,
-            # however, if it's any other number, we want that. Problem: %s alone
-            # might use scientific notation, and we can't use %11.f for both cases
-            # as it would turn the empty string into a zero. So use both.
             perday_format=\"%11.f\";
             persec_format=\"%11.f\";
             nowsec_format=\"%11.f\";
@@ -299,15 +265,6 @@ format_status_variables () {
    }" "$file"
 }
 
-# Slices the processlist a bunch of different ways.  The processlist should be
-# created with the \G flag so it's vertical.
-# The parsing is a bit awkward because different
-# versions of awk have limitations like "too many fields on line xyz".  So we
-# use 'cut' to shorten the lines.  We count all things into temporary variables
-# for each process in the processlist, and when we hit the Info: line which
-# ought to be the last line in the process, we decide what to do with the temp
-# variables.  If we're summarizing Command, we count everything; otherwise, only
-# non-Sleep processes get counted towards the sum and max of Time.
 summarize_processlist () {
    local file="$1"
 
@@ -363,7 +320,6 @@ summarize_processlist () {
    echo
 }
 
-# Pretty-prints the my.cnf file.
 pretty_print_cnf_file () {
    local file="$1"
 
@@ -536,7 +492,6 @@ find_transation_states () {
    group_concat "${tmpfile}"
 }
 
-# Summarizes various things about InnoDB status that are not easy to see by eye.
 format_innodb_status () {
    local file=$1
 
@@ -575,11 +530,10 @@ format_innodb_status () {
    fi
 }
 
-format_ndb_status() {
+format_cs_status() {
    local file=$1
 
    [ -e "$file" ] || return
-   # We could use "& \n" but that does not seem to work on bsd sed. 
    egrep '^[ \t]*Name:|[ \t]*Status:' $file|sed 's/^[ \t]*//g'|while read line; do echo $line; echo $line | grep '^Status:'>/dev/null && echo ; done
 }
 
@@ -620,9 +574,6 @@ format_mysql_roles() {
    cat $file
 }
 
-# Summarizes per-database statistics for a bunch of different things: count of
-# tables, views, etc.  $1 is the file name.  $2 is the database name; if none,
-# then there should be multiple databases.
 format_overall_db_stats () {
    local file="$1"
    local tmpfile="$PT_TMPDIR/format_overall_db_stats.tmp"
@@ -630,12 +581,8 @@ format_overall_db_stats () {
    [ -e "$file" ] || return
 
    echo
-   # We keep counts of everything in an associative array keyed by db name, and
-   # what it is.  The num_dbs counter is to ensure sort order is consistent when
-   # we run the awk commands following this one.
    awk '
       BEGIN {
-         # In case there is no USE statement in the file.
          db      = "{chosen}";
          num_dbs = 0;
       }
@@ -647,7 +594,6 @@ format_overall_db_stats () {
          }
       }
       /^CREATE TABLE/ {
-         # Handle single-DB dumps, where there is no USE statement.
          if (num_dbs == 0) {
             num_dbs     = 1;
             db_seen[db] = 1;
@@ -692,10 +638,8 @@ format_overall_db_stats () {
    tail -n +3 "$tmpfile" | sort
 
    echo
-   # Now do the summary of engines per DB
    awk '
       BEGIN {
-         # In case there is no USE statement in the file.
          db          = "{chosen}";
          num_dbs     = 0;
          num_engines = 0;
@@ -708,7 +652,6 @@ format_overall_db_stats () {
          }
       }
       /^\) ENGINE=/ {
-         # Handle single-DB dumps, where there is no USE statement.
          if (num_dbs == 0) {
             num_dbs     = 1;
             db_seen[db] = 1;
@@ -752,11 +695,8 @@ format_overall_db_stats () {
    tail -n +2 "$tmpfile" | sort
 
    echo
-   # Now do the summary of index types per DB. Careful -- index is a reserved
-   # word in awk.
    awk '
       BEGIN {
-         # In case there is no USE statement in the file.
          db        = "{chosen}";
          num_dbs   = 0;
          num_idxes = 0;
@@ -769,7 +709,6 @@ format_overall_db_stats () {
          }
       }
       /KEY/ {
-         # Handle single-DB dumps, where there is no USE statement.
          if (num_dbs == 0) {
             num_dbs     = 1;
             db_seen[db] = 1;
@@ -825,10 +764,8 @@ format_overall_db_stats () {
    tail -n +2 "$tmpfile" | sort
 
    echo
-   # Now do the summary of datatypes per DB
    awk '
       BEGIN {
-         # In case there is no USE statement in the file.
          db          = "{chosen}";
          num_dbs     = 0;
          num_types = 0;
@@ -841,7 +778,6 @@ format_overall_db_stats () {
          }
       }
       /^  `/ {
-         # Handle single-DB dumps, where there is no USE statement.
          if (num_dbs == 0) {
             num_dbs     = 1;
             db_seen[db] = 1;
@@ -918,45 +854,36 @@ format_overall_db_stats () {
    echo
 }
 
-section_percona_server_features () {
+section_mariadb_server_features () {
    local file="$1"
 
    [ -e "$file" ] || return
 
-   # Renamed to userstat in 5.5.10-20.1
    name_val "Table & Index Stats"   \
             "$(feat_on_renamed "$file" userstat_running userstat)"
    name_val "Multiple I/O Threads"  \
             "$(feat_on "$file" innodb_read_io_threads gt 1)"
-
-   # Renamed to innodb_corrupt_table_action in 5.5.10-20.1
+   
    name_val "Corruption Resilient"  \
             "$(feat_on_renamed "$file" innodb_pass_corrupt_table innodb_corrupt_table_action)"
 
-   # Renamed to innodb_recovery_update_relay_log in 5.5.10-20.1
    name_val "Durable Replication"   \
             "$(feat_on_renamed "$file" innodb_overwrite_relay_log_info innodb_recovery_update_relay_log)"
 
-   # Renamed to innodb_import_table_from_xtrabackup in 5.5.10-20.1
    name_val "Import InnoDB Tables"  \
             "$(feat_on_renamed "$file" innodb_expand_import innodb_import_table_from_xtrabackup)"
 
-   # Renamed to innodb_buffer_pool_restore_at_startup in 5.5.10-20.1
    name_val "Fast Server Restarts"  \
             "$(feat_on_renamed "$file" innodb_auto_lru_dump innodb_buffer_pool_restore_at_startup)"
-   
+
    name_val "Enhanced Logging"      \
             "$(feat_on "$file" log_slow_verbosity ne microtime)"
    name_val "Replica Perf Logging"  \
             "$(feat_on "$file" log_slow_slave_statements)"
 
-   # Renamed to query_response_time_stats in 5.5
    name_val "Response Time Hist."   \
             "$(feat_on_renamed "$file" enable_query_response_time_stats query_response_time_stats)"
 
-   # Renamed to innodb_adaptive_flushing_method in 5.5
-   # This one is a bit more convulted than the rest because not only did it
-   # change names, but also default values: none in 5.1, native in 5.5
    local smooth_flushing="$(feat_on_renamed "$file" innodb_adaptive_checkpoint innodb_adaptive_flushing_method)"
    if  [ "${smooth_flushing:-""}" != "Not Supported" ]; then
       if [ -n "$(get_var innodb_adaptive_checkpoint "$file")" ]; then
@@ -969,6 +896,7 @@ section_percona_server_features () {
    
    name_val "HandlerSocket NoSQL"   \
             "$(feat_on "$file" handlersocket_port)"
+
    name_val "Fast Hash UDFs"   \
             "$(get_var "pt-summary-internal-FNV_64" "$file")"
 }
@@ -992,14 +920,31 @@ section_myisam () {
    name_val "Unflushed" "$(fuzzy_pct ${unfl} ${buf_size})"
 }
 
+section_aria () {
+   local variables_file="$1"
+   local status_file="$2"
+
+   [ -e "$variables_file" -a -e "$status_file" ] || return
+
+   local buf_size="$(get_var aria_pagecache_buffer_size "$variables_file")"
+   local blk_size="$(get_var aria_block_size "$variables_file")"
+   local blk_unus="$(get_var Aria_pagecache_blocks_unused "$status_file")"
+   local blk_unfl="$(get_var Aria_pagecache_blocks_not_flushed "$variables_file")"
+   local unus=$((${blk_unus:-0} * ${blk_size:-0}))
+   local unfl=$((${blk_unfl:-0} * ${blk_size:-0}))
+   local used=$((${buf_size:-0} - ${unus}))
+
+   name_val "Page Cache Buffer" "$(shorten ${buf_size} 1)"
+   name_val "Pct Used" "$(fuzzy_pct ${used} ${buf_size})"
+   name_val "Unflushed" "$(fuzzy_pct ${unfl} ${buf_size})"
+}
+
 section_innodb () {
    local variables_file="$1"
    local status_file="$2"
 
    [ -e "$variables_file" -a -e "$status_file" ] || return
 
-   # XXX TODO I don't think this is working right.
-   # XXX TODO Should it use data from information_schema.plugins too?
    local version=$(get_var innodb_version "$variables_file")
    name_val Version ${version:-default}
 
@@ -1017,7 +962,15 @@ section_innodb () {
    name_val "Page Size"           $(shorten $(get_var Innodb_page_size "$status_file") 0)
 
    local log_size="$(get_var innodb_log_file_size "$variables_file")"
-   local log_file="$(get_var innodb_log_files_in_group "$variables_file")"
+   major_version=`echo $version | cut -d '.' -f 1`
+   minor_version=`echo $version | cut -d '.' -f 2`
+   dep_major_version="10"
+   dep_minor_version="6" # innodb_log_files_in_group removed in 10.6 (https://mariadb.com/kb/en/innodb-system-variables/#innodb_log_files_in_group)
+   if [[ "$major_version" -ge "$dep_major_version" ]] && [[ "$minor_version" -ge "$dep_minor_version" ]]; then 
+      log_file="1"
+   else
+      local log_file="$(get_var innodb_log_files_in_group "$variables_file")"
+   fi
    local log_total=$(awk "BEGIN {printf \"%.2f\n\", ${log_size}*${log_file}}" )
    name_val "Log File Size"       \
             "${log_file} * $(shorten ${log_size} 1) = $(shorten ${log_total} 1)"
@@ -1103,9 +1056,6 @@ section_noteworthy_variables () {
    done
 }
 
-#
-# Formats and outputs the semisyncronious replication-related variables
-#
 _semi_sync_stats_for () {
    local target="$1"
    local file="$2"
@@ -1152,9 +1102,6 @@ _semi_sync_stats_for () {
    fi
 }
 
-# Make a pattern of things we want to omit because they aren't
-# counters, they are gauges (in RRDTool terminology).  Gauges are shown
-# elsewhere in the output.
 noncounters_pattern () {
    local noncounters_pattern=""
 
@@ -1193,7 +1140,7 @@ section_mysqld () {
 
    [ -e "$executables_file" -a -e "$variables_file" ] || return
 
-   section "MySQL Executable"
+   section "MariaDB Executable"
    local i=1;
    while read executable; do
       name_val "Path to executable" "$executable"
@@ -1207,7 +1154,7 @@ section_slave_hosts () {
 
    [ -e "$slave_hosts_file" ] || return
 
-   section "Slave Hosts"
+   section "Replicas"
    if [ -s "$slave_hosts_file" ]; then
        cat "$slave_hosts_file"
    else
@@ -1218,7 +1165,7 @@ section_slave_hosts () {
 section_mysql_files () {
    local variables_file="$1"
 
-   section "MySQL Files"
+   section "MariaDB Files"
    for file_name in pid_file slow_query_log_file general_log_file log_error; do
       local file="$(get_var "${file_name}" "$variables_file")"
       local name_out="$(echo "$file_name" | sed 'y/[a-z]/[A-Z]/')"
@@ -1231,7 +1178,7 @@ section_mysql_files () {
    done
 }
 
-section_percona_xtradb_cluster () {
+section_mariadb_galera_cluster () {
    local mysql_var="$1"
    local mysql_status="$2"
 
@@ -1276,9 +1223,9 @@ report_jemalloc_enabled() {
      grep -qc jemalloc /proc/${pid}/environ || ldd $(which mysqld) 2>/dev/null | grep -qc jemalloc
      jemalloc_status=$?
      if [ $jemalloc_status = 1 ]; then
-       echo "jemalloc is not enabled in mysql config for process with id ${pid}" 
+       echo "jemalloc is not enabled in mariadb config for process with id ${pid}" 
      else
-       echo "jemalloc enabled in mysql config for process with id ${pid}"
+       echo "jemalloc enabled in mariadb config for process with id ${pid}"
        GENERAL_JEMALLOC_STATUS=1
      fi
   done
@@ -1297,152 +1244,112 @@ report_jemalloc_enabled() {
 report_mysql_summary () {
    local dir="$1"
 
-   # Field width for name_val
    local NAME_VAL_LEN=25
 
-   # ########################################################################
-   # Header for the whole thing, table of discovered instances
-   # ########################################################################
 
-   section "Percona Toolkit MySQL Summary Report"
+   section "MariaDB Server Summary Report"
    name_val "System time" "`date -u +'%F %T UTC'` (local TZ: `date +'%Z %z'`)"
    section "Instances"
-   parse_mysqld_instances "$dir/mysqld-instances" "$dir/mysql-variables"
+   parse_mysqld_instances "$dir/mysqld-instances" "$dir/mariadb-variables"
 
-   section_mysqld "$dir/mysqld-executables" "$dir/mysql-variables"
+   section_mysqld "$dir/mysqld-executables" "$dir/mariadb-variables"
 
-   section_slave_hosts "$dir/mysql-slave-hosts"
-   # ########################################################################
-   # General date, hostname, etc
-   # ########################################################################
-   local user="$(get_var "pt-summary-internal-user" "$dir/mysql-variables")"
-   local port="$(get_var port "$dir/mysql-variables")"
-   local now="$(get_var "pt-summary-internal-now" "$dir/mysql-variables")"
+   section_slave_hosts "$dir/mariadb-slave-hosts"
+   local user="$(get_var "pt-summary-internal-user" "$dir/mariadb-variables")"
+   local port="$(get_var port "$dir/mariadb-variables")"
+   local now="$(get_var "pt-summary-internal-now" "$dir/mariadb-variables")"
    section "Report On Port ${port}"
    name_val User "${user}"
-   name_val Time "${now} ($(get_mysql_timezone "$dir/mysql-variables"))"
-   name_val Hostname "$(get_var hostname "$dir/mysql-variables")"
-   get_mysql_version "$dir/mysql-variables"
+   name_val Time "${now} ($(get_mysql_timezone "$dir/mariadb-variables"))"
+   name_val Hostname "$(get_var hostname "$dir/mariadb-variables")"
+   get_mysql_version "$dir/mariadb-variables"
 
-   local uptime="$(get_var Uptime "$dir/mysql-status")"
-   local current_time="$(get_var "pt-summary-internal-current_time" "$dir/mysql-variables")"
+   local uptime="$(get_var Uptime "$dir/mariadb-status")"
+   local current_time="$(get_var "pt-summary-internal-current_time" "$dir/mariadb-variables")"
    name_val Started "$(get_mysql_uptime "${uptime}" "${current_time}")"
 
-   local num_dbs="$(grep -c . "$dir/mysql-databases")"
+   local num_dbs="$(grep -c . "$dir/mariadb-databases")"
    name_val Databases "${num_dbs}"
-   name_val Datadir "$(get_var datadir "$dir/mysql-variables")"
+   name_val Datadir "$(get_var datadir "$dir/mariadb-variables")"
 
-   local fuzz_procs=$(fuzz $(get_var Threads_connected "$dir/mysql-status"))
-   local fuzz_procr=$(fuzz $(get_var Threads_running "$dir/mysql-status"))
+   local fuzz_procs=$(fuzz $(get_var Threads_connected "$dir/mariadb-status"))
+   local fuzz_procr=$(fuzz $(get_var Threads_running "$dir/mariadb-status"))
    name_val Processes "${fuzz_procs} connected, ${fuzz_procr} running"
 
    local slave=""
-   if [ -s "$dir/mysql-slave" ]; then slave=""; else slave="not "; fi
-   local slavecount=$(grep -c 'Binlog Dump' "$dir/mysql-processlist")
+   if [ -s "$dir/mariadb-slave" ]; then slave=""; else slave="not "; fi
+   local slavecount=$(grep -c 'Binlog Dump' "$dir/mariadb-processlist")
    name_val Replication "Is ${slave}a slave, has ${slavecount} slaves connected"
 
 
-   # TODO move this into a section with other files: error log, slow log and
-   # show the sizes
-   #   section_mysql_files "$dir/mysql-variables"
-   local pid_file="$(get_var "pid_file" "$dir/mysql-variables")"
+   local pid_file="$(get_var "pid_file" "$dir/mariadb-variables")"
    local PID_EXISTS=""
-   if [ "$( get_var "pt-summary-internal-pid_file_exists" "$dir/mysql-variables" )" ]; then
+   if [ "$( get_var "pt-summary-internal-pid_file_exists" "$dir/mariadb-variables" )" ]; then
       PID_EXISTS="(exists)"
    else
       PID_EXISTS="(does not exist)"
    fi
    name_val Pidfile "${pid_file} ${PID_EXISTS}"
 
-   # ########################################################################
-   # Processlist, sliced several different ways
-   # ########################################################################
    section "Processlist"
-   summarize_processlist "$dir/mysql-processlist"
+   summarize_processlist "$dir/mariadb-processlist"
 
-   # ########################################################################
-   # Queries and query plans
-   # ########################################################################
    section "Status Counters (Wait ${OPT_SLEEP} Seconds)"
-   # Wait for the child that was forked during collection.
    wait
    local noncounters_pattern="$(noncounters_pattern)"
-   format_status_variables "$dir/mysql-status-defer" | grep -v "${noncounters_pattern}"
+   format_status_variables "$dir/mariadb-status-defer" | grep -v "${noncounters_pattern}"
 
-   # ########################################################################
-   # Table cache
-   # ########################################################################
    section "Table cache"
-   local open_tables=$(get_var "Open_tables" "$dir/mysql-status")
-   local table_cache=$(get_table_cache "$dir/mysql-variables")
+   local open_tables=$(get_var "Open_tables" "$dir/mariadb-status")
+   local table_cache=$(get_table_cache "$dir/mariadb-variables")
    name_val Size  $table_cache
    name_val Usage "$(fuzzy_pct ${open_tables} ${table_cache})"
 
-   # ########################################################################
-   # Percona Server features
-   # ########################################################################
-   section "Key Percona Server features"
-   section_percona_server_features "$dir/mysql-variables"
+   section "Key MariaDB Server features"
+   section_mariadb_server_features "$dir/mariadb-variables"
 
-   # ########################################################################
-   # Percona XtraDB Cluster data
-   # ########################################################################
-   section "Percona XtraDB Cluster"
-   local has_wsrep="$(get_var "wsrep_on" "$dir/mysql-variables")"
+   section "MariaDB Galera Cluster"
+   local has_wsrep=$($CMD_MYSQL $EXT_ARGV -ss -e 'show session variables like "%wsrep_on%";' | cut -f2 | grep -i "on")
    if [ -n "${has_wsrep:-""}" ]; then
-      local wsrep_on="$(feat_on "$dir/mysql-variables" "wsrep_on")"
-      if [ "${wsrep_on:-""}" = "Enabled" ]; then
-         section_percona_xtradb_cluster "$dir/mysql-variables" "$dir/mysql-status"
+      if [ "${has_wsrep:-""}" = "ON" ]; then
+         section_mariadb_galera_cluster "$dir/mariadb-variables" "$dir/mariadb-status"
       else
          name_val "wsrep_on" "OFF"
       fi
    fi
 
-   # ########################################################################
-   # Plugins
-   # ########################################################################
-   # TODO: what would be good is to show nonstandard plugins here.
    section "Plugins"
-   name_val "InnoDB compression" "$(get_plugin_status "$dir/mysql-plugins" "INNODB_CMP")"
+   name_val "InnoDB compression" "$(get_plugin_status "$dir/mariadb-plugins" "INNODB_CMP")"
 
-   # ########################################################################
-   # Query cache
-   # ########################################################################
-   local has_query_cache=$(get_var have_query_cache "$dir/mysql-variables")
+   local has_query_cache=$(get_var have_query_cache "$dir/mariadb-variables")
    if [ "$has_query_cache" = 'YES' ]; then
       section "Query cache"
-      local query_cache_size=$(get_var query_cache_size "$dir/mysql-variables")
-      local used=$(( ${query_cache_size} - $(get_var Qcache_free_memory "$dir/mysql-status") ))
-      local hrat=$(fuzzy_pct $(get_var Qcache_hits "$dir/mysql-status") $(get_var Qcache_inserts "$dir/mysql-status"))
-      name_val query_cache_type $(get_var query_cache_type "$dir/mysql-variables")
+      local query_cache_size=$(get_var query_cache_size "$dir/mariadb-variables")
+      local used=$(( ${query_cache_size} - $(get_var Qcache_free_memory "$dir/mariadb-status") ))
+      local hrat=$(fuzzy_pct $(get_var Qcache_hits "$dir/mariadb-status") $(get_var Qcache_inserts "$dir/mariadb-status"))
+      name_val query_cache_type $(get_var query_cache_type "$dir/mariadb-variables")
       name_val Size "$(shorten ${query_cache_size} 1)"
       name_val Usage "$(fuzzy_pct ${used} ${query_cache_size})"
       name_val HitToInsertRatio "${hrat}"
    fi
 
-   local semisync_enabled_master="$(get_var "rpl_semi_sync_master_enabled" "$dir/mysql-variables")"
+   local semisync_enabled_master="$(get_var "rpl_semi_sync_master_enabled" "$dir/mariadb-variables")"
    if [ -n "${semisync_enabled_master}" ]; then
       section "Semisynchronous Replication"
       if [ "$semisync_enabled_master" = "OFF" -o "$semisync_enabled_master" = "0" -o -z "$semisync_enabled_master" ]; then
-         name_val "Master" "Disabled"
+         name_val "Primary" "Disabled"
       else
-         _semi_sync_stats_for "master" "$dir/mysql-variables"
+         _semi_sync_stats_for "master" "$dir/mariadb-variables"
       fi
-      local semisync_enabled_slave="$(get_var rpl_semi_sync_slave_enabled "$dir/mysql-variables")"
+      local semisync_enabled_slave="$(get_var rpl_semi_sync_slave_enabled "$dir/mariadb-variables")"
       if    [ "$semisync_enabled_slave" = "OFF" -o "$semisync_enabled_slave" = "0" -o -z "$semisync_enabled_slave" ]; then
-         name_val "Slave" "Disabled"
+         name_val "Replica" "Disabled"
       else
-         _semi_sync_stats_for "slave" "$dir/mysql-variables"
+         _semi_sync_stats_for "slave" "$dir/mariadb-variables"
       fi
    fi
 
-   # ########################################################################
-   # Schema, databases, data type, other analysis.
-   # ########################################################################
    section "Schema"
-   # Test the result by checking the file, not by the exit status, because we
-   # might get partway through and then die, and the info is worth analyzing
-   # anyway.
    if [ -s "$dir/mysqldump" ] \
       && grep 'CREATE TABLE' "$dir/mysqldump" >/dev/null 2>&1; then
          format_overall_db_stats "$dir/mysqldump"
@@ -1455,9 +1362,6 @@ report_mysql_summary () {
       echo "Skipping schema analysis due to apparent error in dump file"
    fi
 
-   # ########################################################################
-   # Noteworthy Technologies
-   # ########################################################################
    section "Noteworthy Technologies"
    if [ -s "$dir/mysqldump" ]; then
       if grep FULLTEXT "$dir/mysqldump" > /dev/null; then
@@ -1487,55 +1391,52 @@ report_mysql_summary () {
          name_val "InnoDB Compression" "No"
       fi
    fi
-   local ssl="$(get_var Ssl_accepts "$dir/mysql-status")"
+   local ssl="$(get_var Ssl_accepts "$dir/mariadb-status")"
    if [ -n "$ssl" -a "${ssl:-0}" -gt 0 ]; then
       name_val "SSL" "Yes"
    else
       name_val "SSL" "No"
    fi
-   local lock_tables="$(get_var Com_lock_tables "$dir/mysql-status")"
+   local lock_tables="$(get_var Com_lock_tables "$dir/mariadb-status")"
    if [ -n "$lock_tables" -a "${lock_tables:-0}" -gt 0 ]; then
       name_val "Explicit LOCK TABLES" "Yes"
    else
       name_val "Explicit LOCK TABLES" "No"
    fi
-   local delayed_insert="$(get_var Delayed_writes "$dir/mysql-status")"
+   local delayed_insert="$(get_var Delayed_writes "$dir/mariadb-status")"
    if [ -n "$delayed_insert" -a "${delayed_insert:-0}" -gt 0 ]; then
       name_val "Delayed Insert" "Yes"
    else
       name_val "Delayed Insert" "No"
    fi
-   local xat="$(get_var Com_xa_start "$dir/mysql-status")"
+   local xat="$(get_var Com_xa_start "$dir/mariadb-status")"
    if [ -n "$xat" -a "${xat:-0}" -gt 0 ]; then
       name_val "XA Transactions" "Yes"
    else
       name_val "XA Transactions" "No"
    fi
-   local ndb_cluster="$(get_var "Ndb_cluster_node_id" "$dir/mysql-status")"
-   if [ -n "$ndb_cluster" -a "${ndb_cluster:-0}" -gt 0 ]; then
-      name_val "NDB Cluster" "Yes"
+   local cs_cluster="$(get_var "infinidb_local_query" "$dir/mariadb-status")"
+   if [ -n "$cs_cluster" -a "${cs_cluster:-0}" -gt 0 ]; then
+      name_val "ColumnStore Cluster" "Yes"
    else
-      name_val "NDB Cluster" "No"
+      name_val "ColumnStore Cluster" "No"
    fi
-   local prep=$(( $(get_var "Com_stmt_prepare" "$dir/mysql-status") + $(get_var "Com_prepare_sql" "$dir/mysql-status") ))
+   local prep=$(( $(get_var "Com_stmt_prepare" "$dir/mariadb-status") + $(get_var "Com_prepare_sql" "$dir/mariadb-status") ))
    if [ "${prep}" -gt 0 ]; then
       name_val "Prepared Statements" "Yes"
    else
       name_val "Prepared Statements" "No"
    fi
-   local prep_count="$(get_var Prepared_stmt_count "$dir/mysql-status")"
+   local prep_count="$(get_var Prepared_stmt_count "$dir/mariadb-status")"
    if [ "${prep_count}" ]; then
       name_val "Prepared statement count" "${prep_count}"
    fi
 
-   # ########################################################################
-   # InnoDB
-   # ########################################################################
    section "InnoDB"
-   local have_innodb="$(get_var "have_innodb" "$dir/mysql-variables")"
-   local innodb_version="$(get_var "innodb_version" "$dir/mysql-variables")"
+   local have_innodb="$(get_var "have_innodb" "$dir/mariadb-variables")"
+   local innodb_version="$(get_var "innodb_version" "$dir/mariadb-variables")"
    if [ "${have_innodb}" = "YES" ] || [ -n "${innodb_version}" ]; then
-      section_innodb "$dir/mysql-variables" "$dir/mysql-status"
+      section_innodb "$dir/mariadb-variables" "$dir/mariadb-status"
 
       if [ -s "$dir/innodb-status" ]; then
          format_innodb_status "$dir/innodb-status"
@@ -1545,83 +1446,68 @@ report_mysql_summary () {
    local has_rocksdb=$($CMD_MYSQL $EXT_ARGV -ss -e 'SHOW ENGINES' 2>/dev/null | grep -i 'rocksdb')
    if [ ! -z "$has_rocksdb" ]; then
        section "RocksDB"
-       section_rocksdb "$dir/mysql-variables" "$dir/mysql-status"
+       section_rocksdb "$dir/mariadb-variables" "$dir/mariadb-status"
    fi
 
-   # ########################################################################
-   # NDB
-   # ########################################################################
-   if [ -s "$dir/ndb-status" ]; then
-       section "NDB"
-       format_ndb_status "$dir/ndb-status"
+   if [ -s "$dir/cs-status" ]; then
+       section "ColumnStore"
+       format_cs_status "$dir/cs-status"
    fi
 
-   # ########################################################################
-   # MyISAM
-   # ########################################################################
    section "MyISAM"
-   section_myisam "$dir/mysql-variables" "$dir/mysql-status"
+   section_myisam "$dir/mariadb-variables" "$dir/mariadb-status"
 
-   # ########################################################################
-   # Users & Security
-   # ########################################################################
+   section "Aria"
+   section_aria "$dir/mariadb-variables" "$dir/mariadb-status"
+
    section "Security"
-   local users="$( format_users "$dir/mysql-users" )"
+   local users="$( format_users "$dir/mariadb-users" )"
    name_val "Users" "${users}"
-   name_val "Old Passwords" "$(get_var old_passwords "$dir/mysql-variables")"
+   name_val "Old Passwords" "$(get_var old_passwords "$dir/mariadb-variables")"
 
-   if [ -s "$dir/mysql-roles" ]; then
+   if [ -s "$dir/mariadb-roles" ]; then
        section "Roles"
-       format_mysql_roles "$dir/mysql-roles"
+       format_mysql_roles "$dir/mariadb-roles"
    fi
 
-   section "Encryption"
-   local keyring_plugins="$(collect_keyring_plugins)"
-   local encrypted_tables=""
-   local encrypted_tablespaces=""
-   if [ "${OPT_LIST_ENCRYPTED_TABLES}" = 'yes' ]; then 
-       encrypted_tables="$(collect_encrypted_tables)"
-       encrypted_tablespaces="$(collect_encrypted_tablespaces)"
+   if [[ ! -z "$OPT_LIST_ENCRYPTED_TABLES" ]]; then 
+       section "Encryption"
+       local keyring_plugins="$(collect_keyring_plugins)"
+       local encrypted_tables=""
+       local encrypted_tablespaces=""
+       if [ "${OPT_LIST_ENCRYPTED_TABLES}" = 'yes' ]; then 
+           encrypted_tables="$(collect_encrypted_tables)"
+           encrypted_tablespaces="$(collect_encrypted_tablespaces)"
+       fi
    fi
 
    format_keyring_plugins "$keyring_plugins" "$encrypted_tables"
    format_encrypted_tables "$encrypted_tables"
    format_encrypted_tablespaces "$encrypted_tablespaces"
 
-   # ########################################################################
-   # Binary Logging
-   # ########################################################################
    section "Binary Logging"
 
-   if    [ -s "$dir/mysql-master-logs" ] \
-      || [ -s "$dir/mysql-master-status" ]; then
-      summarize_binlogs "$dir/mysql-master-logs"
-      local format="$(get_var binlog_format "$dir/mysql-variables")"
+   if    [ -s "$dir/mariadb-master-logs" ] \
+      || [ -s "$dir/mariadb-master-status" ]; then
+      summarize_binlogs "$dir/mariadb-master-logs"
+      local format="$(get_var binlog_format "$dir/mariadb-variables")"
       name_val binlog_format "${format:-STATEMENT}"
-      name_val expire_logs_days "$(get_var expire_logs_days "$dir/mysql-variables")"
-      name_val sync_binlog "$(get_var sync_binlog "$dir/mysql-variables")"
-      name_val server_id "$(get_var server_id "$dir/mysql-variables")"
-      format_binlog_filters "$dir/mysql-master-status"
+      name_val expire_logs_days "$(get_var expire_logs_days "$dir/mariadb-variables")"
+      name_val sync_binlog "$(get_var sync_binlog "$dir/mariadb-variables")"
+      name_val server_id "$(get_var server_id "$dir/mariadb-variables")"
+      format_binlog_filters "$dir/mariadb-master-status"
    fi
 
-# Replication: seconds behind, running, filters, skip_slave_start, skip_errors,
-# read_only, temp tables open, slave_net_timeout, slave_exec_mode
 
-   # ########################################################################
-   # Interesting things that you just ought to know about.
-   # ########################################################################
    section "Noteworthy Variables"
-   section_noteworthy_variables "$dir/mysql-variables"
+   section_noteworthy_variables "$dir/mariadb-variables"
 
-   # ########################################################################
-   # If there is a my.cnf in a standard location, see if we can pretty-print it.
-   # ########################################################################
    section "Configuration File"
-   local cnf_file="$(get_var "pt-summary-internal-Config_File_path" "$dir/mysql-variables")"
+   local cnf_file="$(get_var "pt-summary-internal-Config_File_path" "$dir/mariadb-variables")"
 
    if [ -n "${cnf_file}" ]; then
       name_val "Config File" "${cnf_file}"
-      pretty_print_cnf_file "$dir/mysql-config-file"
+      pretty_print_cnf_file "$dir/mariadb-config-file"
    else
       name_val "Config File" "Cannot autodetect or find, giving up"
    fi
@@ -1629,7 +1515,6 @@ report_mysql_summary () {
    section "Memory management library"
    report_jemalloc_enabled
 
-   # Make sure that we signal the end of the tool's output.
    section "The End"
 }
 
