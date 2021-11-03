@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:      mariadb-tools
-Summary:   Advanced MySQL and system command-line tools
+Summary:   Advanced MariaDB and system command-line tools
 Version:   %{version}
 Release:   %{release}
 Group:     Applications/Databases
@@ -14,11 +14,17 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: x86_64
 
 BuildRequires: perl(ExtUtils::MakeMaker) make
-Requires:  perl(DBI) >= 1.13, perl(DBD::mysql) >= 1.0, perl(Time::HiRes), perl(IO::Socket::SSL), perl(Digest::MD5), perl(Term::ReadKey)
+Requires:  perl(DBI) >= 1.13, perl(DBD::mysql) >= 1.0, perl(Time::HiRes), perl(IO::Socket::SSL), perl(Digest::MD5), perl(Term::ReadKey), perl(DateTime::Format::Strptime) >= 1.54
 AutoReq:   no
 
 %description
 
+MariaDB Tools is a collection of advanced command-line tools used by
+MariaDB Corporation (https://www.mariadb.com/) support staff to perform a variety of
+MariaDB and system tasks that are too difficult or complex to perform manually.
+
+These tools are ideal alternatives to private or "one-off" scripts because
+they are professionally developed, formally tested, and fully documented.
 
 %prep
 %setup -q
