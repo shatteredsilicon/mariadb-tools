@@ -1,5 +1,0 @@
-#!/bin/sh
-
-mysql --defaults-file=/tmp/PORT/configs/mariadb-client.cnf "$@"
-
-exit

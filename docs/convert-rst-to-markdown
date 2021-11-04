@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [[ -z `which pandoc` ]]; then
-   echo "This tool requires pandoc. Please visit https://pandoc.org/installing.html for installing on this platform."
-   exit 2
-fi
-
-find . -type f -name "*.rst" -exec sh -c 'pandoc -s -o "${1%.*}".md "$1"' sh {} \;
