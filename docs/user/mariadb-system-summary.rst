@@ -363,5 +363,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-system-summary` 6.0.0a
+:program:`mariadb-system-summary` 6.0.0rc
 

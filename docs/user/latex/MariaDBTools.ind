@@ -7,37 +7,29 @@
   \bigletter {\sphinxsymbolsname}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}add}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{79}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{85}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}all\sphinxhyphen{}databases}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
 		\hyperpage{42}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}all\sphinxhyphen{}structs}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{46}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}alter}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{117}
+		\hyperpage{111}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}alter\sphinxhyphen{}foreign\sphinxhyphen{}keys\sphinxhyphen{}method}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{118}
+		\hyperpage{112}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}analyze}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{15}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}any\sphinxhyphen{}busy\sphinxhyphen{}time}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{71}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}archive}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{79}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{85}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}archive\sphinxhyphen{}database}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{79}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{85}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}archive\sphinxhyphen{}path}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{79}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{85}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}ascend\sphinxhyphen{}first}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{15}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}
@@ -48,19 +40,19 @@
 		\hyperpage{46}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{63}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{119}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{143}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{113}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{137}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}attribute\sphinxhyphen{}aliases}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}attribute\sphinxhyphen{}value\sphinxhyphen{}limit}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}binary}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}buffer}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{16}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}bulk\sphinxhyphen{}delete}
@@ -72,49 +64,49 @@
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}channel}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{16}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{119}
+		\hyperpage{113}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}charset}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{17}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{46}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{63}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{119}
+		\hyperpage{113}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}check\sphinxhyphen{}interval}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{17}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{120}
+		\hyperpage{114}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}check\sphinxhyphen{}slave\sphinxhyphen{}lag}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{17}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{121}
+		\hyperpage{115}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}index}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{121}
+		\hyperpage{115}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}index\sphinxhyphen{}columns}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{121}
+		\hyperpage{115}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}size}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{121}
+		\hyperpage{115}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}size\sphinxhyphen{}limit}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{121}
+		\hyperpage{115}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}time}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{121}
+		\hyperpage{115}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{143}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{137}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}gdb}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{143}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{137}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}oprofile}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{143}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{137}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}strace}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}tcpdump}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}columns}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{17}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}columns\sphinxhyphen{}regex}
@@ -130,44 +122,44 @@
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{57}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{63}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{116}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}create\sphinxhyphen{}log\sphinxhyphen{}table}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{64}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}critical\sphinxhyphen{}load}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
+		\hyperpage{116}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}cycles}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}daemonize}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{64}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+		\hyperpage{87}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}data\sphinxhyphen{}dir}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
+		\hyperpage{116}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}database}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{18}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{64}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
+		\hyperpage{116}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}databases}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
 		\hyperpage{42}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{47}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}default\sphinxhyphen{}engine}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
+		\hyperpage{116}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
 		\hyperpage{42}
@@ -175,74 +167,70 @@
 		\hyperpage{47}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{64}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{94}
+		\hyperpage{88}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{116}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}delayed\sphinxhyphen{}insert}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{18}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}dest}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{18}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}devices\sphinxhyphen{}regex}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{57}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}disk\sphinxhyphen{}bytes\sphinxhyphen{}free}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}disk\sphinxhyphen{}pct\sphinxhyphen{}free}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}drop}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{79}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{85}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{18}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{123}
+		\hyperpage{117}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}each\sphinxhyphen{}busy\sphinxhyphen{}time}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{71}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}email\sphinxhyphen{}activity}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{78}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{84}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}embedded\sphinxhyphen{}attributes}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{94}
+		\hyperpage{88}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}engines}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{47}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}execute}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{123}
+		\hyperpage{117}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}execute\sphinxhyphen{}command}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{71}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}expected\sphinxhyphen{}range}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{94}
+		\hyperpage{88}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}explain}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{94}
+		\hyperpage{88}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}file}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{18}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}filter}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{64}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{94}
+		\hyperpage{88}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}for\sphinxhyphen{}update}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{19}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}force}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{124}
+		\hyperpage{118}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}force\sphinxhyphen{}concat\sphinxhyphen{}enums}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{124}
+		\hyperpage{118}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}function}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{144}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{138}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}group\sphinxhyphen{}by}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{57}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{64}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{96}
+		\hyperpage{90}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}header}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{19}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}headers}
@@ -258,23 +246,23 @@
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{57}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{65}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{96}
+		\hyperpage{90}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{124}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{145}
+		\hyperpage{118}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{139}
     \subitem \spxentry{mariadb\sphinxhyphen{}stat\sphinxhyphen{}browser command line option}, 
-		\hyperpage{152}
+		\hyperpage{146}
     \subitem \spxentry{mariadb\sphinxhyphen{}status\sphinxhyphen{}diff command line option}, 
-		\hyperpage{156}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{150}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}high\sphinxhyphen{}priority\sphinxhyphen{}select}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{19}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}history}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{96}
+		\hyperpage{90}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{19}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
@@ -283,18 +271,18 @@
 		\hyperpage{47}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{65}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{99}
+		\hyperpage{93}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{124}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{145}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{118}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{139}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}idle\sphinxhyphen{}time}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{68}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}ignore}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{19}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}ignore\sphinxhyphen{}attributes}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{99}
+		\hyperpage{93}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}ignore\sphinxhyphen{}command}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{68}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}ignore\sphinxhyphen{}databases}
@@ -321,20 +309,20 @@
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{69}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}inherit\sphinxhyphen{}attributes}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{99}
+		\hyperpage{93}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}interval}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{57}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{65}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{99}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{145}
+		\hyperpage{93}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{139}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}iterations}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{58}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{99}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{145}
+		\hyperpage{93}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{139}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}key\sphinxhyphen{}types}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{47}
@@ -347,12 +335,10 @@
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}limit}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{19}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{78}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{84}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{99}
+		\hyperpage{93}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}lines}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}list\sphinxhyphen{}encrypted\sphinxhyphen{}tables}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
 		\hyperpage{42}
@@ -361,8 +347,8 @@
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}log}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{65}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{99}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{146}
+		\hyperpage{93}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{140}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}log\sphinxhyphen{}dsn}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{65}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}low\sphinxhyphen{}priority\sphinxhyphen{}delete}
@@ -370,9 +356,9 @@
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}low\sphinxhyphen{}priority\sphinxhyphen{}insert}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{20}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}mariadb\sphinxhyphen{}only}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{147}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{141}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}match}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{146}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{140}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}all}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{69}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}command}
@@ -390,52 +376,50 @@
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}flow\sphinxhyphen{}ctl}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{20}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{124}
+		\hyperpage{118}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}hostname\sphinxhyphen{}length}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{100}
+		\hyperpage{94}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}lag}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{20}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{124}
+		\hyperpage{118}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}line\sphinxhyphen{}length}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{100}
+		\hyperpage{94}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}load}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{124}
+		\hyperpage{118}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}new\sphinxhyphen{}table\sphinxhyphen{}name}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
+		\hyperpage{120}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}no\sphinxhyphen{}ascend}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{20}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}no\sphinxhyphen{}delete}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{20}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}notify\sphinxhyphen{}by\sphinxhyphen{}email}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{146}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{140}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}null\sphinxhyphen{}to\sphinxhyphen{}not\sphinxhyphen{}null}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
+		\hyperpage{120}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}only\sphinxhyphen{}same\sphinxhyphen{}schema\sphinxhyphen{}fks}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
+		\hyperpage{120}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}optimize}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{21}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}order\sphinxhyphen{}by}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{100}
+		\hyperpage{94}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}outliers}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{100}
+		\hyperpage{94}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}output}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}output\sphinxhyphen{}format}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{21}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}partcol\sphinxhyphen{}integer}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{78}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{84}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{21}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
@@ -444,30 +428,30 @@
 		\hyperpage{47}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{146}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{120}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{140}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}pause\sphinxhyphen{}file}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
+		\hyperpage{120}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{21}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{47}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{146}
+		\hyperpage{120}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{140}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}plugin}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{21}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{146}
+		\hyperpage{120}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{140}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{21}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
@@ -476,34 +460,34 @@
 		\hyperpage{48}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{147}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{120}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{141}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}prefix}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{147}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{141}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}preserve\sphinxhyphen{}embedded\sphinxhyphen{}numbers}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}preserve\sphinxhyphen{}triggers}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{125}
+		\hyperpage{119}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}primary\sphinxhyphen{}key\sphinxhyphen{}only}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{21}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}print}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{72}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
+		\hyperpage{120}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}processlist}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}progress}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{22}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
+		\hyperpage{120}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}purge}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{22}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}query\sphinxhyphen{}count}
@@ -515,79 +499,79 @@
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}quiet}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{22}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{126}
+		\hyperpage{120}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}rds}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}samples}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
 		\hyperpage{43}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}timeout}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{101}
+		\hyperpage{95}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}recurse}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{127}
+		\hyperpage{121}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}recursion\sphinxhyphen{}method}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{127}
+		\hyperpage{121}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}relative}
     \subitem \spxentry{mariadb\sphinxhyphen{}status\sphinxhyphen{}diff command line option}, 
-		\hyperpage{156}
+		\hyperpage{150}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}remove\sphinxhyphen{}data\sphinxhyphen{}dir}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
+		\hyperpage{116}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}replace}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{22}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}replication\sphinxhyphen{}threads}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{70}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}all}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{102}
+		\hyperpage{96}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}format}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{102}
+		\hyperpage{96}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}histogram}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{102}
+		\hyperpage{96}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}resume}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{102}
+		\hyperpage{96}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}count}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{147}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{141}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}size}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{147}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{141}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}time}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{147}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{141}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}retries}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{22}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}review}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{103}
+		\hyperpage{97}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}run\sphinxhyphen{}time}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{22}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{103}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{147}
+		\hyperpage{97}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{141}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}run\sphinxhyphen{}time\sphinxhyphen{}mode}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{103}
+		\hyperpage{97}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}sample}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{104}
+		\hyperpage{98}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}sample\sphinxhyphen{}time}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{58}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}save\sphinxhyphen{}samples}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
 		\hyperpage{43}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{58}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}sentinel}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{23}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
@@ -597,54 +581,54 @@
 		\hyperpage{48}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{67}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{105}
+		\hyperpage{99}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{128}
+		\hyperpage{122}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}share\sphinxhyphen{}lock}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{23}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}show\sphinxhyphen{}all}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{105}
+		\hyperpage{99}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}show\sphinxhyphen{}inactive}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{58}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}show\sphinxhyphen{}timestamps}
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{58}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}since}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{105}
+		\hyperpage{99}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}skip\sphinxhyphen{}check\sphinxhyphen{}slave\sphinxhyphen{}lag}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{127}
+		\hyperpage{121}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}skip\sphinxhyphen{}foreign\sphinxhyphen{}key\sphinxhyphen{}checks}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{23}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}password}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{23}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{104}
+		\hyperpage{98}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{128}
+		\hyperpage{122}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}user}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{23}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{66}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{104}
+		\hyperpage{98}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{128}
+		\hyperpage{122}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{23}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
 		\hyperpage{43}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{128}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{122}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep\sphinxhyphen{}coef}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{23}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep\sphinxhyphen{}collect}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{24}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
@@ -653,59 +637,57 @@
 		\hyperpage{48}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{67}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{105}
+		\hyperpage{99}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{128}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{160}
+		\hyperpage{122}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{154}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}source}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{24}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}stalk}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}statistics}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{24}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{128}
+		\hyperpage{122}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}stop}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{25}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{67}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}mounts}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{161}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{155}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}network}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{161}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{155}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}processes}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{161}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{155}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}tables}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{48}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}test\sphinxhyphen{}matching}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{70}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}threshold}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}timeline}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{105}
+		\hyperpage{99}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}tries}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{129}
+		\hyperpage{123}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}txn\sphinxhyphen{}size}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{25}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}type}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{106}
+		\hyperpage{100}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}until}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{107}
+		\hyperpage{101}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}use\sphinxhyphen{}hours}
     \subitem \spxentry{mariadb\sphinxhyphen{}parted command line option}, \hyperpage{78}
-    \subitem \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}, 
-		\hyperpage{84}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{25}
     \subitem \spxentry{mariadb\sphinxhyphen{}database\sphinxhyphen{}summary command line option}, 
@@ -714,21 +696,21 @@
 		\hyperpage{48}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{67}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{108}
+		\hyperpage{102}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{129}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{161}
+		\hyperpage{123}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{155}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}variable}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}variations}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{108}
+		\hyperpage{102}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}verbose}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{48}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{71}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{148}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{142}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}
     \subitem \spxentry{mariadb\sphinxhyphen{}align\sphinxhyphen{}output command line option}, 
 		\hyperpage{10}
@@ -740,18 +722,18 @@
     \subitem \spxentry{mariadb\sphinxhyphen{}iostat command line option}, \hyperpage{58}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{67}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{108}
+		\hyperpage{102}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{129}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{138}
-    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{149}
+		\hyperpage{123}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}, \hyperpage{132}
+    \subitem \spxentry{mariadb\sphinxhyphen{}stat command line option}, \hyperpage{143}
     \subitem \spxentry{mariadb\sphinxhyphen{}stat\sphinxhyphen{}browser command line option}, 
-		\hyperpage{152}
+		\hyperpage{146}
     \subitem \spxentry{mariadb\sphinxhyphen{}status\sphinxhyphen{}diff command line option}, 
-		\hyperpage{156}
-    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{161}
+		\hyperpage{150}
+    \subitem \spxentry{mariadb\sphinxhyphen{}summary command line option}, \hyperpage{155}
     \subitem \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}, 
-		\hyperpage{167}
+		\hyperpage{161}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}victims}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{67}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}wait\sphinxhyphen{}after\sphinxhyphen{}kill}
@@ -760,61 +742,61 @@
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{68}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}watch\sphinxhyphen{}server}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{108}
+		\hyperpage{102}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}where}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{26}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}why\sphinxhyphen{}quit}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{26}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}analyze\sphinxhyphen{}before\sphinxhyphen{}swap}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{119}
+		\hyperpage{113}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}bulk\sphinxhyphen{}delete\sphinxhyphen{}limit}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{16}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}alter}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{119}
+		\hyperpage{113}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}charset}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{17}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}columns}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{17}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}foreign\sphinxhyphen{}keys}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{120}
+		\hyperpage{114}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}plan}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{120}
+		\hyperpage{114}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}replication\sphinxhyphen{}filters}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{120}
+		\hyperpage{114}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}unique\sphinxhyphen{}key\sphinxhyphen{}change}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{123}
+		\hyperpage{117}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}clustered}
     \subitem \spxentry{mariadb\sphinxhyphen{}index\sphinxhyphen{}checker command line option}, 
 		\hyperpage{46}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}continue\sphinxhyphen{}on\sphinxhyphen{}error}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}create\sphinxhyphen{}history\sphinxhyphen{}table}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}create\sphinxhyphen{}review\sphinxhyphen{}table}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{93}
+		\hyperpage{87}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}drop\sphinxhyphen{}new\sphinxhyphen{}table}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{122}
+		\hyperpage{116}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}drop\sphinxhyphen{}old\sphinxhyphen{}table}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{123}
+		\hyperpage{117}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}drop\sphinxhyphen{}triggers}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{123}
+		\hyperpage{117}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}ignore\sphinxhyphen{}self}
     \subitem \spxentry{mariadb\sphinxhyphen{}kill command line option}, \hyperpage{68}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}report}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{102}
+		\hyperpage{96}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}safe\sphinxhyphen{}auto\sphinxhyphen{}increment}
     \subitem \spxentry{mariadb\sphinxhyphen{}archiver command line option}, \hyperpage{22}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}sql}
@@ -827,10 +809,10 @@
 		\hyperpage{48}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}swap\sphinxhyphen{}tables}
     \subitem \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}, 
-		\hyperpage{128}
+		\hyperpage{122}
   \item \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}vertical\sphinxhyphen{}format}
     \subitem \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}, 
-		\hyperpage{108}
+		\hyperpage{102}
 
   \indexspace
   \bigletter M
@@ -1056,275 +1038,264 @@
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}limit}, \hyperpage{78}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}partcol\sphinxhyphen{}integer}, \hyperpage{78}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}use\sphinxhyphen{}hours}, \hyperpage{78}
-  \item \spxentry{mariadb\sphinxhyphen{}parted\sphinxhyphen{}fat command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}add}, \hyperpage{85}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}archive}, \hyperpage{85}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}archive\sphinxhyphen{}database}, 
-		\hyperpage{85}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}archive\sphinxhyphen{}path}, \hyperpage{85}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}drop}, \hyperpage{85}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}email\sphinxhyphen{}activity}, \hyperpage{84}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}limit}, \hyperpage{84}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}partcol\sphinxhyphen{}integer}, \hyperpage{84}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}use\sphinxhyphen{}hours}, \hyperpage{84}
   \item \spxentry{mariadb\sphinxhyphen{}query\sphinxhyphen{}digest command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{93}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{87}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}attribute\sphinxhyphen{}aliases}, 
-		\hyperpage{93}
+		\hyperpage{87}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}attribute\sphinxhyphen{}value\sphinxhyphen{}limit}, 
-		\hyperpage{93}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}charset}, \hyperpage{93}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{93}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}daemonize}, \hyperpage{93}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}database}, \hyperpage{93}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{94}
+		\hyperpage{87}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}charset}, \hyperpage{87}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{87}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}daemonize}, \hyperpage{87}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}database}, \hyperpage{87}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{88}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}embedded\sphinxhyphen{}attributes}, 
-		\hyperpage{94}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}expected\sphinxhyphen{}range}, \hyperpage{94}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}explain}, \hyperpage{94}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}filter}, \hyperpage{94}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}group\sphinxhyphen{}by}, \hyperpage{96}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{96}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}history}, \hyperpage{96}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{99}
+		\hyperpage{88}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}expected\sphinxhyphen{}range}, \hyperpage{88}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}explain}, \hyperpage{88}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}filter}, \hyperpage{88}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}group\sphinxhyphen{}by}, \hyperpage{90}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{90}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}history}, \hyperpage{90}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{93}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ignore\sphinxhyphen{}attributes}, 
-		\hyperpage{99}
+		\hyperpage{93}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}inherit\sphinxhyphen{}attributes}, 
-		\hyperpage{99}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}interval}, \hyperpage{99}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}iterations}, \hyperpage{99}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}limit}, \hyperpage{99}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}log}, \hyperpage{99}
+		\hyperpage{93}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}interval}, \hyperpage{93}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}iterations}, \hyperpage{93}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}limit}, \hyperpage{93}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}log}, \hyperpage{93}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}hostname\sphinxhyphen{}length}, 
-		\hyperpage{100}
+		\hyperpage{94}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}line\sphinxhyphen{}length}, 
-		\hyperpage{100}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}order\sphinxhyphen{}by}, \hyperpage{100}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}outliers}, \hyperpage{100}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}output}, \hyperpage{101}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{101}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{101}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{101}
+		\hyperpage{94}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}order\sphinxhyphen{}by}, \hyperpage{94}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}outliers}, \hyperpage{94}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}output}, \hyperpage{95}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{95}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{95}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{95}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}preserve\sphinxhyphen{}embedded\sphinxhyphen{}numbers}, 
-		\hyperpage{101}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}processlist}, \hyperpage{101}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}progress}, \hyperpage{101}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}timeout}, \hyperpage{101}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}all}, \hyperpage{102}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}format}, \hyperpage{102}
+		\hyperpage{95}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}processlist}, \hyperpage{95}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}progress}, \hyperpage{95}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}timeout}, \hyperpage{95}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}all}, \hyperpage{96}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}format}, \hyperpage{96}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}report\sphinxhyphen{}histogram}, 
-		\hyperpage{102}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}resume}, \hyperpage{102}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}review}, \hyperpage{103}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}run\sphinxhyphen{}time}, \hyperpage{103}
+		\hyperpage{96}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}resume}, \hyperpage{96}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}review}, \hyperpage{97}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}run\sphinxhyphen{}time}, \hyperpage{97}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}run\sphinxhyphen{}time\sphinxhyphen{}mode}, 
-		\hyperpage{103}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sample}, \hyperpage{104}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}set\sphinxhyphen{}vars}, \hyperpage{105}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}show\sphinxhyphen{}all}, \hyperpage{105}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}since}, \hyperpage{105}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}password}, \hyperpage{104}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}user}, \hyperpage{104}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{105}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}timeline}, \hyperpage{105}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}type}, \hyperpage{106}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}until}, \hyperpage{107}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{108}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}variations}, \hyperpage{108}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{108}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}watch\sphinxhyphen{}server}, \hyperpage{108}
+		\hyperpage{97}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sample}, \hyperpage{98}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}set\sphinxhyphen{}vars}, \hyperpage{99}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}show\sphinxhyphen{}all}, \hyperpage{99}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}since}, \hyperpage{99}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}password}, \hyperpage{98}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}user}, \hyperpage{98}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{99}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}timeline}, \hyperpage{99}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}type}, \hyperpage{100}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}until}, \hyperpage{101}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{102}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}variations}, \hyperpage{102}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{102}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}watch\sphinxhyphen{}server}, \hyperpage{102}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}continue\sphinxhyphen{}on\sphinxhyphen{}error}, 
-		\hyperpage{93}
+		\hyperpage{87}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}create\sphinxhyphen{}history\sphinxhyphen{}table}, 
-		\hyperpage{93}
+		\hyperpage{87}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}create\sphinxhyphen{}review\sphinxhyphen{}table}, 
-		\hyperpage{93}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}report}, \hyperpage{102}
+		\hyperpage{87}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}report}, \hyperpage{96}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}vertical\sphinxhyphen{}format}, 
-		\hyperpage{108}
+		\hyperpage{102}
   \item \spxentry{mariadb\sphinxhyphen{}schema\sphinxhyphen{}change command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}alter}, \hyperpage{117}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}alter}, \hyperpage{111}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}alter\sphinxhyphen{}foreign\sphinxhyphen{}keys\sphinxhyphen{}method}, 
-		\hyperpage{118}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{119}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}channel}, \hyperpage{119}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}charset}, \hyperpage{119}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}check\sphinxhyphen{}interval}, \hyperpage{120}
+		\hyperpage{112}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{113}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}channel}, \hyperpage{113}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}charset}, \hyperpage{113}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}check\sphinxhyphen{}interval}, \hyperpage{114}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}check\sphinxhyphen{}slave\sphinxhyphen{}lag}, 
-		\hyperpage{121}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}index}, \hyperpage{121}
+		\hyperpage{115}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}index}, \hyperpage{115}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}index\sphinxhyphen{}columns}, 
-		\hyperpage{121}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}size}, \hyperpage{121}
+		\hyperpage{115}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}size}, \hyperpage{115}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}size\sphinxhyphen{}limit}, 
-		\hyperpage{121}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}time}, \hyperpage{121}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{122}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}critical\sphinxhyphen{}load}, \hyperpage{122}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}data\sphinxhyphen{}dir}, \hyperpage{122}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}database}, \hyperpage{122}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}default\sphinxhyphen{}engine}, \hyperpage{122}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{122}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}, \hyperpage{123}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}execute}, \hyperpage{123}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}force}, \hyperpage{124}
+		\hyperpage{115}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}chunk\sphinxhyphen{}time}, \hyperpage{115}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{116}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}critical\sphinxhyphen{}load}, \hyperpage{116}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}data\sphinxhyphen{}dir}, \hyperpage{116}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}database}, \hyperpage{116}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}default\sphinxhyphen{}engine}, \hyperpage{116}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{116}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}, \hyperpage{117}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}execute}, \hyperpage{117}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}force}, \hyperpage{118}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}force\sphinxhyphen{}concat\sphinxhyphen{}enums}, 
-		\hyperpage{124}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{124}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{124}
+		\hyperpage{118}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{118}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{118}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}flow\sphinxhyphen{}ctl}, 
-		\hyperpage{124}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}lag}, \hyperpage{124}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}load}, \hyperpage{124}
+		\hyperpage{118}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}lag}, \hyperpage{118}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}max\sphinxhyphen{}load}, \hyperpage{118}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}new\sphinxhyphen{}table\sphinxhyphen{}name}, 
-		\hyperpage{126}
+		\hyperpage{120}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}null\sphinxhyphen{}to\sphinxhyphen{}not\sphinxhyphen{}null}, 
-		\hyperpage{126}
+		\hyperpage{120}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}only\sphinxhyphen{}same\sphinxhyphen{}schema\sphinxhyphen{}fks}, 
-		\hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pause\sphinxhyphen{}file}, \hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}plugin}, \hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{126}
+		\hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pause\sphinxhyphen{}file}, \hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}plugin}, \hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{120}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}preserve\sphinxhyphen{}triggers}, 
-		\hyperpage{125}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}print}, \hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}progress}, \hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}quiet}, \hyperpage{126}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}recurse}, \hyperpage{127}
+		\hyperpage{119}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}print}, \hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}progress}, \hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}quiet}, \hyperpage{120}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}recurse}, \hyperpage{121}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}recursion\sphinxhyphen{}method}, 
-		\hyperpage{127}
+		\hyperpage{121}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}remove\sphinxhyphen{}data\sphinxhyphen{}dir}, 
-		\hyperpage{122}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}set\sphinxhyphen{}vars}, \hyperpage{128}
+		\hyperpage{116}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}set\sphinxhyphen{}vars}, \hyperpage{122}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}skip\sphinxhyphen{}check\sphinxhyphen{}slave\sphinxhyphen{}lag}, 
-		\hyperpage{127}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}password}, \hyperpage{128}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}user}, \hyperpage{128}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{128}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{128}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}statistics}, \hyperpage{128}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}tries}, \hyperpage{129}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{129}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{129}
+		\hyperpage{121}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}password}, \hyperpage{122}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}slave\sphinxhyphen{}user}, \hyperpage{122}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{122}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{122}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}statistics}, \hyperpage{122}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}tries}, \hyperpage{123}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{123}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{123}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}analyze\sphinxhyphen{}before\sphinxhyphen{}swap}, 
-		\hyperpage{119}
+		\hyperpage{113}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}alter}, 
-		\hyperpage{119}
+		\hyperpage{113}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}foreign\sphinxhyphen{}keys}, 
-		\hyperpage{120}
+		\hyperpage{114}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}plan}, 
-		\hyperpage{120}
+		\hyperpage{114}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}replication\sphinxhyphen{}filters}, 
-		\hyperpage{120}
+		\hyperpage{114}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}check\sphinxhyphen{}unique\sphinxhyphen{}key\sphinxhyphen{}change}, 
-		\hyperpage{123}
+		\hyperpage{117}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}drop\sphinxhyphen{}new\sphinxhyphen{}table}, 
-		\hyperpage{122}
+		\hyperpage{116}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}drop\sphinxhyphen{}old\sphinxhyphen{}table}, 
-		\hyperpage{123}
+		\hyperpage{117}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}drop\sphinxhyphen{}triggers}, 
-		\hyperpage{123}
+		\hyperpage{117}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}{[}no{]}swap\sphinxhyphen{}tables}, 
-		\hyperpage{128}
+		\hyperpage{122}
   \item \spxentry{mariadb\sphinxhyphen{}stacktrace command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}binary}, \hyperpage{138}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{138}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}interval}, \hyperpage{138}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}iterations}, \hyperpage{138}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}lines}, \hyperpage{138}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{138}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}save\sphinxhyphen{}samples}, \hyperpage{138}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}binary}, \hyperpage{132}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{132}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}interval}, \hyperpage{132}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}iterations}, \hyperpage{132}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}lines}, \hyperpage{132}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{132}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}save\sphinxhyphen{}samples}, \hyperpage{132}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{132}
   \item \spxentry{mariadb\sphinxhyphen{}stat command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{143}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect}, \hyperpage{143}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}gdb}, \hyperpage{143}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{137}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect}, \hyperpage{137}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}gdb}, \hyperpage{137}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}oprofile}, 
-		\hyperpage{143}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}strace}, \hyperpage{144}
+		\hyperpage{137}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}strace}, \hyperpage{138}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}collect\sphinxhyphen{}tcpdump}, 
-		\hyperpage{144}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{144}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}cycles}, \hyperpage{144}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}daemonize}, \hyperpage{144}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{144}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}dest}, \hyperpage{144}
+		\hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}cycles}, \hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}daemonize}, \hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}dest}, \hyperpage{138}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}disk\sphinxhyphen{}bytes\sphinxhyphen{}free}, 
-		\hyperpage{144}
+		\hyperpage{138}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}disk\sphinxhyphen{}pct\sphinxhyphen{}free}, 
-		\hyperpage{144}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}function}, \hyperpage{144}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{145}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{145}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}interval}, \hyperpage{145}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}iterations}, \hyperpage{145}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}log}, \hyperpage{146}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}mariadb\sphinxhyphen{}only}, \hyperpage{147}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}match}, \hyperpage{146}
+		\hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}function}, \hyperpage{138}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{139}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{139}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}interval}, \hyperpage{139}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}iterations}, \hyperpage{139}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}log}, \hyperpage{140}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}mariadb\sphinxhyphen{}only}, \hyperpage{141}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}match}, \hyperpage{140}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}notify\sphinxhyphen{}by\sphinxhyphen{}email}, 
-		\hyperpage{146}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{146}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{146}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}plugin}, \hyperpage{146}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{147}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}prefix}, \hyperpage{147}
+		\hyperpage{140}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{140}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}pid}, \hyperpage{140}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}plugin}, \hyperpage{140}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{141}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}prefix}, \hyperpage{141}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}count}, 
-		\hyperpage{147}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}size}, \hyperpage{147}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}time}, \hyperpage{147}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}run\sphinxhyphen{}time}, \hyperpage{147}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep\sphinxhyphen{}collect}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}stalk}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}threshold}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}variable}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}verbose}, \hyperpage{148}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{149}
+		\hyperpage{141}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}size}, \hyperpage{141}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}retention\sphinxhyphen{}time}, \hyperpage{141}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}run\sphinxhyphen{}time}, \hyperpage{141}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep\sphinxhyphen{}collect}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}stalk}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}threshold}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}variable}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}verbose}, \hyperpage{142}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{143}
   \item \spxentry{mariadb\sphinxhyphen{}stat\sphinxhyphen{}browser command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{152}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{152}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{146}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{146}
   \item \spxentry{mariadb\sphinxhyphen{}status\sphinxhyphen{}diff command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{156}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}relative}, \hyperpage{156}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{156}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{150}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}relative}, \hyperpage{150}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{150}
   \item \spxentry{mariadb\sphinxhyphen{}summary command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}all\sphinxhyphen{}databases}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}databases}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}samples}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}save\sphinxhyphen{}samples}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{160}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{160}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}all\sphinxhyphen{}databases}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}ask\sphinxhyphen{}pass}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}databases}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}defaults\sphinxhyphen{}file}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}host}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}password}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}port}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}samples}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}save\sphinxhyphen{}samples}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{154}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}socket}, \hyperpage{154}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}mounts}, 
-		\hyperpage{161}
+		\hyperpage{155}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}network}, 
-		\hyperpage{161}
+		\hyperpage{155}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}processes}, 
-		\hyperpage{161}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{161}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{161}
+		\hyperpage{155}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}user}, \hyperpage{155}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{155}
   \item \spxentry{mariadb\sphinxhyphen{}system\sphinxhyphen{}summary command line option}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{167}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{167}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}samples}, \hyperpage{167}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}save\sphinxhyphen{}samples}, \hyperpage{167}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{167}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}config}, \hyperpage{161}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}help}, \hyperpage{161}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}read\sphinxhyphen{}samples}, \hyperpage{161}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}save\sphinxhyphen{}samples}, \hyperpage{161}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}sleep}, \hyperpage{161}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}mounts}, 
-		\hyperpage{167}
+		\hyperpage{161}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}network}, 
-		\hyperpage{167}
+		\hyperpage{161}
     \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}summarize\sphinxhyphen{}processes}, 
-		\hyperpage{167}
-    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{167}
+		\hyperpage{161}
+    \subitem \spxentry{\sphinxhyphen{}\sphinxhyphen{}version}, \hyperpage{161}
 
 \end{sphinxtheindex}

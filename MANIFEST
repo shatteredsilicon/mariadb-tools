@@ -4,10 +4,11 @@ Changelog
 INSTALL
 LICENSE
 MANIFEST
+MYMETA.json
+MYMETA.yml
 Makefile.PL
 README.md
 docker-compose.yml
-install.sh
 bin/mariadb-align-output
 bin/mariadb-archiver
 bin/mariadb-backup-manager
