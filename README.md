@@ -11,7 +11,17 @@ no libraries are installed.
 
 ## Installing
 
-To install all tools, run:
+Official Packages are available via the [MariaDB-Tools Repository](https://mariadb.com/kb/en/mariadb-package-repository-setup-and-usage/).
+
+```
+apt install mariadb-tools
+
+yum install mariadb-tools
+
+dnf install mariadb-tools
+```
+
+To install all tools from this repo, run:
 
 ```
 perl Makefile.PL
@@ -23,10 +33,11 @@ make install
 You probably need to be root to `make install`.  On most systems, the tools
 are installed in /usr/local/bin.  See the INSTALL file for more information.
 
-## Documentation
+## Documentation 
 
-Run `man mariadb-tools` to see a list of installed tools, then `man tool`
-to read the embedded documentation for a specific tool.  You can also read
-the documentation online at [http://www.percona.com/software/percona-toolkit/](http://www.percona.com/software/percona-toolkit/).
+[Click Here for Official Documentation](docs/user/index.md)
+
+Alternatively, Run `man mariadb-tools` to see a list of installed tools, then `man tool`
+to read the embedded documentation for a specific tool.
 
 
