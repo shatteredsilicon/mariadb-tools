@@ -515,7 +515,8 @@ rm_tmpdir() {
 # The main() function is called at the end of the script.  This makes it
 # testable.  Major bits of parsing are separated into functions for testability.
 # ##############################################################################
-main () { local PTFUNCNAME=main;
+main () { 
+   local PTFUNCNAME=main;
    trap sigtrap HUP INT TERM
 
    # Begin by setting the $PATH to include some common locations that are not
@@ -523,7 +524,7 @@ main () { local PTFUNCNAME=main;
    # locations for proprietary management software, such as RAID controllers.
    export PATH="${PATH}:/usr/local/bin:/usr/bin:/bin:/usr/libexec"
    export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
-
+   export BASEDIR=`pwd`
    
    # If the programs we need don't exist, try to get them.
    # Percona Toolkit tools:

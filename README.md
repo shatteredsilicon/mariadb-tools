@@ -33,6 +33,17 @@ make install
 You probably need to be root to `make install`.  On most systems, the tools
 are installed in /usr/local/bin.  See the INSTALL file for more information.
 
+**CENTOS 8 INSTALL ISSUE**
+--
+It has been identified that you must enable the powertools repo in order to install `perl(DateTime::Format::Strptime)`. This package is required to run `mariadb-parted`.
+
+Error Example:
+```
+Problem: conflicting requests
+  - nothing provides perl(DateTime::Format::Strptime) >= 1.54 needed by mariadb-tools-6.0.0rc-1.x86_64
+(try to add '--skip-broken' to skip uninstallable packages or '--nobest' to use not only best candidate packages)
+```
+
 ## Documentation 
 
 [Click Here for Official Documentation](docs/user/index.md)
