@@ -4,7 +4,11 @@ Changelog
 INSTALL
 LICENSE
 MANIFEST
+MYMETA.json
+MYMETA.yml
+Makefile
 Makefile.PL
+Makefile.old
 README.md
 docker-compose.yml
 install.sh
