@@ -5,11 +5,9 @@ INSTALL
 LICENSE
 MANIFEST
 Makefile.PL
-Makefile.old
 README.md
 docker-compose.yml
 install.sh
-tools-to-check.txt
 bin/mariadb-align-output
 bin/mariadb-archiver
 bin/mariadb-backup-manager
@@ -26,7 +24,4 @@ bin/mariadb-stat-browser
 bin/mariadb-status-diff
 bin/mariadb-summary
 bin/mariadb-system-summary
-bin/sed2DKTXZ
-bin/sedCmC5Wb
-bin/sedD7VWjm
 docs/mariadb-tools.pod
