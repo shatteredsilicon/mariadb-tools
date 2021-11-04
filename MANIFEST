@@ -7,7 +7,6 @@ MANIFEST
 MYMETA.json
 MYMETA.yml
 Makefile.PL
-Makefile.old
 README.md
 docker-compose.yml
 bin/mariadb-align-output
