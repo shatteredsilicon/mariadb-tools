@@ -1900,7 +1900,7 @@ the process ID, in addition to the common attributes.
 AUTHORS
 =======
 
-Baron Schwartz, Daniel Nichter, and Brian Fraser
+Cole Busby, Baron Schwartz, Daniel Nichter, and Brian Fraser
 
 ABOUT THIS MARIADB TOOL
 =======================
@@ -1914,7 +1914,7 @@ Nichter.
 COPYRIGHT, LICENSE, AND WARRANTY
 ================================
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED

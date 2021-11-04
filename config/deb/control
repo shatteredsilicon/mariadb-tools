@@ -1,28 +1,23 @@
-Source: percona-toolkit
+Source: mariadb-tools
 Section: utils
 Priority: optional
-Maintainer: Percona Toolkit Developers <toolkit-dev@percona.com>
+Maintainer: MariaDB Tools Team <tools@mariadb.com>
 Build-Depends: debhelper (>= 4.2)
 Build-Depends-Indep: perl (>= 5.6.0-16)
 Standards-Version: 3.7.2
-Homepage: http://www.percona.com/software/percona-toolkit/
-Vcs-Browser: https://github.com/percona/percona-toolkit
-Vcs-Git: git://github.com/percona/percona-toolkit.git
+Homepage: http://www.mariadb.com/
+Vcs-Browser: https://github.com/mariadb-corporation/mariadb-tools
+Vcs-Git: git://github.com/mariadb-corporation/mariadb-tools
 
-Package: percona-toolkit
+Package: mariadb-tools
 Architecture: amd64
-Depends: ${perl:Depends}, libdbi-perl (>= 1.13), libdbd-mysql-perl | libdbd-mysql-5.1-perl, libterm-readkey-perl (>=2.10),
-    libio-socket-ssl-perl
-Description: Advanced MySQL and system command-line tools
- Percona Toolkit is a collection of advanced command-line tools used by
- Percona (http://www.percona.com/) support staff to perform a variety of
- MySQL and system tasks that are too difficult or complex to perform manually.
+Depends: ${perl:Depends}, libdbi-perl (>= 1.13), libdbd-mysql | libdbd-mysql-perl | libdbd-mysql-5.1-perl, 
+    libterm-readkey-perl (>=2.10), libio-socket-ssl-perl, libdatetime-perl, libdatetime-format-strptime-perl,
+    mariadb-client, curl, sqlite3, openssl, pigz
+Description: Advanced MariaDB and system command-line tools
+ MariaDB Tools is a collection of advanced command-line tools used by
+ MariaDB Corporation (https://www.mariadb.com/) support staff to perform a variety of
+ MariaDB and system tasks that are too difficult or complex to perform manually.
  .
  These tools are ideal alternatives to private or "one-off" scripts because
  they are professionally developed, formally tested, and fully documented.
- They are also fully self-contained, so installation is quick and easy and
- no libraries are installed. 
- .
- Percona Toolkit is developed and supported by Percona.  For more
- information and other free, open-source software developed by Percona,
- visit http://www.percona.com/software/.

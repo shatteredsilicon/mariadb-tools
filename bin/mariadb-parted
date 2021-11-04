@@ -2742,6 +2742,10 @@ sub main {
     "i-am-sure",
   );
 
+  unless($o{'help'}){
+    pod2usage();
+  }
+
   $timespec = shift @ARGV;
   $dsn    = shift @ARGV;
   pod2usage("Missing TIMESPEC") if(!$timespec);

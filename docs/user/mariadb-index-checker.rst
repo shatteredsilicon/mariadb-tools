@@ -17,19 +17,19 @@ Usage
 
 ::
 
-  pt-duplicate-key-checker [OPTIONS] [DSN]
+  mariadb-index-checker [OPTIONS] [DSN]
 
-pt-duplicate-key-checker examines MariaDB tables for duplicate or redundant
+:program:`mariadb-index-checker` examines MariaDB tables for duplicate or redundant
 indexes and foreign keys.  Connection options are read from MariaDB option files.
 
 .. code-block:: bash
 
-    pt-duplicate-key-checker --host host1
+    mariadb-index-checker --host host1
 
 RISKS
 =====
 
-Percona Toolkit is mature, proven in the real world, and well tested,
+MariaDB Tools is mature, proven in the real world, and well tested,
 but all database tools can pose a risk to the system and the database
 server.  Before using this tool, please:
 
@@ -283,7 +283,7 @@ These DSN options are used to create a DSN.  Each option is given like
 ``option=value``.  The options are case-sensitive, so P and p are not the
 same option.  There cannot be whitespace before or after the ``=`` and
 if the value contains whitespace it must be quoted.  DSN options are
-comma-separated.  See the percona-toolkit manpage for full details.
+comma-separated.  See the mariadb-tools manpage for full details.
 
 * A
 
@@ -354,14 +354,15 @@ ABOUT THIS MARIADB TOOL
 =======================
 
 This tool is part of MariaDB client tools. This MariaDB Tool was forked from
-Percona Toolkit's pt-align in August, 2019. Percona Toolkit was forked from two
-projects in June, 2011: Maatkit and Aspersa.  Those projects were created by
-Baron Schwartz and primarily developed by him and Daniel Nichter.
+Percona Toolkit's pt-duplicate-key-checker in October, 2021. Percona Toolkit 
+was forked from two projects in June, 2011: Maatkit and Aspersa.  
+Those projects were created by Baron Schwartz and primarily developed by him 
+and Daniel Nichter.
 
 COPYRIGHT, LICENSE, AND WARRANTY
 ================================
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED

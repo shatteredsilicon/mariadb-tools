@@ -2082,7 +2082,7 @@ then
 	[ "$LOGNAME" != "root" ] && echo "Since you are not running as root, it will be created in your home directory."
 	exit 1
 fi
-[ "$1" = "help" ] && self_doc
+[ "$1" = "help" ] || [ "$1" = "--help" ] && self_doc && exit
 parse_config $*
 setup_db
 disk_space
@@ -2099,7 +2099,7 @@ case "$1" in
 	'print-latest') print_latest;;
 	'setup-replication') setup_repl_only=1; build_slave $2 $3;;
 	'help');;
-	*) [ "$1" = "" ] && self_doc || echo "$0: unkown option $1"; exit 0;;
+	*) [ "$1" = "" ] && self_doc || echo "$0: unknown option $1"; exit 0;;
 esac
 exit 0
 

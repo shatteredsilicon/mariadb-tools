@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ ! -e /etc/percona-toolkit/.percona.toolkit.uuid ]; then
-  mkdir -p /etc/percona-toolkit
+if [ ! -e /etc/mariadb-tools/.mariadb.tools.uuid ]; then
+  mkdir -p /etc/mariadb-tools
   if [ -r /sys/class/dmi/id/product_uuid ]; then
-    cat /sys/class/dmi/id/product_uuid > /etc/percona-toolkit/.percona.toolkit.uuid
+    cat /sys/class/dmi/id/product_uuid > /etc/mariadb-tools/.mariadb.tools.uuid
   else
-    perl -e 'printf+($}="%04x")."$}-$}-$}-$}-".$}x3,map rand 65537,0..7;' > /etc/percona-toolkit/.percona.toolkit.uuid
+    perl -e 'printf+($}="%04x")."$}-$}-$}-$}-".$}x3,map rand 65537,0..7;' > /etc/mariadb-tools/.mariadb.tools.uuid
   fi
 fi
 

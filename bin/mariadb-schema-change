@@ -3075,6 +3075,7 @@ sub generate_cmp_where {
       my $col = $cols[$ord];
       my $quo = $q->quote($col);
       my $end = $i == $#slice; # Last clause of the whole group.
+      my $val = ($col && ($type_for->{$col} || '')) eq 'enum' ? "CAST(? AS UNSIGNED)" : "?";
       if ( $is_nullable->{$col} ) {
          if ( $type =~ m/=/ && $end ) {
             push @clause, "($val IS NULL OR $quo $type $val)";
@@ -7968,6 +7969,9 @@ sub main {
       if ( $alter_fk_method eq 'drop_swap' && !$o->get('drop-new-table') ) {
          $o->save_error("--alter-foreign-keys-method=drop_swap does not work with --no-drop-new-table.");
       }
+   }else{
+      $o->usage_or_errors();
+      die;
    }
 
    eval {
@@ -7976,8 +7980,6 @@ sub main {
    if ( $EVAL_ERROR ) {
       $o->save_error("Invalid --recursion-method: $EVAL_ERROR")
    }
-
-   $o->usage_or_errors(); 
 
    if ( $o->get('quiet') ) {
       # BARON: this will fail on Windows, where there is no /dev/null. I feel
@@ -12749,7 +12751,7 @@ were created by Baron Schwartz and primarily developed by him and Daniel Nichter
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED

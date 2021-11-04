@@ -2034,12 +2034,12 @@ sub _read_config_file {
          next LINE;
       }
 
-      if (  $parse
-            && !$self->has('version-check')
-            && $line =~ /version-check/
-      ) {
-         next LINE;
-      }
+      # if (  $parse
+      #       && !$self->has('version-check')
+      #       && $line =~ /version-check/
+      # ) {
+      #    next LINE;
+      # }
 
       if ( $parse
          && (my($opt, $arg) = $line =~ m/^\s*([^=\s]+?)(?:\s*=\s*(.*?)\s*)?$/)
@@ -4375,7 +4375,7 @@ if ( $INC{"IO/Socket/SSL.pm"} ) {
 # Check at the end of this package for the call to main() which actually runs
 # the program.
 # #############################################################################
-package mariadb-index-checker;
+package mariadb_index_checker;
 
 use strict;
 use warnings FATAL => 'all';
@@ -4437,12 +4437,12 @@ sub main {
    # ########################################################################
    # Do the version-check
    # ########################################################################
-   if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
-      VersionCheck::version_check(
-         force     => $o->got('version-check'),
-         instances => [ {dbh => $dbh, dsn => $dsn} ],
-      );
-   }
+   # if ( $o->get('version-check') && (!$o->has('quiet') || !$o->get('quiet')) ) {
+   #    VersionCheck::version_check(
+   #       force     => $o->got('version-check'),
+   #       instances => [ {dbh => $dbh, dsn => $dsn} ],
+   #    );
+   # }
 
    # #######################################################################
    # Do the main work.

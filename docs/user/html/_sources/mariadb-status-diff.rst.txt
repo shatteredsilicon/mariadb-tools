@@ -89,7 +89,7 @@ This tool requires the Bourne shell (*/bin/sh*) and the seq program.
 AUTHORS
 =======
 
-Baron Schwartz
+Cole Busby, Baron Schwartz
 
 ABOUT THIS MARIADB TOOL
 =======================
@@ -102,7 +102,7 @@ Baron Schwartz and primarily developed by him and Daniel Nichter.
 COPYRIGHT, LICENSE, AND WARRANTY
 ================================
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
