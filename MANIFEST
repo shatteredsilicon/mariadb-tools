@@ -6,12 +6,10 @@ LICENSE
 MANIFEST
 MYMETA.json
 MYMETA.yml
-Makefile
 Makefile.PL
 Makefile.old
 README.md
 docker-compose.yml
-install.sh
 bin/mariadb-align-output
 bin/mariadb-archiver
 bin/mariadb-backup-manager
