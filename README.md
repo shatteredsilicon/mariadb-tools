@@ -46,7 +46,7 @@ Problem: conflicting requests
 
 ## Documentation 
 
-[Click Here for Official Documentation](docs/user/index.md)
+[Click Here for Official Documentation](https://mariadb-corporation.github.io/mariadb-tools/index.html)
 
 Alternatively, Run `man mariadb-tools` to see a list of installed tools, then `man tool`
 to read the embedded documentation for a specific tool.
