@@ -32,65 +32,33 @@ Align output from other tools to columns.
 
 Archive rows from a MariaDB table into another table or a file.
 
-=item mariadb-config-diff
+=item mariadb-backup-manager
 
-Diff MariaDB configuration files and server variables.
 
-# =item pt-deadlock-logger
 
-# Log MariaDB deadlocks.
+=item mariadb-database-summary
+
+Summarize MariaDB information nicely.
+
+=item mariadb-index-checker
+
+Find duplicate indexes and foreign keys on MariaDB tables.
 
 =item mariadb-iostat
 
 An interactive I/O monitoring tool for GNU/Linux.
 
-# =item pt-duplicate-key-checker
-
-# Find duplicate indexes and foreign keys on MariaDB tables.
-
-# =item pt-fifo-split
-
-# Split files and pipe lines to a fifo without really splitting.
-
-# =item pt-find
-
-# Find MariaDB tables and execute actions, like GNU find.
-
-# =item pt-fingerprint
-
-# Convert queries into fingerprints.
-
-# =item pt-fk-error-logger
-
-# Log MariaDB foreign key errors.
-
-# =item pt-heartbeat
-
-# Monitor MariaDB replication delay.
-
-# =item pt-index-usage
-
-# Read queries from a log and analyze how they use indexes.
-
-# =item pt-ioprofile
-
-# Watch process IO and print a table of file and I/O activity.
-
 =item mariadb-kill
 
 Kill MariaDB queries that match certain criteria.
 
+=item mariadb-parted
+
+MySQL partition management script
+
 =item mariadb-query-digest
 
 Analyze MariaDB queries from logs, processlist, and tcpdump.
-
-=item mariadb-status-diff
-
-Look at many samples of MariaDB C<SHOW GLOBAL STATUS> side-by-side.
-
-=item mariadb-summary
-
-Summarize MariaDB information nicely.
 
 =item mariadb-schema-change
 
@@ -100,59 +68,30 @@ ALTER tables without locking them.
 
 Aggregate GDB stack traces for a selected program.
 
-# =item pt-show-grants
-
-# Canonicalize and print MariaDB grants so you can effectively replicate, compare and version-control them.
-
-=item mariadb-stat-browser
-
-Browses files created by pt-stalk.
-
-# =item pt-slave-delay
-
-# Make a MariaDB slave server lag behind its master.
-
-# =item pt-slave-find
-
-# Find and print replication hierarchy tree of MariaDB slaves.
-
-# =item pt-slave-restart
-
-# Watch and restart MariaDB replication after errors.
-
 =item mariadb-stat
 
 Collect forensic data about MariaDB when problems occur.
 
-# =item pt-summary
+=item mariadb-stat-browser
 
-# Summarize system information nicely.
+Browses files created by mariadb-stat.
 
-# =item pt-table-checksum
+=item mariadb-status-diff
 
-# Verify MariaDB replication integrity.
+Look at many samples of MariaDB C<SHOW GLOBAL STATUS> side-by-side.
 
-# =item pt-table-sync
+=item mariadb-summary
 
-# Synchronize MariaDB table data efficiently.
+Summarize system information nicely.
 
-# =item pt-table-usage
+=item mariadb-system-summary
 
-# Analyze how queries use tables.
-
-# =item pt-upgrade
-
-# Verify that query results are identical on different servers.
-
-# =item pt-variable-advisor
-
-# Analyze MariaDB variables and advise on possible problems.
-
-# =item pt-visual-explain
-
-# Format EXPLAIN output as a tree.
+Summarize system information nicely.
 
 =back
+
+For more free, open-source software developed by MariaDB Foundation, visit
+L<http://www.mariadb.com/downloads/>.
 
 =head1 SPECIAL OPTION TYPES
 
@@ -512,7 +451,7 @@ Many people have contributed code over the years.  See each tool's
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -531,6 +470,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-MariaDB Tools v1.0.0 released 2019-08-30
+MariaDB Tools v6.0.0rc released 2021-11-04
 
 =cut

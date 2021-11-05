@@ -24,10 +24,10 @@ if ( !$dbh ) {
    plan skip_all => 'Cannot connect to sandbox master';
 }
 
-my $cnf      = "/tmp/12345/my.sandbox.cnf";
-my $pid_file = "/tmp/pt-stalk.pid.$PID";
-my $log_file = "/tmp/pt-stalk.log.$PID";
-my $dest     = "/tmp/pt-stalk.collect.$PID";
+my $cnf      = "/tmp/12345/configs/mariadb-client.cnf";
+my $pid_file = "/tmp/mariadb-stat.pid.$PID";
+my $log_file = "/tmp/mariadb-stat.log.$PID";
+my $dest     = "/tmp/mariadb-stat.collect.$PID";
 my $output;
 my $retval;
 my $pid;
@@ -41,7 +41,7 @@ diag(`mkdir $dest`);
 my (undef, $uptime) = $dbh->selectrow_array("SHOW STATUS LIKE 'Uptime'");
 my $threshold = $uptime + 2;
 
-$retval = system("$trunk/bin/pt-stalk --iterations 1 --dest $dest --variable Uptime --threshold $threshold --cycles 1 --run-time 2 --pid $pid_file --plugin $trunk/t/pt-stalk/samples/plugin001.sh -- --defaults-file=$cnf >$log_file 2>&1");
+$retval = system("$trunk/bin/mariadb-stat --iterations 1 --dest $dest --variable Uptime --threshold $threshold --cycles 1 --run-time 2 --pid $pid_file --plugin $trunk/t/mariadb-stat/samples/plugin001.sh -- --defaults-file=$cnf >$log_file 2>&1");
 
 PerconaTest::wait_until(sub { !-f $pid_file });
 

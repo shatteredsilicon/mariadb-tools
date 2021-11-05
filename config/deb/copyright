@@ -1,15 +1,15 @@
-This package was debianized by Percona Toolkit Developers
-<toolkit-dev@percona.com> on Sun, 10 Jun 2007 22:30:36 -0500
+This package was debianized by MariaDB Tools Team
+<tools@mariadb.com> on Wednesday, November 3, 2021
 
-It was downloaded from http://www.percona.com/downloads/
+It was downloaded from https://www.mariadb.com
 
 Upstream Author:
 
-    Percona Toolkit Developers <toolkit-dev@percona.com>
+    MariaDB Tools Team <tools@mariadb.com>
 
 Copyright:
 
-   Copyright 2013 Percona Ireland Ltd.
+   Copyright 2021 MariaDB Corporation
 
 License:
 

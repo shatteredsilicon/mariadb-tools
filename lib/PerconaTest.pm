@@ -74,7 +74,7 @@ our $trunk = $ENV{PERCONA_TOOLKIT_BRANCH};
 
 our $sandbox_version = '';
 eval {
-   chomp(my $v = `$trunk/sandbox/test-env version 2>/dev/null`);
+   chomp(my $v = `/tmp/12345/use -ss -e "SELECT VERSION()"| cut -d'.' -f1,2`); # This will always return the stood-up version.
    $sandbox_version = $v if $v;
 };
 
@@ -242,6 +242,7 @@ sub wait_until {
    my ( $code, $t, $max_t ) = @_;
    $t     ||= .20;
    $max_t ||= 30;
+   _d('sleep for ',$max_t);
 
    my $slept = 0;
    while ( $slept <= $max_t ) {
@@ -845,6 +846,14 @@ sub get_cmd_pid {
 sub can_load_data {
     my $output = `/tmp/12345/use -e "SELECT * FROM percona_test.load_data" 2>/dev/null`;
     return ($output || '') =~ /1/;
+}
+
+sub _d {
+   my ($package, undef, $line) = caller 0;
+   @_ = map { (my $temp = $_) =~ s/\n/\n# /g; $temp; }
+        map { defined $_ ? $_ : 'undef' }
+        @_;
+   print STDERR "# $package:$line $PID ", join(' ', @_), "\n";
 }
 
 1;

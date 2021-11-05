@@ -50,7 +50,6 @@ div.sphinxsidebarwrapper {
 div.sphinxsidebar {
     float: left;
     width: 230px;
-    margin-left: -100%;
     font-size: 90%;
 }
 

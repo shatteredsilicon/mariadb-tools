@@ -1,0 +1,2108 @@
+#!/bin/bash
+#
+# MariaDB Backup Manager: a backup-tool-agnostic backup and restore script
+#
+# Please send bugs to rick.pizzi@mariadb.com
+#
+#
+
+# begin 
+
+VERSION="6.0.0a"
+CONFIGDIR=/etc/mariadb
+CONFIGNAME=backup_manager.cnf
+CONFIGFILE=$CONFIGDIR/$CONFIGNAME
+DB=$CONFIGDIR/.backup_inventory.db
+UPDATE_KEYFILE=$CONFIGDIR/.update
+BOOTSTRAP_FILE=mysql/bckmgr_bootstrap.opt
+#
+#
+
+get_lock()
+{
+	if [ -f $lockfile ]
+	then
+		kill -0 $(cat $lockfile 2>/dev/null)
+		if [ $? -eq 0 ]
+		then	
+			echo "Another instance of MariaDB Backup Manager is running. Exiting."
+			echo "If you think this is in error, remove $lockfile and try again."
+			exit 1
+		fi
+	fi
+	trap 'rm -f $lockfile $error_log $aux_log' 0
+	echo $runtime_id > $lockfile
+}
+
+safe_defaults()
+{
+	error_log=/tmp/bm.error.$$
+	aux_log=/tmp/bm.aux.$$
+	parallelism=4
+	port=3306
+	dt_format="%Y-%m-%d"
+	compressor="cat"
+	encryptor="cat"
+	uncompressor="cat"
+	unencryptor="cat"
+	purge_incomplete=0
+	expire_days=0
+	smart_purge=0
+	smart_purge_months=6
+	master_position=0
+	max_open_files=100000
+	min_disk_pfree=20
+	galera=0
+	runtime_id=$$
+	restore_test=0
+	timeout=0
+	setup_repl_only=0
+	enc_key_local=0
+	kill_query_time=0
+	skysql=0
+	expire_days=7
+        [ "$(which less 2>/dev/null)" != "" ] && pager="less -em -Pm--more--"  || pager="cat"
+	perldoc=0
+        [ "$(which perldoc 2>/dev/null)" != "" ] && perldoc=1
+	do_binlogs=0
+	no_mysqlbinlog=0
+	set_maintenance=0
+	ignore_errors=0
+	master_slave=0
+	dbtype="sqlite"
+}
+
+setup_db()
+{
+	case "$dbtype" in
+		'sqlite') setup_sqlite_db;;
+		'maria') setup_maria_db;;
+		*) 	
+			echo "ERROR: unsupported backend type '$dbtype'"
+			exit 1
+			;;
+	esac
+}
+
+setup_sqlite_db()
+{
+	if [ "$(which sqlite3 2>/dev/null)" = "" ]
+	then
+		echo "This script requires the sqlite3 package. Please install it."
+		exit 1
+	fi
+	if [ "$(which curl 2>/dev/null)" = "" ]
+	then
+		echo "This script requires the curl package. Please install it."
+		exit 1
+	fi
+	if  [ ! -f $DB ]
+	then
+		(
+		echo "CREATE TABLE backup_history ("
+  		echo "uuid varchar(40) NOT NULL,"
+		echo "runtime_id int DEFAULT NULL,"
+  		echo "start_time timestamp NULL DEFAULT NULL,"
+  		echo "end_time timestamp NULL DEFAULT NULL,"
+  		echo "bulocation varchar(255) DEFAULT NULL,"
+  		echo "logfile varchar(255) DEFAULT NULL,"
+  		echo "status tinyint DEFAULT NULL,"
+  		echo "level tinyint DEFAULT NULL,"
+  		echo "compressor varchar(40) DEFAULT NULL,"
+  		echo "uncompressor varchar(40) DEFAULT NULL,"
+  		echo "encryptor varchar(40) DEFAULT NULL,"
+  		echo "unencryptor varchar(40) DEFAULT NULL,"
+  		echo "cryptkey varchar(255) DEFAULT NULL,"
+  		echo "last_lsn bigint DEFAULT NULL,"
+  		echo "backup_tool varchar(120) DEFAULT NULL,"
+  		echo "server_version varchar(50) DEFAULT NULL,"
+  		echo "backup_size bigint  DEFAULT NULL,"
+  		echo "ref_full_backup varchar(40) DEFAULT NULL,"
+  		echo "xid bigint DEFAULT NULL,"
+  		echo "dumplist varchar(2000) DEFAULT NULL,"
+  		echo "skysql_pod varchar(64) DEFAULT NULL,"
+  		echo "skysql_bucket varchar(255) DEFAULT NULL,"
+  		echo "skysql_db varchar(64) DEFAULT NULL,"
+  		echo "checkpoint varchar(64) DEFAULT NULL,"
+		echo "binlog_file varchar(64) DEFAULT NULL,"
+		echo "binlog_position varchar(64) DEFAULT NULL,"
+		echo "binlog_first varchar(64) DEFAULT NULL,"
+		echo "binlog_last varchar(64) DEFAULT NULL,"
+  		echo "binlog_last_ts timestamp NULL DEFAULT NULL,"
+  		echo "PRIMARY KEY (uuid),"
+  		echo "FOREIGN KEY (ref_full_backup) REFERENCES backup_history(uuid) ON DELETE CASCADE);"
+		echo "CREATE INDEX start_time ON backup_history(start_time);"
+		echo "CREATE INDEX ref_full ON backup_history(ref_full_backup);"
+		echo "CREATE INDEX incremental_check on backup_history(backup_tool, level, status);"
+		echo "CREATE INDEX binlog_last_ts ON backup_history(binlog_last_ts);"
+		) | dbquery $DB
+	else
+		patch_sqlite_db $DB
+	fi
+}
+
+patch_sqlite_db()
+{
+	rev=$(echo "PRAGMA table_info(backup_history);" | dbquery $1 | tail -1 | cut -d "|" -f 1)
+	case "$rev" in
+		'17') 	echo "ALTER TABLE backup_history ADD COLUMN xid bigint DEFAULT NULL;" | dbquery $1
+			patch_db $1
+			return
+			;;
+		'18') 	echo "ALTER TABLE backup_history ADD COLUMN dumplist varchar(2000) DEFAULT NULL;" | dbquery $1
+			echo "ALTER TABLE backup_history ADD COLUMN skysql_pod varchar(64) DEFAULT NULL;" | dbquery $1
+			echo "ALTER TABLE backup_history ADD COLUMN skysql_bucket varchar(256) DEFAULT NULL;" | dbquery $1
+			echo "ALTER TABLE backup_history ADD COLUMN skysql_db varchar(64) DEFAULT NULL;" | dbquery $1
+			echo "ALTER TABLE backup_history ADD COLUMN checkpoint varchar(64) DEFAULT NULL;" | dbquery $1
+			patch_db $1
+			return
+			;;
+		'23') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_file varchar(64) DEFAULT NULL;" | dbquery $1
+			patch_db $1
+			return
+			;;
+		'24') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_position varchar(16) DEFAULT NULL;" | dbquery $1
+			patch_db $1
+			return
+			;;
+		'25') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_first varchar(16) DEFAULT NULL;" | dbquery $1
+			echo "ALTER TABLE backup_history ADD COLUMN binlog_last varchar(16) DEFAULT NULL;" | dbquery $1
+			patch_db $1
+			return
+			;;
+		'27') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_last_ts timestamp DEFAULT NULL;" | dbquery $1
+			echo "CREATE INDEX binlog_last_ts ON backup_history(binlog_last_ts);" | dbquery $1
+			patch_db $1
+			return
+			;;
+	esac
+}
+
+setup_maria_db()
+{
+	if [ "$(which mysql 2>/dev/null)" = "" ]
+	then
+		echo "This script requires the MariaDB CLI package. Please install it."
+		exit 1
+	fi
+	if [ "$(which curl 2>/dev/null)" = "" ]
+	then
+		echo "This script requires the curl package. Please install it."
+		exit 1
+	fi
+	tdp=$(echo "show databases like 'backup_manager';" | dbquery)
+	if  [ "$tdp" != "backup_manager" ]
+	then
+		echo "backup_manager schema does not exist. Please create it and retry."
+		exit 1
+	fi
+	ttp=$(echo "show tables like 'backup_history';" | dbquery)
+	if  [ "$ttp" != "backup_history" ]
+	then
+		(
+		echo "CREATE TABLE backup_history ("
+  		echo "uuid varchar(40) NOT NULL,"
+		echo "runtime_id int DEFAULT NULL,"
+  		echo "start_time timestamp NULL DEFAULT NULL,"
+  		echo "end_time timestamp NULL DEFAULT NULL,"
+  		echo "bulocation varchar(255) DEFAULT NULL,"
+  		echo "logfile varchar(255) DEFAULT NULL,"
+  		echo "status tinyint DEFAULT NULL,"
+  		echo "level tinyint DEFAULT NULL,"
+  		echo "compressor varchar(40) DEFAULT NULL,"
+  		echo "uncompressor varchar(40) DEFAULT NULL,"
+  		echo "encryptor varchar(40) DEFAULT NULL,"
+  		echo "unencryptor varchar(40) DEFAULT NULL,"
+  		echo "cryptkey varchar(255) DEFAULT NULL,"
+  		echo "last_lsn bigint DEFAULT NULL,"
+  		echo "backup_tool varchar(120) DEFAULT NULL,"
+  		echo "server_version varchar(50) DEFAULT NULL,"
+  		echo "backup_size bigint  DEFAULT NULL,"
+  		echo "ref_full_backup varchar(40) DEFAULT NULL,"
+  		echo "xid bigint DEFAULT NULL,"
+  		echo "dumplist varchar(2000) DEFAULT NULL,"
+  		echo "skysql_pod varchar(64) DEFAULT NULL,"
+  		echo "skysql_bucket varchar(255) DEFAULT NULL,"
+  		echo "skysql_db varchar(64) DEFAULT NULL,"
+  		echo "checkpoint varchar(64) DEFAULT NULL,"
+		echo "binlog_file varchar(64) DEFAULT NULL,"
+		echo "binlog_position varchar(64) DEFAULT NULL,"
+		echo "binlog_first varchar(64) DEFAULT NULL,"
+		echo "binlog_last varchar(64) DEFAULT NULL,"
+  		echo "binlog_last_ts timestamp NULL DEFAULT NULL,"
+  		echo "PRIMARY KEY (uuid),"
+  		echo "FOREIGN KEY (ref_full_backup) REFERENCES backup_history(uuid) ON DELETE CASCADE);"
+		echo "CREATE INDEX start_time ON backup_history(start_time);"
+		echo "CREATE INDEX ref_full ON backup_history(ref_full_backup);"
+		echo "CREATE INDEX incremental_check on backup_history(backup_tool, level, status);"
+		echo "CREATE INDEX binlog_last_ts ON backup_history(binlog_last_ts);"
+		) | dbquery $DB
+#	else
+#		patch_sqlite_db $DB
+	fi
+}
+
+clean_exit()
+{
+	[ "$what" = "backup" ] && echo "delete from backup_history where uuid = '$backup_id';" | dbquery $DB
+	exit $1
+}
+
+curl_before()
+{
+	[ "$url_before" != "" ] && curl --output - --insecure --silent --connect-timeout 10  "$url_before" > $tt/callout_before.log 2>&1
+}
+
+curl_after()
+{
+	[ "$url_after" != "" ] && curl --output - --insecure --silent --connect-timeout 10  "$url_after" > $tt/callout_after.log 2>&1
+}
+
+check_free_space()
+{
+	[ $skysql -eq 1 ] && return
+	if [ $level -eq 0 -a $disk_space_p_avail -lt $min_disk_pfree ]
+	then
+		echo "ERROR: Not enough free space on target directory $target."
+		msg="Filesystem has $disk_space_p_avail% ($disk_space_avail) free, but $min_disk_pfree% is required. Exiting."
+		echo $msg
+		[ "$failure_notify" != "" ] && echo $msg | send_mail "$customer: backup FAILED" $failure_notify
+		exit 1
+	fi
+}
+
+email_notification()
+{
+	[ -t 0 ] && return
+	if [ "$failure_notify" != "" ]
+	then
+		if [ $status -eq 1 ]
+		then
+			echo "Backup failed, please run 'backup_manager logs $backup_id' for details" | send_mail "$customer: backup FAILED" $failure_notify
+		else
+			[ "$success_notify" != "" -a $level -eq 0 ] && inventory pretty | send_mail "$customer: backup SUCCESSFUL" $success_notify
+		fi
+	fi
+}
+
+run_with_timeout()
+{
+	pid=$(jobs -p)
+	if [ $timeout -eq 0  ]
+	then
+		wait 
+		status=$?
+		return
+	fi
+	echo "NOTICE: backup_timeout in effect, timeout ${timeout}m, controller id $pid"
+	countdown=$((timeout*12+1))
+	while true
+	do
+		kill -0 $pid 2>/dev/null || break	
+		countdown=$((countdown-1))
+		[ $countdown -eq 0 ] && break
+		sleep 5
+	done
+	if [ $countdown -eq 0 ]
+	then
+		kill -9 $pid
+		echo "ERROR: Backup timed out. Killing it."
+		echo "Backup killed due to timeout." >> $logfile
+	else
+		wait
+		status=$?
+	fi
+}
+
+scan_binlog_archive()
+{
+	echo -n "scanning binlog archive.."
+	for bf in $(ls $bxfolder)
+	do
+		t=$(mysqlbinlog $bf | fgrep -m 1 "Start: binlog" | sed -re "s/^#([0-9]+)([0-9]+)([0-9]+)([0-9]+)([0-9]+)([0-9]+) ([0-9]*):([0-9]*):([0-9]*) server (.*)$/20\1\2-\3\4-\5\6 \7:\8:\9/")
+		if [ "$(echo "select '$t' > '$requested_binlog_ts';" | dbquery $DB)" = "1" ]
+		then 
+			last_b=$prev_bf
+			scan_complete=1
+			echo
+			return
+		fi
+		prev_bf=$bf
+		echo -n "."
+	done
+	echo
+}
+
+# set bxfolder before calling
+apply_binlogs()
+{
+	bf_start_file=$(echo "select binlog_file from backup_history where uuid = '$binlogs_starting_point';" | dbquery $DB)
+	bf_start_pos=$(echo "select binlog_position from backup_history where uuid = '$binlogs_starting_point';" | dbquery $DB)
+	[ "$bf_start_file" = "$requested_binlog_file" -a "$bf_start_pos" = "$requested_binlog_position" ] && return
+	get_binlog_dir
+	if [ "$binlog_dir" = "" ]
+	then
+		echo "ERROR: cannot detect binary logs folder. Skipping binlogs."
+		return
+	fi
+	if [ "$requested_binlog_ts" != "" ]
+	then
+		echo "Now applying binary logs for all events having timestamp < '$requested_binlog_ts'"
+	else
+		echo "Now applying binary logs up to: file $requested_binlog_file, position $requested_binlog_position"
+		requested_binlog_ts="2038-01-19 03:14:07"
+	fi
+	initial_bf_done=0
+	scan_complete=0
+	echo "Applying from starting position: file $bf_start_file, position $bf_start_pos"
+	mariadb_instance start
+	if [ $? -ne 0 ]
+	then
+		echo "ERROR: unable to start MariaDB auxiliary instance. More info: $target/backup_manager_mysqld.err"
+		echo "Aborting binlogs application."
+		return
+	fi
+	[ ! -d $bxfolder ] && mkdir $bxfolder
+	cd $bxfolder
+	wanted_seqno=${bf_start_file:(-6)}
+	for bp in $(echo "select uuid from backup_history where backup_tool = 'binlogs' and ref_full_backup = '$uuid' order by start_time asc;" | dbquery $DB)
+	do
+		last_seqno=$(echo "select substr(binlog_last, -6) from backup_history where uuid = '$bp';" | dbquery $DB)
+		[ $last_seqno -lt $wanted_seqno ] && continue
+		echo "extracting binlog backup $bp"
+		extract_binlog_piece $bp  || break
+		[ $scan_complete -eq 1 ] && break
+		[ "$bp" = "$target_binlog_backup_id" ] && break
+		[ "$last_file" != "" ] && break
+	done
+	mariadb_instance stop
+	echo "Done applying binary logs."
+}
+
+pit_input_error()
+{
+	echo "ERROR: '$1': not a valid point-in-time specification."
+	echo "accepted formats: timestamp ('YYYY-MM-DD HH:MM:SS') or position (binlogfile:position)"
+	exit 1
+}
+
+validate_point_in_time()
+{
+	if [ "$(echo "select datetime('$1') = '$1';" | dbquery $DB)" = "1" ]
+	then
+		requested_binlog_ts="$1"
+	else
+		IFS=":"
+		posarr=($1)
+		[ ${#posarr[@]} -ne 2 ] && pit_input_error "$1"
+		requested_binlog_file=${posarr[0]}
+		requested_binlog_position=${posarr[1]}
+		unset IFS
+		echo "$requested_binlog_file" | grep -qE "^[-0-9a-z\.]+$"  || pit_input_error "$1"
+		echo "$requested_binlog_position" | grep -qE "^[0-9]+$" || pit_input_error "$1"
+	fi
+	if [ $no_mysqlbinlog -eq 1 ]
+	then
+		echo "ERROR: mysqlbinlog program not installed, cannot restore to point-in-time. Exiting."
+		exit 1
+	fi
+	check_pit_availability
+	if [ "$target_binlog_backup_id" = "" ]
+	then
+		echo "ERROR: requested point-in-time not available in the specified full backup."
+		echo "Please run \"backup_manager inventory binlogs\" to verify if another backup has it."
+		exit 1
+	fi
+	echo -n "Requested point-in-time recovery: "
+	if [ "$requested_binlog_ts" = "" ]
+	then
+		echo "after restore, binlogs up to: file $requested_binlog_file, position $requested_binlog_position will be applied."
+	else
+		echo "after restore, all binlogs having events with timestamp < '$requested_binlog_ts' will be applied."
+	fi
+	[ "$2" = "" ] && confirm_operation
+	do_binlogs=1
+}
+
+pit_not_present()
+{
+	echo "ERROR: requested point-in-time not available in this backup."
+	echo "You requested $requested_binlog_file:$requested_binlog_position and this backup starts with $bf:$bp."
+	echo "Please select an older backup, or run without point-in-time recovery."
+	exit 1
+}
+
+check_pit_availability()
+{
+	if [ "$requested_binlog_file" != "" ]
+	then
+		bf=$(echo "select binlog_file from backup_history where uuid = '$uuid';" | dbquery $DB)
+		bp=$(echo "select binlog_position from backup_history where uuid = '$uuid';" | dbquery $DB)
+		#echo "full $uuid: $bf:$bp"
+		if [ "$bf" \> "$requested_binlog_file" ]
+		then
+			pit_not_present
+			return
+		fi
+		if [ "$bf" = "$requested_binlog_file" ]
+		then
+			if [ $bp -gt $requested_binlog_position ]
+			then
+				pit_not_present
+				return
+			fi
+		fi
+		for bb_id in $(echo "select uuid from backup_history where ref_full_backup = '$uuid' and backup_tool = 'binlogs' and status = 0 order by start_time asc;" | dbquery $DB)
+		do
+			bl=$(echo "select binlog_last from backup_history where uuid = '$bb_id';" | dbquery $DB)
+			#echo "binlog backup $bb_id after full $uuid: last binlog $bl"
+			if [ "$bl" \> "$requested_binlog_file" -o "$bl" = "$requested_binlog_file" ]
+			then
+				target_binlog_backup_id=$bb_id
+				return
+			fi
+		done
+		for bb_id in $(echo "select uuid from backup_history where ref_full_backup = '$uuid' and level = 1 and status = 0 order by start_time asc;" | dbquery $DB)
+		do
+			bl=$(echo "select binlog_file from backup_history where uuid = '$bb_id';" | dbquery $DB)
+			#echo "incr backup $bb_id after full $uuid: last binlog $bl"
+			if [ "$bl" \> "$requested_binlog_file" -o "$bl" = "$requested_binlog_file" ]
+			then
+				target_binlog_backup_id=$bb_id
+				return
+			fi
+		done
+	else
+		blt=$(echo "select binlog_last_ts from backup_history where uuid = '$uuid';" | dbquery $DB)
+		#echo "full $uuid: $blt"
+		[ "$requested_binlog_ts" \< "$blt" -o "$requested_binlog_ts" = "$blt" ] && return
+		for bb_id in $(echo "select uuid from backup_history where binlog_last_ts > '$blt' and level in (0, 1, 3) and status = 0 order by binlog_last_ts asc;" | dbquery $DB)
+		do
+			blt=$(echo "select binlog_last_ts from backup_history where uuid = '$bb_id';" | dbquery $DB)
+			ble=$(echo "select level from backup_history where uuid = '$bb_id';" | dbquery $DB)
+			if [ $ble -eq 0 ]
+			then
+				if [ "$requested_binlog_ts" \> "$blt" ]
+				then
+					echo "ERROR: a more recent full backup exists for the requested point in time."
+					echo "In order to speed up your restore, please base it on backup id $bb_id."
+					exit 1
+				else
+					continue
+				fi
+			fi
+			#bty=$(echo "select backup_tool || '-' || level from backup_history where uuid = '$bb_id';" | dbquery $DB)
+			#echo "$bty $bb_id  < $blt"
+			if [ "$requested_binlog_ts" \< "$blt" -o "$requested_binlog_ts" = "$blt" ]
+			then
+				target_binlog_backup_id=$bb_id
+				return
+			fi
+		done
+	fi
+}
+
+find_binlogs_backup_sp()
+{
+        binlog_start=$(echo "select binlog_file from backup_history where backup_tool = 'binlogs' and status=0 and ref_full_backup = '$1' order by start_time desc limit 1;" | dbquery $DB)
+	[ "$binlog_start" = "" ] && binlog_start=$(echo "select binlog_file from backup_history where uuid = '$1';" | dbquery $DB)
+}
+
+send_mail()
+{
+	if [ $(mailx -V | fgrep -c GNU) -gt 0 ]
+	then
+		(
+			echo "<PRE>"
+			cat
+			echo "</PRE>"
+		) | mailx -s "$1" -a "Content-Type: text/html" $2
+	else
+		mailx -s "$1" $2
+	fi
+}
+
+purge_incomplete()
+{
+	[ $purge_incomplete -eq 0 ] && return
+	[ $status -eq 0 ] && return
+	echo "purging incomplete backup"
+	case "$tool" in
+		'mariabackup'|'xtrabackup'|'mysqldump') rm -f $tt/$fn;;
+		'mydumper') rm -f $tt/*;;
+	esac
+	clean_exit 0
+}
+
+current_position()
+{
+	curr_binlog_file=$(echo "select binlog_file from backup_history where uuid = '$1';" | dbquery $DB)
+	curr_binlog_position=$(echo "select binlog_position from backup_history where uuid = '$1';" | dbquery $DB)
+	echo "(current position after apply logs: file $curr_binlog_file, position $curr_binlog_position)"
+}
+
+incr_check_position()
+{
+	if [ $do_binlogs -eq 1 ]
+	then
+		if [ "$requested_binlog_file" != "" ]
+		then
+			this_binlog_file=$(echo "select binlog_file from backup_history where uuid = '$id';" | dbquery $DB)
+			[ "$this_binlog_file" \> "$requested_binlog_file" ] && return 0
+			if [ "$this_binlog_file" = "$requested_binlog_file" ]
+			then
+				this_binlog_position=$(echo "select binlog_position from backup_history where uuid = '$id';" | dbquery $DB)
+				[ $this_binlog_position -gt $requested_binlog_position ] && return 0
+			fi
+		else
+			this_binlog_ts=$(echo "select binlog_last_ts from backup_history where uuid = '$id';" | dbquery $DB)
+			[ "$this_binlog_ts" \> "$requested_binlog_ts" -o "$this_binlog_ts" = "$requested_binlog_ts" ] && return 0
+		fi
+	fi
+	return 1
+}
+
+yes_or_no()
+{
+	while true
+	do
+		read a
+		case "$a" in
+			'N'|'n') return 1;;
+			'Y'|'y') return 0;;
+			*) echo -n "Please enter Y or N: ";;
+		esac
+	done
+}
+
+confirm_operation()
+{
+	l=1
+	while [ $l -eq 1 ]
+	do
+		echo -n "Confirm? y/N "
+		read a
+		case "$a" in
+			'N'|'n'|'') echo "Never mind."; exit 1;;
+			'Y'|'y') l=0;;
+		esac
+	done
+}
+
+print_latest()
+{
+	path=$(echo "select bulocation from backup_history where level = 0 and backup_tool in ('mariabackup','xtrabackup') and status = 0 order by start_time desc limit 1;" | dbquery $DB)
+	if [ "$path" = "" ]
+	then
+		echo "no backups found."
+		exit 1
+	else
+		echo $path
+	fi
+}
+
+purge_incrementals()
+{
+	for ip in $(echo "select uuid from backup_history where ref_full_backup = '$1' and level=1;" | dbquery $DB)
+	do
+		rm -f $(echo "select bulocation from backup_history where uuid = '$ip';" | dbquery $DB)
+		echo "delete from backup_history where uuid = '$ip';" | dbquery $DB
+	done
+}
+
+smart_purge()
+{
+	keep=$(echo "select uuid || ',' || '0' from backup_history where start_time > date('now','-6 day') union select uuid || ',' || '1' from backup_history where start_time > date('now','-1 month', '-5 day') and strftime('%w', start_time)  = '0' union select uuid || ',' || '1' from backup_history where start_time > date('now','-$smart_purge_months month', '-1 month', '-6 day') and strftime('%w', start_time)  = '0' group by strftime('%m', start_time);" | dbquery $DB)
+	IFS="
+"
+	echo -n "Purging backups using smart purge, keeping last $smart_purge_months months... "
+	[ $dry -eq 1 ] && echo "(dry run)" || echo
+	for fp in $(echo "select uuid from backup_history where level=0 order by start_time;" | dbquery $DB)
+	do
+		kf=$(echo "$keep" | fgrep $fp | head -1)
+		pi=$(echo $kf | grep -c ",1$")
+		if [ "$kf" != "" ]
+		then
+			[ $pi -eq 1 -a $dry -eq 0 ] && purge_incrementals $fp
+			continue
+		fi
+		do_purge $fp
+	done
+}
+
+do_purge()
+{
+	st=$(echo "select start_time from backup_history where uuid = '$1';" | dbquery $DB)
+	echo "purging full backup $1 ($st) and related incrementals"
+	if [ $dry -eq 0 ]
+	then
+		path=$(echo "select bulocation from backup_history where uuid = '$1';" | dbquery $DB)
+		[ -d $path ] && rm -rf $path || rm -f $path
+		for path in $(echo "select bulocation from backup_history where ref_full_backup = '$1';" | dbquery $DB)
+		do
+			rm -f $path
+		done
+		rm -f $(dirname $path)/*.log
+		rmdir --ignore-fail-on-non-empty $(dirname $path)
+		rmdir --ignore-fail-on-non-empty $(dirname $(dirname $path))
+		(echo "PRAGMA foreign_keys=ON;"; echo "delete from backup_history where uuid = '$1';") | dbquery $DB
+	fi
+}
+
+purge_backups()
+{
+
+	check_root purge
+	if [ $expire_days -eq 0 -a $smart_purge -eq 0 ]
+	then
+		echo "purge is not properly configured."
+		echo "please set either purge_days variable, or enable smart purge in config file."
+		exit 1
+	fi
+	check_for_update purge $*
+	dry=0
+	[ "$1" = "dry-run" -o "$1" = "dryrun" ] && dry=1
+	if [ "$1" != "" -a $dry -eq 0 ]
+	then
+		if [ $(echo "select count(*) from backup_history where uuid = '$1';" | dbquery $DB) -eq 0 ]
+		then
+			echo "backup with id '$1' not found."
+			exit 1
+		fi
+		echo "purging backup piece $1"
+		path=$(echo "select bulocation from backup_history where uuid = '$1';" | dbquery $DB)
+		if [ $skysql -eq 0 ]
+		then
+			[ -d $path ] && rm -rf $path || rm -f $path
+		fi
+		echo "delete from backup_history where uuid = '$1';" | dbquery $DB
+		return
+	fi
+	if [ $smart_purge -eq 1 ] 
+	then
+		smart_purge $1
+		return
+	fi
+	echo -n "Purging backups older than $expire_days days... "
+	[ $dry -eq 1 ] && echo "(dry run)" || echo
+        [ -f $lockfile ] && r_id=$(cat $lockfile) || r_id=0
+	for fp in $(echo "select uuid from backup_history where level in (0, 2, 3) and start_time < '$(date -d "today - $expire_days days" +%Y-%m-%d\ %T) and runtime_id <> $r_id order by start_time';" | dbquery $DB)
+	do
+		do_purge $fp
+	done
+}
+
+show_logs()
+{
+	logfile=$(echo "select logfile from backup_history where uuid = '$1';" | dbquery $DB)
+	if [ "$logfile" = "" ]
+	then
+		echo "backup with id '$1' not found."
+		exit 1
+	fi
+	[ "$(which less 2>/dev/null)" != "" ] && pager="less" || pager="more"
+	if [ "$(which fuser 2>/dev/null)" != "" ]
+	then
+        	fuser -s $logfile && tail -f $logfile || $pager $logfile
+	else
+        	echo -e "  loading logfile into pager, please wait... \r\c"
+		$pager $logfile
+	fi
+}
+
+check_home_config()
+{
+	[ "$LOGNAME" = "root" ] && return
+	[ -f $HOME/$CONFIGNAME ] && CONFIGFILE=$HOME/$CONFIGNAME
+}
+
+self_doc()
+{
+	base64 -d << DOC_EOF | gzip -dc | sed -e "s/\$VERSION/v$VERSION/" > /tmp/bmdoc.$$
+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
+DOC_EOF
+[ $perldoc -eq 1 ] && perldoc /tmp/bmdoc.$$ || $pager /tmp/bmdoc.$$
+rm -f /tmp/bmdoc.$$
+}
+
+dbquery()
+{
+	case "$dbtype" in
+		'sqlite') sqlite3 $*;;
+		'maria') mysql -ANr backup_manager;;
+	esac
+}
+
+inv_dbquery()
+{
+	case "$dbtype" in
+		'sqlite') sqlite3 -column -header $*;;
+		'maria') mysql -At backup_manager;;
+	esac
+}
+
+dim_prepare_memory()
+{
+	avail=$(grep ^MemTotal  /proc/meminfo | sed -re "s/^MemTotal:(\s*)([0-9]*) kB/\2/")
+	prepare_memory=$((avail/8))
+}
+
+# end
+
+# backup manager integrity check
+# begin
+
+parse_config()
+{
+	grep -q "^backup_host" $CONFIGFILE && host=$(grep "^backup_host" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^backup_port" $CONFIGFILE && port=$(grep "^backup_port" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^backup_user" $CONFIGFILE && user=$(grep "^backup_user" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^backup_password" $CONFIGFILE && password=$(grep "^backup_password" $CONFIGFILE | sed -re 's/([^=]*)=(.*)$/\2/')
+	grep -q "^backup_socket" $CONFIGFILE && socket=$(grep "^backup_socket" $CONFIGFILE | cut -d"=" -f2)
+        grep -q "^backend_type" $CONFIGFILE && dbtype=$(grep "^backend_type" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^target_directory" $CONFIGFILE && target=$(grep "^target_directory" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^compressor" $CONFIGFILE && compressor=$(grep "^compressor" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^uncompressor" $CONFIGFILE && uncompressor=$(grep "^uncompressor" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^encryptor" $CONFIGFILE && encryptor=$(grep "^encryptor" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^unencryptor" $CONFIGFILE && unencryptor=$(grep "^unencryptor" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^purge_incomplete_backups" $CONFIGFILE && purge_incomplete=$(grep "^purge_incomplete_backups" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^expire_days" $CONFIGFILE && expire_days=$(grep "^expire_days" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^purge_days" $CONFIGFILE && expire_days=$(grep "^purge_days" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^smart_purge=" $CONFIGFILE && smart_purge=$(grep "^smart_purge=" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^smart_purge_months" $CONFIGFILE && smart_purge_months=$(grep "^smart_purge_months" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^customer" $CONFIGFILE && customer=$(grep "^customer" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^notify_label" $CONFIGFILE && customer=$(grep "^notify_label" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^parallelism" $CONFIGFILE && parallelism=$(grep "^parallelism" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^date_format" $CONFIGFILE && dt_format=$(grep "^date_format" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^failure_notify" $CONFIGFILE && failure_notify=$(grep "^failure_notify" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^success_notify" $CONFIGFILE && success_notify=$(grep "^success_notify" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^master_position" $CONFIGFILE && master_position=$(grep "^master_position" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^free_space_percentage" $CONFIGFILE && min_disk_pfree=$(grep "^free_space_percentage" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^callout_url_before" $CONFIGFILE && url_before=$(grep "^callout_url_before" $CONFIGFILE | sed -re 's/([^=]*)=(.*)$/\2/')
+	grep -q "^callout_url_after" $CONFIGFILE && url_after=$(grep "^callout_url_after" $CONFIGFILE | sed -re 's/([^=]*)=(.*)$/\2/')
+	grep -q "^galera_info" $CONFIGFILE && galera=$(grep "^galera_info" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^restore_test_directory" $CONFIGFILE && restore_test_dir=$(grep "^restore_test_directory" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^backup_timeout" $CONFIGFILE && timeout=$(grep "^backup_timeout" $CONFIGFILE | cut -d"=" -f2)
+	grep -q "^kill_query_time" $CONFIGFILE && kill_query_time=$(grep "^kill_query_time" $CONFIGFILE | cut -d"=" -f2)
+
+
+	if [ "$host" = "" -o "$user" = "" ]
+	then
+		echo "Please set backup_host and backup_user in $CONFIGFILE."
+		exit 1
+	fi
+	if [ "$target" = "" ]
+	then
+		echo "Please set target_directory in $CONFIGFILE."
+			exit 1
+	fi
+	if [ ! -d "$target" ]
+	then
+		echo "Target directory $target does not exist."
+		exit 1
+	fi
+	if [ "$compressor" != "" ]
+	then
+		ct=$(which ${compressor/%\ */} 2>/dev/null)
+		if [ "$ct" = "" ]
+		then
+			echo "You have configured ${compressor/%\ */}, please install it first."
+			exit 1
+		fi
+	fi
+	if [ "$encryptor" != "" ]
+	then
+		ct=$(which ${encryptor/%\ */} 2>/dev/null)
+		if [ "$ct" = "" ]
+		then
+			echo "You have configured ${encryptor/%\ */}, please install it first."
+			exit 1
+		fi
+		if [ "$(which openssl 2>/dev/null)" = "" ]
+		then
+			echo "This script requires the openssl package. Please install it."
+			exit 1
+		fi
+		if [ "$enc_key" = "" ]
+		then
+			enc_key=$(openssl rand -base64 32)
+			export enc_key="$enc_key"
+			enc_key_local=1
+		fi
+	fi
+	lockfile=/tmp/backup_manager.lock
+	[ "$(which mysqlbinlog 2>/dev/null)" = "" ] && no_mysqlbinlog=1
+	if [ "$success_notify" != "" -a "$failure_notify" = "" ]
+	then
+		echo "NOTICE: 'failure_notify' not set in config, using email in 'success_notify' for failure notifications."
+		failure_notify=$success_notify
+	fi
+	if [ "$failure_notify" != "" ]
+	then
+		mx=$(which mailx 2>/dev/null)
+		if [ "$mx" = "" ]
+		then
+			echo "You have configured email notifications, please install the mailx utility."
+			exit 1
+		fi
+		if [ "$customer" = "" ]
+		then
+			echo "You have configured email notifications, please configure customer name."
+			exit 1
+		fi
+	fi
+}
+
+mysql_variable()
+{
+	[ "$password" != "" ] && pass_str="-p$password"
+	[ "$socket" != "" ] && sock_str="-S$socket"
+	echo "select @@$1" | mysql -ANr -u $user $sock_str $pass_str
+}
+
+prepare_target()
+{
+	backup_id=$(date "+%s$$" | md5sum | cut -d" " -f 1)
+	case "$level" in
+		0) fn=full_$(date +%H:%M);;
+		1) fn=incr_$(date +%H:%M);;
+		2) fn=${dumplist}_$(date +%H:%M);;
+		3) fn=binlogs_$(date +%H:%M);;
+	esac
+	if [ "$tool" = "mydumper" ]
+	then
+		fn=""
+		tt=$target/$(date +$dt_format)/${tool}_$(date +%H:%M)
+	else
+		tt=$target/$(date +$dt_format)/$tool
+	fi
+	mkdir -p $tt
+	echo "Target directory for this backup: $tt"
+	logfile=$tt/$backup_id.log
+	case "$tool" in
+		'binlogs') ;;
+		*) echo "Logfile: $logfile";;
+	esac
+}
+
+save_bootstrap()
+{
+	case "$tool" in
+		'mariabackup'| 'xtrabackup' )
+			cp $DB $(mysql_variable datadir)/$BOOTSTRAP_FILE 2>/dev/null
+			;;
+	esac
+}
+
+inventory_init()
+{
+	case "$level" in
+		1) echo "insert into backup_history values('$backup_id', $runtime_id, '$(date +%Y-%m-%d\ %T)', NULL, '$location', '$logfile', NULL, $level, '$compressor', '$uncompressor', '$encryptor', '$unencryptor', '$local_key', NULL, '$tool', '$(mysql_variable version)', NULL, '$ref_full', NULL, '$dumplist', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);" | dbquery $DB;;
+		*) echo "insert into backup_history values('$backup_id', $runtime_id, '$(date +%Y-%m-%d\ %T)', NULL, '$location', '$logfile', NULL, $level, '$compressor', '$uncompressor', '$encryptor', '$unencryptor', '$local_key', NULL, '$tool', '$(mysql_variable version)', NULL, NULL, NULL, '$dumplist', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);" | dbquery $DB;;
+	esac
+}
+
+update_backup_status()
+{
+	check_status
+	echo "update backup_history set end_time = '$(date +%Y-%m-%d\ %T)' where uuid = '$backup_id';" | dbquery $DB
+	[ $status -ne 0 ] && return
+	case "$tool" in
+		'mariabackup'| 'xtrabackup' )
+			echo "update backup_history set last_lsn = $lsn, backup_size = $(stat -c %s $tt/$fn) where uuid = '$backup_id';" | dbquery $DB
+			pit_xid
+			;;
+		'mysqldump')
+			echo "update backup_history set backup_size = $(stat -c %s $tt/$fn) where uuid = '$backup_id';" | dbquery $DB
+			;;
+		'mydumper')
+			echo "update backup_history set backup_size = $(du -b $tt | cut -f 1) where uuid = '$backup_id';" | dbquery $DB
+			;;
+		'binlogs')
+			echo "update backup_history set backup_size = $(stat -c %s $tt/$fn) where uuid = '$backup_id';" | dbquery $DB
+			;;
+	esac
+}
+
+perform_backup()
+{
+	[ $enc_key_local -eq 1 ] && local_key=$enc_key
+	location=$tt/$fn 
+	inventory_init
+	case "$tool" in
+		'mariabackup')
+			perform_maria_backup;;
+		'xtrabackup')
+			perform_xtra_backup;;
+		'mysqldump')
+			perform_mysqldump_backup;;
+		'mydumper')
+			perform_mydumper_backup;;
+		'binlogs')
+			perform_binlogs_backup;;
+		*)
+			echo "Unsupported backup tool $tool"
+			clean_exit 1
+			;;
+	esac
+}
+
+get_binlog_dir()
+{
+	binlog_dir=$(dirname $(mysql_variable log_bin_basename))
+}
+
+perform_binlogs_backup()
+{
+	if [ $(mysql_variable log_bin) -eq 0 ]
+	then
+		echo "ERROR: cannot backup binary logs if they are not enabled on server."
+		clean_exit 1
+	fi
+	# check for a valid full backup to base binlogs backup on
+	ref_id=$(echo "select uuid from backup_history where level = 0 and backup_tool in ('mariabackup','xtrabackup','skysql') and status = 0 order by start_time desc limit 1;" | dbquery $DB)
+	if [ "$ref_id" = "" ]
+	then
+		echo "ERROR: no full backup available to base binlog backups on. Exiting."
+		clean_exit 1
+	else
+		find_binlogs_backup_sp $ref_id
+		binlog_base=$(mysql_variable log_bin_basename)
+		ena=0
+		for binlog in $(ls ${binlog_base}* | grep -v index)
+		do
+			[ "$binlog_start" = "${binlog##*/}" ] && ena=1
+			[ $ena -eq 0 ] && continue
+			binlog_list="$binlog_list ${binlog##*/}"
+		done
+		binlog_list=$(echo $binlog_list | sed -e "s/${binlog##*/}//")
+		if [ "${binlog_list## }" = "" ]
+		then
+			echo "No binary logs needing backup."
+			clean_exit 0
+		fi
+		echo "Backing up binary log files" 
+		echo "Files in this backup: $binlog_list"
+		cd $(dirname $binlog_base)
+		tar cf - $binlog_list 2>$error_log | $compressor | $encryptor > $tt/$fn
+		if [ -s $error_log ]
+		then
+			status=1
+		else
+			blarr=($binlog_list)
+			lb_ts=$(mysqlbinlog ${binlog##*/} | fgrep -m1 "Start: binlog" | sed -re "s/^#([0-9]+)([0-9]+)([0-9]+)([0-9]+)([0-9]+)([0-9]+) ([0-9 ]*):([0-9]*):([0-9]*) server (.*)$/20\1\2-\3\4-\5\6 \7:\8:\9/" -e "s/( )([0-9]:)/0\2/")
+			binlog_file=${binlog##*/}
+			echo "update backup_history set ref_full_backup = '$ref_id' , binlog_file = '$binlog_file', binlog_first = '${blarr[0]}', binlog_last = '${blarr[-1]}', binlog_last_ts = '$lb_ts' where uuid = '$backup_id';" | dbquery $DB
+			status=0
+		fi
+	fi
+	update_backup_status
+}
+
+check_status()
+{
+	case "$tool" in
+		'mariabackup'|'xtrabackup')
+			tail -5 $logfile | fgrep -q "completed OK"
+			status=$? # override exit status from backup tool
+			if [ $status -eq 0 ]
+			then
+				binlog_file=$(tail $logfile | fgrep "MySQL binlog position:" | sed -re "s/^(.*)filename '(.*)', position '([0-9]*)',(.*)$/\2/")
+				binlog_pos=$(tail $logfile | fgrep "MySQL binlog position:" | sed -re "s/^(.*)filename '(.*)', position '([0-9]*)',(.*)$/\3/")
+				binlog_ts=$(mysqlbinlog $(dirname $(mysql_variable log_bin_basename))/$binlog_file | fgrep -m 1 "end_log_pos $binlog_pos " | sed -re "s/^#([0-9]+)([0-9]+)([0-9]+)([0-9]+)([0-9]+)([0-9]+) ([0-9 ]*):([0-9]*):([0-9]*) server (.*)$/20\1\2-\3\4-\5\6 \7:\8:\9/" -e "s/( )([0-9]:)/0\2/")
+			fi
+			echo "update backup_history set status = $status, binlog_file = '$binlog_file', binlog_position = '$binlog_pos', binlog_last_ts = '$binlog_ts' where uuid = '$backup_id';" | dbquery $DB
+			;;
+		'mysqldump')
+			[ -s $logfile ] && status=1
+			echo "update backup_history set status = $status where uuid = '$backup_id';" | dbquery $DB
+			;;
+		*)	echo "update backup_history set status = $status where uuid = '$backup_id';" | dbquery $DB
+			;;
+	esac
+	echo "Exit status of $tool was $status."
+	[ $status -eq 0 ] && echo "Backup SUCCESSFUL" || echo "Backup FAILED"
+}
+
+incremental_check()
+{
+	[ $level -ne 1 ] && return
+	extra=""
+	ref_full=$(echo "select uuid from backup_history where level = 0 and backup_tool = '$tool' and status = 0 $extra order by start_time desc limit 1;" | dbquery $DB)
+	if [ "$ref_full" = "" ]
+	then
+		msg="ERROR: no valid full backup found, cannot perform incremental backup at this time."
+		echo $msg
+		[ "$failure_notify" != "" ] && echo $msg | send_mail "$customer: backup FAILED" $failure_notify
+		exit 1	
+	fi
+	echo "Performing an incremental backup based on $ref_full"
+}
+
+inventory()
+{
+	case "$dbtype" in
+		'sqlite') sqlite_inventory $*;;
+		'maria') maria_inventory $*;;
+	esac
+}
+
+sqlite_inventory()
+{
+	echo
+	echo -n "MariaDB Backup Manager v$VERSION"
+	echo
+	echo
+	[ -f $lockfile ] && r_id=$(cat $lockfile) || r_id=0
+	case "$1" in
+		'pretty'|'short') 
+			width="0 0 5 0 0 10 0 0 9"
+			echo -e ".width $width\nselect uuid as 'backup id', backup_tool as 'backup tool', case(level) when 0 then 'full' when 1 then 'incr' when 2 then 'dump' end as level, datetime(start_time) as 'start time        ', datetime(end_time) as 'end time           ', ((strftime('%s', end_time) - strftime('%s', start_time)) / 86400) || '+' || time(strftime('%s', end_time) - strftime('%s', start_time), 'unixepoch') as duration, last_lsn as 'last LSN', case when length(server_version) > 20 then substr(server_version,1,17) || '..' || substr(server_version, -1) else server_version end as 'server version', case when backup_size < 1000000 then substr('        ' || round(backup_size/1000.0, 2) || 'K', -8, 8) when backup_size between 1000000 and 999999999 then substr('        ' || round(backup_size/1000000.0, 2) || 'M', -8, 8) else substr('        ' || round(backup_size/1000000000.0, 2) || 'G', -8, 8) end as 'disk size', case when status = 0 then 'succeeded' when status is null and runtime_id = $r_id then 'running' else 'failed' end as status, case(level) when 2 then dumplist end as 'additional info' from backup_history $skyfilter order by start_time desc;" | inv_dbquery $DB 2>/dev/null | tee /tmp/bi$$
+			;;
+		'binlogs')
+			width="1 0 0 5 0 0 9 9 28 13 0"
+			echo -e ".width $width\nselect case(level) when 0 then 'F' else ' ' end as f, uuid as 'backup id', backup_tool as 'backup tool', case(level) when 0 then 'full' when 1 then 'incr' when 2 then 'dump' end as level, datetime(start_time) as 'start time        ', datetime(end_time) as 'end time           ', case when backup_size < 1000000 then substr('        ' || round(backup_size/1000.0, 2) || 'K', -8, 8) when backup_size between 1000000 and 999999999 then substr('        ' || round(backup_size/1000000.0, 2) || 'M', -8, 8) else substr('        ' || round(backup_size/1000000000.0, 2) || 'G', -8, 8) end as 'disk size', case when status = 0 then 'succeeded' when status is null and runtime_id = $r_id then 'running' else 'failed' end as status, case(level) when 3 then '' else binlog_file || ':' || binlog_position end as 'backup position', substr(binlog_first, -6) || '-' || substr(binlog_last, -6) as binlogs, binlog_last_ts as 'backup point-in-time'  from backup_history $skyfilter order by binlog_last_ts desc;" | dbquery -column -header $DB 2>/dev/null | tee /tmp/bi$$
+			;;
+		*) echo "select * from backup_history order by start_time desc;" | inv_dbquery $DB 2>/dev/null | tee /tmp/bi$$
+			;;
+	esac
+	echo
+	if [ ! -s /tmp/bi$$ ]
+	then
+		echo "There are no backups in inventory. "
+	fi
+	rm -f /tmp/bi$$
+	echo "Backup directory $target $disk_space_p_used% used, $disk_space_avail left" 
+	echo
+}
+
+maria_inventory()
+{
+	echo
+	echo -n "MariaDB Backup Manager v$VERSION"
+	echo
+	echo
+	[ -f $lockfile ] && r_id=$(cat $lockfile) || r_id=0
+	case "$1" in
+		'pretty'|'short') 
+			echo -e "select uuid as 'backup id', rpad(backup_tool, 12, ' ') as 'backup tool', case(level) when 0 then 'full' when 1 then 'incr' when 2 then 'dump' else '     ' end as level, start_time, end_time, sec_to_time(unix_timestamp(end_time) - unix_timestamp(start_time)) as duration, case when last_lsn is NULL then '          ' else last_lsn end as 'last LSN', case when length(server_version) > 20 then concat(substr(server_version,1,17), '..', substr(server_version, -1)) else server_version end as 'server version', case when backup_size < 1000000 then substr(concat('        ', round(backup_size/1000.0, 2), 'K'), -8, 8) when backup_size between 1000000 and 999999999 then substr(concat('        ', round(backup_size/1000000.0, 2), 'M'), -8, 8) else substr(concat('        ', round(backup_size/1000000000.0, 2), 'G'), -8, 8) end as 'disk size', case when status = 0 then 'succeeded' when status is null and runtime_id = $r_id then 'running' else 'failed' end as status, case(level) when 2 then dumplist else '      ' end as 'additional info' from backup_history $skyfilter order by start_time desc;" | inv_dbquery 2>/dev/null | tee /tmp/bi$$
+			;;
+		'binlogs')
+			echo -e "select case(level) when 0 then 'F' else ' ' end as f, uuid as 'backup id', rpad(backup_tool, 12, ' ') as 'backup tool', case(level) when 0 then 'full' when 1 then 'incr' when 2 then 'dump' else '     ' end as level, start_time, end_time, case when backup_size < 1000000 then substr(concat('        ', round(backup_size/1000.0, 2), 'K'), -8, 8) when backup_size between 1000000 and 999999999 then substr(concat('        ', round(backup_size/1000000.0, 2), 'M'), -8, 8) else substr(concat('        ', round(backup_size/1000000000.0, 2), 'G'), -8, 8) end as 'disk size', case when status = 0 then 'succeeded' when status is null and runtime_id = $r_id then 'running' else 'failed' end as status, case(level) when 3 then '                         ' else concat(binlog_file, ':', binlog_position) end as 'backup position', case(level) when 3 then concat(substr(binlog_first, -6), '-', substr(binlog_last, -6)) else '                ' end as binlogs, binlog_last_ts as 'backup point-in-time'  from backup_history $skyfilter order by binlog_last_ts desc;" | inv_dbquery | tee /tmp/bi$$
+			;;
+		*) echo "select * from backup_history order by start_time desc;" | inv_dbquery 2>/dev/null | tee /tmp/bi$$
+			;;
+	esac
+	echo
+	if [ ! -s /tmp/bi$$ ]
+	then
+		echo "There are no backups in inventory. "
+	fi
+	rm -f /tmp/bi$$
+	echo "Backup directory $target $disk_space_p_used% used, $disk_space_avail left" 
+	echo
+}
+
+usage() 
+{               
+	echo "usage: $0 backup [ mariabackup | xtrabackup | mydumper | mysqldump | binlogs ]" 
+	exit 1                  
+}   
+
+do_backup()
+{
+	check_root backup
+        [ "$tool" != "binlogs" ] && get_lock
+	check_for_update backup $*
+	tool=$1
+	what="backup"
+	case "$tool" in
+		'mariabackup') incr="| incr";;
+		'xtrabackup') incr="| incr";;
+		'mysqldump') incr=""
+			dumplist="$2"
+			[ "$dumplist" = "" -o "$dumplist" = "full" ] && dumplist="ALL"
+			;;
+		'mydumper') incr="";;
+		'binlogs') incr="";;
+		*) usage;;
+	esac
+	case "$tool" in
+		'mysqldump') level=2;;
+		'binlogs') level=3;;
+		*)	case "$2" in
+				'full') level=0;;
+				'incr'|'incremental') [ "$incr" != "" ] && level=1;;
+			esac
+	esac
+	if [ "$level" = "" ]
+	then
+		echo "usage: $0 backup $1 [ full $incr]"
+		exit 1
+	fi
+	set_limits
+	incremental_check
+	prepare_target
+	check_free_space
+	check_slave_status
+	curl_before
+	save_bootstrap
+	perform_backup
+	email_notification
+	curl_after
+	purge_incomplete
+}
+
+get_repl_creds()
+{
+	if [ ! -f $(mysql_variable datadir)/master.info ]
+	then
+		[ "$password" != "" ] && pass_str="-p$password"
+		[ "$socket" != "" ] && sock_str="-S$socket"
+		repl_creds=$(echo "select * from mysql.slave_master_info\G" | mysql -Ar -u $user $sock_str $pass_str 2>/dev/null | egrep "User_name:|User_password:|Host:|Port:" | cut -d":" -f 2 |sed -e "s/^ //g")
+	else
+		repl_creds=$(cat $(mysql_variable datadir)/master.info  2>/dev/null | head -7 | tail -4)
+        fi
+}
+
+which_gtid()
+{
+	gtid_list=$(tail $logfile | fgrep gtid_slave_pos | sed -re "s/^(.*)gtid_slave_pos\ (.*)$/\2/" | tr "," " ") 
+	tid=0
+	for gtid in $gtid_list
+	do
+		this=$(echo $gtid | cut -d"-" -f3)
+		[ $this -gt $tid ] && tid=$this
+	done
+	echo $tid
+}
+
+build_master_cmd()
+{
+	master_cmd="mysql -u $repl_user -p$repl_pass -h$repl_host -P$repl_port -ANr --skip-ssl --max-allowed-packet=1073741824"
+}
+
+do_restore()
+{
+	check_root restore
+	if [ "$1" = "" ]
+	then
+		echo "usage: $0 restore [ backupid ] [ targetdir ] [ point-in-time ]" 
+		exit 1
+	fi
+	check_for_update restore $*
+	if [ "$1" = "test" ]
+	then
+		do_restore_test
+		return
+	fi
+	what="restore"
+	set_limits
+	tool=$(echo "select backup_tool from backup_history where uuid = '$1';" | dbquery $DB)
+	if [ "$(which $tool 2>/dev/null)" = "" -a $skysql -eq 0 ]
+	then
+		echo "tool $tool needed to restore '$1' is not installed. Please install it."
+		exit 1
+	fi
+	lv=0
+	if [ $(echo "select count(*) from backup_history where uuid = '$1' and level = $lv;" | dbquery $DB) -eq 0 ]
+	then
+		echo "full backup with id '$1' not found."
+		exit 1
+	fi
+	uuid=$1
+	case "$tool" in
+		'mariabackup'|'xtrabackup')
+			if [ "$2" = "" ]
+			then
+				echo "usage: $0 restore [ backupid ] [ targetdir ] [ point-in-time ]"
+				exit 1
+			fi
+			target=$2
+			if [ "$target" != "-" ]
+			then
+				if [ -d $target ]
+				then
+					if [ "$(ls -a1 $target | tr -d ".\n")" != "" ]
+					then
+						echo "target directory $target must be empty."
+						exit 1
+					fi
+				fi
+			fi
+			[ "$3" != "" ] && validate_point_in_time "$3"
+			[ "$2" != "-" ] && echo -n "Restoring backup '$uuid' using $tool to $target"
+			[ "$2" != "-" ] && echo
+			if [ "$target" != "-" ]
+			then
+				[ ! -d $target ] && mkdir -p $target
+				logfile=$target/restore.log
+				echo "Logfile: $logfile"
+			else
+				logfile=/tmp/restore.log
+			fi
+			;;
+		*)
+			;;
+	esac
+	dim_prepare_memory
+	case "$tool" in
+		'mariabackup')
+			perform_maria_restore;;
+		'xtrabackup')
+			perform_xtra_restore;;
+		'mysqldump')
+			perform_mysqldump_restore;;
+		'mydumper')
+			perform_mydumper_restore;;
+	esac
+	case "$tool" in
+		'mariabackup'|'xtrabackup')
+			if [ "$target" != "-" ]
+			then
+				echo "Exit status of $tool was $status."
+				if [ $restore_test -eq 1 ]
+				then
+					if [ $status -eq 0 ]
+					then
+						[ "$success_notify" != "" ] && echo "Restore test successful. Details in /tmp/restore.log" | send_mail "$customer: restore test SUCCESSFUL" $success_notify 
+					else
+						[ "$failure_notify" != "" ] && echo "Restore test FAILED, please see /tmp/restore.log for details" | send_mail "$customer: restore test FAILED" $failure_notify
+					fi
+				else
+					[ $status -eq 0 ] && echo "Restore complete. Please don't forget to chown -R mysql:mysql $target."
+				fi
+			else
+				echo $status > /tmp/build_slave.status
+			fi
+			;;
+	esac
+}
+
+inventory_cleanup()
+{
+	exit 1
+}
+
+extract_binlog_piece()
+{
+	path=$(echo "select bulocation from backup_history where uuid = '$1';" | dbquery $DB)
+	key=$(echo "select cryptkey from backup_history where uuid = '$1';" | dbquery $DB)
+	[ "$key" != "" ] && export enc_key="$key"
+	cat $path | $unencryptor | $uncompressor | tar xf -
+	first_b=$(basename $(ls -1 $bxfolder/* | head -1))
+	last_b=$(basename $(ls -1 $bxfolder/* | tail -1))
+	if [ "$requested_binlog_file" != "" ]
+	then
+		[ "$last_b" \> "$requested_binlog_file" ] && last_b=$requested_binlog_file
+	else
+		scan_binlog_archive
+	fi
+	[ "$bf_start_file" \> "$first_b" ] && first_b=$bf_start_file
+	echo -n "applying binlog files from $first_b to $last_b.."
+	for bf in $(ls $bxfolder)
+	do
+		[ "$bf_start_file" \> "$bf" ] && continue
+		echo -n "."
+		if [ "$bf" != "$requested_binlog_file" ]
+		then
+			if [ $initial_bf_done -eq 1 ]
+			then
+				mysqlbinlog --stop-datetime="$requested_binlog_ts" $bxfolder/$bf | mysql -A -S /tmp/backup_manager.sock
+			else
+				initial_bf_done=1
+				mysqlbinlog --start-position=$bf_start_pos --stop-datetime="$requested_binlog_ts" $bxfolder/$bf | mysql -A -S /tmp/backup_manager.sock
+			fi
+			if [ $? -ne 0 ]
+			then
+				echo
+				echo "ERROR: apply of binary log $bf failed. Exiting."
+				kill $instance 2>/dev/null
+				return 1
+			fi
+		else
+			last_file=$bf
+			if [ $initial_bf_done -eq 1 ]
+			then
+				mysqlbinlog --stop-position=$requested_binlog_position --stop-datetime="$requested_binlog_ts" $bxfolder/$bf | mysql -A -S /tmp/backup_manager.sock
+			else
+				mysqlbinlog --start-position=$bf_start_pos --stop-position=$requested_binlog_position --stop-datetime="$requested_binlog_ts" $bxfolder/$bf | mysql -A -S /tmp/backup_manager.sock
+			fi
+			if [ $? -ne 0 ]
+			then
+				echo
+				echo "ERROR: apply of binary log $bf failed. Exiting."
+				kill $instance 2>/dev/null
+				return 1
+			fi
+			break
+		fi
+		[ "$bf" = "$last_b" ] && break
+	done
+	echo
+	rm -f $bxfolder/*
+	return 0
+}
+
+check_root()
+{
+        if [ "$LOGNAME" != "root" ]
+        then
+                echo "the $1 command requires superuser privileges. Exiting."
+                exit 1
+        fi
+}
+
+perform_maria_backup()
+{
+	mariabackup=$(which mariabackup 2>/dev/null)
+	if [ "$mariabackup" = "" ]
+	then
+		echo "Please install $tool first."
+		clean_exit 1
+	else
+		echo "Performing backup using $tool."
+	fi
+	mkdir -p $target/checkpoints/mariabackup
+	[ "$password" != "" ] && pass_str="--password=$password"
+	[ "$socket" != "" ] && sock_str="--socket=$socket"
+	[ $galera -eq 1 ] && galera_str="--galera-info"
+	[ $kill_query_time -gt 0 ] && kill_str="--kill-long-queries-timeout=$kill_query_time --kill-long-query-type=SELECT"
+	case $level in
+		0)
+			mariabackup --backup $galera_str $kill_str --user=$user $pass_str $sock_str --parallel=$parallelism --extra-lsndir=/tmp --stream=xbstream --slave-info --target-dir=$tt 2>> $logfile | $compressor | $encryptor > $tt/$fn &
+			run_with_timeout
+			mv -f /tmp/xtrabackup_checkpoints $target/checkpoints/mariabackup 2>/dev/null
+			;;
+		1)
+			cp $target/checkpoints/mariabackup/xtrabackup_checkpoints /tmp
+			mariabackup --backup $galera_str $kill_str --incremental-basedir=$target/checkpoints/mariabackup --user=$user $sock_str $pass_str --parallel=$parallelism --extra-lsndir=/tmp --stream=xbstream --slave-info --target-dir=$tt 2>> $logfile | $compressor | $encryptor > $tt/$fn &
+			run_with_timeout
+			mv -f /tmp/xtrabackup_checkpoints $target/checkpoints/mariabackup 2>/dev/null
+			;;
+	esac
+	get_lsn
+	update_backup_status
+}
+
+perform_xtra_backup()
+{
+	xtrabackup=$(which xtrabackup 2>/dev/null)
+	if [ "$xtrabackup" = "" ]
+	then
+		echo "Please install $tool first."
+		clean_exit 1
+	else
+		echo "Performing backup using $tool."
+	fi
+	mkdir -p $target/checkpoints/xtrabackup
+	[ "$password" != "" ] && pass_str="--password=$password"
+	[ "$socket" != "" ] && sock_str="--socket=$socket"
+	[ $galera -eq 1 ] && galera_str="--galera-info"
+	[ $kill_query_time -gt 0 ] && kill_str="--kill-long-queries-timeout=$kill_query_time --kill-long-query-type=SELECT"
+	case $level in
+		0)
+			xtrabackup --backup $galera_str $kill_str --user=$user $pass_str $sock_str --parallel=$parallelism --extra-lsndir=/tmp --target-dir=$tt --stream=xbstream --slave-info 2>> $logfile | $compressor | $encryptor > $tt/$fn &
+			run_with_timeout
+			mv -f /tmp/xtrabackup_checkpoints $target/checkpoints/xtrabackup 2>/dev/null
+			;;
+		1)
+			cp $target/checkpoints/xtrabackup/xtrabackup_checkpoints /tmp
+			xtrabackup --backup $galera_str $kill_str --incremental-basedir=$target/checkpoints/xtrabackup --user=$user $pass_str $sock_str --parallel=$parallelism --extra-lsndir=/tmp --target-dir=$tt --stream=xbstream --slave-info 2>> $logfile | $compressor | $encryptor > $tt/$fn &
+			run_with_timeout
+			mv -f /tmp/xtrabackup_checkpoints $target/checkpoints/xtrabackup 2>/dev/null
+			;;
+	esac
+	get_lsn
+	update_backup_status
+}
+
+perform_mydumper_backup()
+{
+	mydumper=$(which mydumper 2>/dev/null)
+	if [ "$mydumper" = "" ]
+	then
+		echo "Please install $tool first."
+		clean_exit 1
+	else
+		echo "Performing backup using $tool." 
+		[ "$compressor" != "cat" ] && echo "Note: compression configured in config file, but $tool will use its built-in compression instead."
+		[ "$encryptor" != "cat" ] && echo "Warning: encryption configured in config file, but not supported by $tool, hence setting ignored."
+	fi
+	case $level in
+		0)
+			[ "$password" != "" ] && pass_str="-p $password"
+			[ "$socket" != "" ] && sock_str="-S $socket"
+			$mydumper -o $tt -t $parallelism -L $logfile --less-locking -G -E -R -v 3 -c -h $host -P $port $sock_str -u $user $pass_str &
+			run_with_timeout
+			;;
+		1)
+			echo "Incremental backups not supported by $tool. Exiting."
+			clean_exit 1
+			;;
+	esac
+	update_backup_status
+}
+
+perform_mysqldump_backup()
+{
+	mysqldump=$(which mysqldump 2>/dev/null)
+	if [ "$mysqldump" = "" ]
+	then
+		echo "Please install $tool first."
+		clean_exit 1
+	else
+		echo "Performing backup using $tool."
+	fi
+	[ "$dumplist" = "ALL" ] && dbstr="--all-databases --master-data=2" || dbstr="--databases ${dumplist//,/ }"
+	[ "$password" != "" ] && pass_str="-p$password"
+	[ "$socket" != "" ] && sock_str="-S$socket"
+	[ $master_position -eq 1 ] && mp_str="--dump-slave=2"
+	$mysqldump --single-transaction --routines --triggers $mp_str $sock_str --log-error=$logfile --max_allowed_packet=1G -h $host -P $port -u $user $pass_str $dbstr | $compressor | $encryptor > $tt/$fn &
+	run_with_timeout
+	update_backup_status
+}
+
+perform_mydumper_restore()
+{
+	path=$(echo "select bulocation from backup_history where uuid = '$uuid';" | dbquery $DB)
+	echo "To restore this $tool dump, please use: myloader -d $path ..."
+	exit 0
+}
+
+perform_mysqldump_restore()
+{
+	if [ -t 1 ]
+	then
+		echo "To restore this $tool dump, please use: $0 restore $uuid | mysql -h ... "
+		exit 1
+	fi
+	path=$(echo "select bulocation from backup_history where uuid = '$uuid';" | dbquery $DB)
+	key=$(echo "select cryptkey from backup_history where uuid = '$uuid';" | dbquery $DB)
+	[ "$key" != "" ] && export enc_key="$key"
+	cat $path | $unencryptor | $uncompressor
+	status=$?
+}
+
+do_restore_test()
+{
+	tb=$(echo "select uuid from backup_history where level = 0 and status = 0 and backup_tool in ('mariabackup', 'xtrabackup') order by start_time desc limit 1;" | dbquery $DB)
+	if [ "$tb" = "" ]
+	then
+		msg="no valid backup found to perform a restore test. Exiting."
+		echo "ERROR: $msg"
+		[ ! -t 1 -a "$failure_notify" != "" ] && echo $msg | send_mail "$customer: restore test FAILED" $failure_notify
+		return
+	fi
+	[ "$restore_test_dir" != "" ] && disk_space_avail_k=$(df -k $restore_test_dir |  tail -1 | tr -s " " "\t" | cut -f 4)
+	if [ $disk_space_avail_k -le $(du -ks $(mysql_variable datadir) | cut -f 1) ]
+	then
+		msg="not enough free disk space to perform a restore test. Exiting."
+		echo "ERROR: $msg"
+		[ ! -t 1 -a "$failure_notify" != "" ] && echo $msg | send_mail "$customer: restore test FAILED" $failure_notify
+		return
+	fi
+	echo "Performing a test restore of backup $tb and related incrementals"
+	restore_test=1
+	[ "$restore_test_dir" != "" ] && do_restore $tb $restore_test_dir/RESTORE-TEST || do_restore $tb $target/RESTORE-TEST
+	mv $logfile /tmp/
+	echo "Removing restore test directory $target. Details of this test execution can be found in /tmp/restore.log."
+	rm -rf $target
+}
+
+build_slave()
+{
+	check_root build_slave
+	if [ "$1" = "" -o "$2" = "" ]
+	then
+		echo "usage: $0 build-slave [ targethost ] [ targetdir ]"
+		exit 1
+	fi
+	replication_credentials
+	if [ "$repl_creds" = "" ] 
+	then
+		echo "Not a slave myself, cannot build another slave. Exiting."
+		exit 1
+	fi
+	ssh_setup $1
+	echo "*** Login to $1 successful"
+	if [ $setup_repl_only -eq 0 ]
+	then
+		ssh -q $1 test -d $2
+		if [ $? -ne 0 ]
+		then
+			ssh -q $1 mkdir $2
+			if [ $? -ne 0 ]
+			then
+				echo "error creating target directory $2 on $1. Exiting."
+				exit 1
+			fi
+		fi
+		if [ "$(ssh -q $1 ls -1 $2)" != "" ]
+		then
+			echo "target directory $2 on target host $1 must be empty. Exiting."
+			exit 1
+		fi
+        	uuid=$(echo "select uuid from backup_history where level = 0 and backup_tool in ('mariabackup','xtrabackup') and status = 0 order by start_time desc limit 1;" | dbquery $DB)
+		if [ "$uuid" = "" ]
+		then
+			echo "no backup suitable for slave build found in inventory. Exiting."
+			exit 1
+		fi
+        	tool=$(echo "select backup_tool from backup_history where uuid = '$uuid';" | dbquery $DB)
+		case "$tool" in
+			'mariabackup') rtool="mbstream"; ropts="-p $parallelism";;
+			'xtrabackup') rtool="xbstream"; ropts="";;
+		esac
+		ssh -q $1 id mysql >/dev/null 2>&1
+		if [ $? -ne 0 ]
+		then
+			echo "MariaDB not found. Please install MariaDB-server package on $1 and retry."
+			exit 1
+		fi
+		ssh -q $1 which $rtool >/dev/null 2>&1
+		if [ $? -ne 0 ]
+		then
+			echo "$rtool is not installed on $1. Please install the $tool package there and retry."
+			exit 1
+		fi
+		echo "*** Streaming last good full backup ($uuid) to $1:$2"
+		r_uncompressor=$uncompressor
+		uncompressor="cat" 
+		do_restore $uuid - | ssh -q $1 "$r_uncompressor | $rtool $ropts -v -x -C $2"
+		status=$(cat /tmp/build_slave.status)
+		if [ $status -ne 0 ]
+		then
+			echo "Streaming error detected! Exiting."
+			exit 1
+		fi
+		echo "*** Preparing backup on $1"
+		ssh -q $1 $tool --prepare --use-memory=$prepare_memory --target-dir=$2
+		echo "*** Fixing permissions on $1"
+		ssh -q $1 chown -R mysql:mysql $2
+		echo "*** Starting MariaDB on $1"
+		ssh -q $1 service mysql start
+		if [ $? -ne 0 ]
+		then
+			ssh -q $1 service mariadb start
+			if [ $? -ne 0 ]
+			then
+				echo "MariaDB failed to start. Stopping here."
+				echo "You can start it by hand and resume the process with: '$0 setup-replication $*'"
+				exit 1
+			fi
+		fi
+	fi
+	if [ "$repl_user" != "" ]
+	then
+		echo "*** Setting up replication on $1"
+		[ "$password" != "" ] && pass_str="-p$password"
+		[ "$socket" != "" ] && sock_str="-S$socket"
+		( 
+			echo "CHANGE MASTER TO MASTER_HOST='$repl_host', MASTER_PORT=$repl_port, MASTER_USER='$repl_user', MASTER_PASSWORD='$repl_pass';"
+			ssh -q $1 cat $2/xtrabackup_slave_info
+			echo ";START SLAVE;" # not an error, file created missing a semicolon at end
+		) | ssh -q $1 "cat | mysql -ANr -u $user $sock_str $pass_str"
+		if [ $? -ne 0 ]
+		then
+			echo "Replication setup failed. Please fix the issue and retry with: '$0 setup-replication $*'"
+			exit 1
+		fi
+		success=$(echo "show slave status\G" | ssh -q $1 mysql -Ar -u $user $sock_str $pass_str | grep 'Running:' | fgrep -c Yes)
+		if [ "$success" = "2" ]
+		then
+			echo "*** Slave started successfully!"
+		fi
+	fi
+	[ $setup_repl_only -eq 0 ] && echo "*** Build complete."
+}
+
+perform_xtra_restore()
+{
+	path=$(echo "select bulocation from backup_history where uuid = '$uuid';" | dbquery $DB)
+	key=$(echo "select cryptkey from backup_history where uuid = '$uuid';" | dbquery $DB)
+	[ "$key" != "" ] && export enc_key="$key"
+	if [ "$target" != "-" ]
+	then
+		mkdir -p $target/full
+		echo -n "extracting full backup $uuid... "
+		echo "--> cat $path | $unencryptor | $uncompressor | xbstream -p $parallelism -x -v -C $target/full" >> $logfile
+		cat $path | $unencryptor | $uncompressor | xbstream -p $parallelism -x -v -C $target/full 2>> $logfile
+	else
+		cat $path | $unencryptor | $uncompressor 2>> $logfile
+		status=$?
+		return
+	fi
+	status=$?
+	echo
+	[ $status -ne 0 ] && return
+	echo -n "applying redo logs for $uuid... "
+	echo "--> xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile
+	xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	status=$?
+	echo
+	[ $status -ne 0 ] && return
+	tail -1 $logfile | fgrep -q "completed OK"
+	status=$?
+	[ $status -ne 0 ] && return
+	binlogs_starting_point=$uuid
+	for id in $(echo "select uuid from backup_history where ref_full_backup = '$uuid' and backup_tool = '$tool' and status =0 order by start_time asc;" | dbquery $DB)
+	do
+		incr_check_position $id && break
+		path=$(echo "select bulocation from backup_history where uuid = '$id';" | dbquery $DB)
+		key=$(echo "select cryptkey from backup_history where uuid = '$id';" | dbquery $DB)
+		[ "$key" != "" ] && export enc_key="$key"
+		incdir=$(basename $path)
+		echo -n "extracting incremental backup $id... "
+		mkdir -p $target/$incdir
+		echo "--> cat $path | $unencryptor | $uncompressor | xbstream -p $parallelism -x -v -C $target/$incdir" >> $logfile
+		cat $path | $unencryptor | $uncompressor | xbstream -p $parallelism -x -v -C $target/$incdir 2>> $logfile
+		status=$?
+		echo
+		[ $status -ne 0 ] && break
+		echo -n "applying redo logs for $id... "
+		echo "--> xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir" >> $logfile
+		xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir >> $logfile 2>&1
+		status=$?
+		echo
+		[ $status -ne 0 ] && break
+		tail -1 $logfile | fgrep -q "completed OK"
+		status=$?
+		[ $status -ne 0 ] && break
+		binlogs_starting_point=$id
+		rm -rf $target/$incdir
+	done
+	[ $status -ne 0 ] && return
+	echo -n "final preparation of backup... "
+	echo "--> xtrabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile 
+	xtrabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	status=$?
+	echo
+	[ $status -ne 0 ] && return
+	tail -1 $logfile | fgrep -q "completed OK"
+	status=$?
+	mv $target/full/* $target/
+	rmdir $target/full
+	if [ $status -eq 0 -a $do_binlogs -eq 1 ]
+	then
+		bxfolder=$target/.backupmanager
+		apply_binlogs
+	fi
+}
+
+perform_maria_restore()
+{
+	mariabackup=$(which mariabackup 2>/dev/null)
+	if [ "$mariabackup" = "" ]
+	then
+		echo "Please install $tool first."
+		clean_exit 1
+	else
+		mb_ver=$(mariabackup --version 2>&1 | sed -re "s/(.*)server (.[0-9])\.([0-9])(.*)/\2.\3/")
+		[ "$mb_ver" = "10.1" ] && mb_all="--apply-log-only" || mb_all=""
+	fi
+	path=$(echo "select bulocation from backup_history where uuid = '$uuid';" | dbquery $DB)
+	key=$(echo "select cryptkey from backup_history where uuid = '$uuid';" | dbquery $DB)
+	[ "$key" != "" ] && export enc_key="$key"
+	rm -f /tmp/xtrabackup*
+	if [ "$target" != "-" ]
+	then
+		echo -n "extracting full backup $uuid... "
+		mkdir -p $target/full
+		echo "--> cat $path | $unencryptor | $uncompressor | mbstream -p $parallelism -x -v -C $target/full" >> $logfile
+		cat $path | $unencryptor | $uncompressor | mbstream -p $parallelism -x -v -C $target/full 2>> $logfile
+	else
+		cat $path | $unencryptor | $uncompressor 2>> $logfile
+		status=$?
+		return
+	fi
+	status=$?
+	echo
+	[ $status -ne 0 ] && return
+	echo -n "applying redo logs for $uuid... "
+	echo "--> mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile
+	mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	status=$?
+	echo
+	[ $status -ne 0 ] && return
+	tail -1 $logfile | fgrep -q "completed OK"
+	status=$?
+	[ $status -ne 0 ] && return
+	current_position $uuid
+	binlogs_starting_point=$uuid
+	for id in $(echo "select uuid from backup_history where ref_full_backup = '$uuid' and backup_tool = '$tool' and status = 0 order by start_time asc;" | dbquery $DB)
+	do
+		incr_check_position $id && break
+		path=$(echo "select bulocation from backup_history where uuid = '$id';" | dbquery $DB)
+		key=$(echo "select cryptkey from backup_history where uuid = '$id';" | dbquery $DB)
+		[ "$key" != "" ] && export enc_key="$key"
+		incdir=$(basename $path)
+		echo -n "extracting incremental backup $id... "
+		mkdir -p $target/$incdir
+		rm -f /tmp/xtrabackup*
+		echo "--> cat $path | $unencryptor | $uncompressor | mbstream -p $parallelism -x -v -C $target/$incdir" >> $logfile
+		cat $path | $unencryptor | $uncompressor | mbstream -p $parallelism -x -v -C $target/$incdir 2>> $logfile
+		status=$?
+		echo
+		[ $status -ne 0 ] && break
+		echo -n "applying redo logs for $id... "
+		echo "--> mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir" >> $logfile
+		mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir >> $logfile 2>&1
+		status=$?
+		echo
+		[ $status -ne 0 ] && break
+		tail -1 $logfile | fgrep -q "completed OK"
+		status=$?
+		[ $status -ne 0 ] && break
+		current_position $id
+		binlogs_starting_point=$id
+		rm -rf $target/$incdir
+	done
+	[ $status -ne 0 ] && return
+	echo -n "Finalizing backup... "
+	echo "--> mariabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile 
+	mariabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	status=$?
+	echo
+	[ $status -ne 0 ] && return
+	tail -1 $logfile | fgrep -q "completed OK"
+	status=$?
+	mv $target/full/* $target/
+	rmdir $target/full
+	if [ $status -eq 0 -a $do_binlogs -eq 1 ]
+	then
+		bxfolder=$target/.backupmanager
+		apply_binlogs
+	fi
+}
+
+ssh_setup()
+{
+	if [ ! -f $HOME/.ssh/id_rsa.pub ]
+	then
+		ssh-keygen -q -t rsa -b 2048 -f $HOME/.ssh/id_rsa -N ''
+		if [ $? -ne 0 ]
+		then
+			echo "error setting up public/private key pair. Exiting."
+			exit 1
+		fi
+	fi
+	ssh -oPasswordAuthentication=no -q $1 true
+	if [ $? -ne 0 ]
+	then
+		echo "*** Setting up ssh"
+		echo "Setting up public/private key authentication. Please enter $targethost password."
+		cat $HOME/.ssh/id_rsa.pub | ssh -tq $1 "mkdir .ssh 2>/dev/null; chmod 755 .ssh; cat >> .ssh/authorized_keys; chmod 644 .ssh/authorized_keys"
+		if [ $? -ne 0 ]
+		then
+			echo "error setting up public/private key pair. Exiting."
+			rm -rf $HOME/.ssh/id_rsa*
+			exit 1
+		fi
+	fi
+	ssh -q $1 true
+	if [ $? -ne 0 ]
+	then
+		echo "ssh connection to $1 was not successful. Exiting."
+		exit 1
+	fi
+}
+
+replication_credentials()
+{
+	get_repl_creds
+	if [ "$repl_creds" != "" ]
+	then
+		repl_host=$(echo $repl_creds | cut -d" " -f 1)
+		repl_port=$(echo $repl_creds | cut -d" " -f 4)
+		repl_user=$(echo $repl_creds | cut -d" " -f 2)
+		repl_pass=$(echo $repl_creds | cut -d" " -f 3)
+	fi
+}
+
+pit_xid()
+{
+	replication_credentials
+	[ "$repl_creds" = "" ] && return
+	build_master_cmd
+	target_gtid=$(which_gtid)
+	[ $target_gtid -eq 0 ] && return
+	for binlog in $(echo "show binary logs" | $master_cmd 2>/dev/null | cut -f 1 | sort -r)
+	do
+		gtid=$(echo "show binlog events in '$binlog' limit 5" | $master_cmd 2>/dev/null | fgrep -v Gtid_list | fgrep Gtid | cut -f 6 | cut -d" " -f 3 | cut -d"-" -f 3)
+		[ "$gtid" = "" ] && break
+		if [ $target_gtid -ge $gtid ]
+		then
+			target_binlog=$binlog
+			break
+		fi
+	done
+	[ "$target_binlog" = "" ] && return
+        pos=$(echo "show binlog events in '$target_binlog'" | $master_cmd 2>/dev/null | grep -E -- "GTID\ ([0-9]*)-([0-9]*)-$target_gtid($| )" | cut -f 2)
+	[ "$pos" = "" ] && return
+	xid=$(echo "show binlog events in '$target_binlog' from $pos" | $master_cmd 2>/dev/null | fgrep -m 1 COMMIT | sed -re "s/^(.*)\ xid=([0-9]*)\ (.*)/\2/")
+	if [ "$xid" !=  "" ]
+	then
+		echo "update backup_history set xid = $xid  where uuid = '$backup_id';" | dbquery $DB
+		echo "Great! Xid $xid for galera master decoupling has been retrieved and saved to inventory."
+	fi
+}
+
+disk_space()
+{
+	disk_space_avail=$(df -h $target |  tail -1 | tr -s " " "\t" | cut -f 4)
+	disk_space_avail_k=$(df -k $target |  tail -1 | tr -s " " "\t" | cut -f 4)
+	disk_space_p_used=$(df -h $target |  tail -1 | tr -s " " "\t" | cut -f 5 | tr -d "%")
+	disk_space_p_avail=$((100-disk_space_p_used))
+}
+
+check_slave_status()
+{
+	[ "$password" != "" ] && pass_str="-p$password"
+	[ "$socket" != "" ] && sock_str="-S$socket"
+	echo "show slave status\G" | mysql -Ar -u $user $sock_str $pass_str | grep -P "Slave_(.*)_Running:" | fgrep -q No
+	if [ $? -eq 0 ]
+	then
+		msg="ERROR: replication is broken, will not backup stale data. Exiting."
+		echo $msg
+		[ "$failure_notify" != "" ] && echo $msg | send_mail "$customer: backup FAILED" $failure_notify
+		exit 1
+	fi
+}
+
+get_lsn()
+{
+	lsn=$(fgrep last_lsn $target/checkpoints/$tool/xtrabackup_checkpoints | tr -d " " | cut -d"=" -f 2)
+}
+
+check_for_update()
+{
+	[ ! -f $UPDATE_KEYFILE ] && return
+	check_root update
+	myself=$(which backup_manager)
+	mysum=$(md5sum $myself | cut -d" " -f1)
+	curl --silent --connect-timeout 10 --output /tmp/backup_manager_common.$$ --header "Authorization: token $(cat $UPDATE_KEYFILE)" --header 'Accept: application/vnd.github.v3.raw' --remote-name --location https://raw.githubusercontent.com/mariadb-corporation/mariadb-backup-manager/master/backup_manager.common
+	[ $? -ne 0 ] && return
+	tail -1 /tmp/backup_manager_common.$$ | fgrep -q "backup manager integrity check" || return
+	curl --silent --connect-timeout 10 --output /tmp/backup_manager_packaged.$$ --header "Authorization: token $(cat $UPDATE_KEYFILE)" --header 'Accept: application/vnd.github.v3.raw' --remote-name --location https://raw.githubusercontent.com/mariadb-corporation/mariadb-backup-manager/master/backup_manager.packaged
+	[ $? -ne 0 ] && return
+	tail -1 /tmp/backup_manager_packaged.$$ | fgrep -q "backup manager integrity check" || return
+	curl --silent --connect-timeout 10 --output /tmp/backup_manager_main.$$ --header "Authorization: token $(cat $UPDATE_KEYFILE)" --header 'Accept: application/vnd.github.v3.raw' --remote-name --location https://raw.githubusercontent.com/mariadb-corporation/mariadb-backup-manager/master/backup_manager.main
+	[ $? -ne 0 ] && return
+	tail -1 /tmp/backup_manager_main.$$ | fgrep -q "backup manager integrity check" || return
+	cat /tmp/backup_manager_common.$$ /tmp/backup_manager_packaged.$$ /tmp/backup_manager_main.$$ > /tmp/backup_manager.$$
+	head -1 /tmp/backup_manager.$$ 2>/dev/null | fgrep -q /bin/bash || return
+	reposum=$(md5sum /tmp/backup_manager.$$ | cut -d" " -f1)
+	if [ "$mysum" != "$reposum" ]
+	then
+		cp $myself $myself.old
+		cp /tmp/backup_manager.$$ $(dirname $myself)/backup_manager
+		echo 
+		echo "Script updated from GIT repository"	
+		echo
+		rm -f /tmp/backup_manager_common.$$ /tmp/backup_manager_packaged.$$ /tmp/backup_manager.$$ /tmp/backup_manager_main.$$
+		rm -f $lockfile
+		exec $0 $*
+	fi
+	rm -f /tmp/backup_manager_common.$$ /tmp/backup_manager_packaged.$$ /tmp/backup_manager.$$ /tmp/backup_manager_main.$$
+}
+
+build_config()
+{
+	if [ "$LOGNAME" != "root" ]
+	then
+		CONFIGFILE=$HOME/$CONFIGNAME
+	else
+		[ ! -d $CONFIGDIR ] && mkdir $CONFIGDIR
+	fi
+	if [ -f $CONFIGFILE ]
+	then
+		echo "$CONFIGFILE already exists, will not overwrite."
+		exit 1
+	fi
+	base64 -d << DOC_EOF | gzip -dc | sed -e "s/\$VERSION/v$VERSION/" > $CONFIGFILE
+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
+DOC_EOF
+
+	echo "Created $CONFIGFILE. Please adjust it for your setup." 
+	exit 0
+}
+
+set_limits()
+{
+	ulimit -n $max_open_files
+	if [ $(ulimit -n) != $max_open_files ]
+	then
+		echo "Unable to set max open files to $max_open_files."
+		echo "Please configure the operating system limits.conf, and try again."
+		exit 1
+	fi
+	
+}
+
+mariadb_instance()
+{
+	case "$1" in
+		'start')
+			echo -n "starting MariaDB auxiliary instance on $target... "
+			echo "server_id=987654321" >> $target/backup-my.cnf
+			/usr/sbin/mysqld --defaults-file=$target/backup-my.cnf  --innodb_file_per_table  --skip-grant-tables --basedir=/usr --datadir=$target --plugin-dir=/usr/lib64/mysql/plugin --user=root --log-error=$target/backup_manager_mysqld.err --open-files-limit=8192 --pid-file=$target/mysql.pid --socket=/tmp/backup_manager.sock --port=65432 2>> $target/backup_manager_mysqld.err &
+			instance=$!
+			sleep 10
+			kill -0 $instance 2>/dev/null
+			return $?
+			;;
+                'stop') echo "stopping MariaDB auxiliary instance"
+			kill $instance
+			;;
+	esac
+}
+
+# end
+
+# backup manager integrity check
+# begin
+
+safe_defaults
+[ "$1" = "build-config" ] && build_config
+check_home_config
+if [ ! -f $CONFIGFILE ]
+then
+	[ $# -eq 0 ] && self_doc
+	echo "$CONFIGFILE not found. You can build it with: $0 build-config."
+	[ "$LOGNAME" != "root" ] && echo "Since you are not running as root, it will be created in your home directory."
+	exit 1
+fi
+[ "$1" = "help" ] || [ "$1" = "--help" ] && self_doc && exit
+parse_config $*
+setup_db
+disk_space
+case "$1" in
+	'backup') do_backup $2 $3 $4 $5;;
+	'restore') do_restore $2 $3 "$4" "$5";;
+	'inventory'|'inv'|'list') inventory $2 $3;;
+	'browse') browse_inventory $2 $3 $4;;
+	'purge') purge_backups $2;;
+	'cleanup') inventory_cleanup $2;;
+	'logs') show_logs $2;;
+	'update') check_for_update $*;;
+	'build-slave') build_slave $2 $3;;
+	'print-latest') print_latest;;
+	'setup-replication') setup_repl_only=1; build_slave $2 $3;;
+	'help');;
+	*) [ "$1" = "" ] && self_doc || echo "$0: unknown option $1"; exit 0;;
+esac
+exit 0
+
+# end
+
+# backup manager integrity check

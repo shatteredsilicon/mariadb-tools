@@ -1,0 +1,8 @@
+DEB:
+CHECK=0 UPDATE=1 UPDATE_DOCS=0 BUILD=1 BUILD_GO=0 BUILD_DEB=1 BUILD_RPM=0 ./build-packages 6.0.0a ../docs/release_notes.rst linux-amd64
+
+RPM:
+CHECK=0 UPDATE=1 UPDATE_DOCS=0 BUILD=1 BUILD_GO=0 BUILD_DEB=0 BUILD_RPM=1 ./build-packages 6.0.0a ../docs/release_notes.rst linux-amd64
+
+DOCS:
+CHECK=0 UPDATE=1 UPDATE_DOCS=1 BUILD=1 BUILD_GO=0 BUILD_DEB=0 BUILD_RPM=0 ./build-packages 6.0.0a ../docs/release_notes.rst linux-amd64

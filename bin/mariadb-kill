@@ -45,7 +45,7 @@ BEGIN {
 {
 package MariaDB::Tools;
 
-our $VERSION = '3.0.13';
+our $VERSION = '6.0.0a';
 
 use strict;
 use warnings FATAL => 'all';
@@ -2050,6 +2050,8 @@ sub fill_in_dsn {
 
 sub get_dbh {
    my ( $self, $cxn_string, $user, $pass, $opts ) = @_;
+   my $i = 1;
+
    $opts ||= {};
    my $defaults = {
       AutoCommit         => 0,
@@ -2147,6 +2149,28 @@ sub get_dbh {
            . ($sql_mode ? " and $sql_mode" : '')
            . ": $EVAL_ERROR";
       }
+   }
+   my ($mysql_version) = eval { $dbh->selectrow_array('SELECT VERSION()') };
+   if ($EVAL_ERROR) {
+       die "Cannot get MariaDB version: $EVAL_ERROR";
+   }
+
+   my (undef, $character_set_server) = eval { $dbh->selectrow_array("SHOW VARIABLES LIKE 'character_set_server'") };
+   if ($EVAL_ERROR) {
+       die "Cannot get MariaDB var character_set_server: $EVAL_ERROR";
+   }
+
+   if ($mysql_version =~ m/^(\d+)\.(\d)\.(\d+).*/) {
+       if (($1 >= 10 && $2 >= 3) && $character_set_server =~ m/^utf8/) {
+           $dbh->{mysql_enable_utf8} = 1;
+           my $msg = "MariaDB version $mysql_version >= 10.3 and character_set_server = $character_set_server\n".
+                     "Setting: SET NAMES $character_set_server";
+           PTDEBUG && _d($msg);
+           eval { $dbh->do("SET NAMES 'utf8mb4'") };
+           if ($EVAL_ERROR) {
+               die "Cannot SET NAMES $character_set_server: $EVAL_ERROR";
+           }
+       }
    }
 
    PTDEBUG && _d('DBH info: ',
@@ -2986,9 +3010,10 @@ sub parse {
 
 sub remove_quoted_text {
    my ($string) = @_;
-   $string =~ s/[^\\]`[^`]*[^\\]`//g; 
-   $string =~ s/[^\\]"[^"]*[^\\]"//g; 
-   $string =~ s/[^\\]'[^']*[^\\]'//g; 
+   $string =~ s/\\['"]//g;
+   $string =~ s/`[^`]*?`//g;
+   $string =~ s/"[^"]*?"//g;
+   $string =~ s/'[^']*?'//g;
    return $string;
 }
 
@@ -4003,7 +4028,13 @@ sub find_slave_hosts {
 
 sub _find_slaves_by_processlist {
    my ( $self, $dsn_parser, $dbh, $dsn ) = @_;
+   my @connected_slaves = $self->get_connected_slaves($dbh);
+   my @slaves = $self->_process_slaves_list($dsn_parser, $dsn, \@connected_slaves);
+   return @slaves;
+}
 
+sub _process_slaves_list {
+   my ($self, $dsn_parser, $dsn, $connected_slaves) = @_;
    my @slaves = map  {
       my $slave        = $dsn_parser->parse("h=$_", $dsn);
       $slave->{source} = 'processlist';
@@ -4011,13 +4042,15 @@ sub _find_slaves_by_processlist {
    }
    grep { $_ }
    map  {
-      my ( $host ) = $_->{host} =~ m/^([^:]+):/;
-      $host ||= $_->{host};
+      my ( $host ) = $_->{host} =~ m/^(.*):\d+$/;
       if ( $host eq 'localhost' ) {
          $host = '127.0.0.1'; # Replication never uses sockets.
       }
+      if ($host =~ m/::/) {
+          $host = '['.$host.']';
+      }
       $host;
-   } $self->get_connected_slaves($dbh);
+   } @$connected_slaves;
 
    return @slaves;
 }
@@ -4156,12 +4189,19 @@ sub get_slave_status {
               if (!$self->{channel}) {
                   die 'This server returned more than one row for SHOW SLAVE STATUS but "channel" was not specified on the command line';
               }
+              my $slave_use_channels;
               for my $row (@$sss_rows) {
                   $row = { map { lc($_) => $row->{$_} } keys %$row }; # lowercase the keys
+                  if ($row->{channel_name}) {
+                      $slave_use_channels = 1;
+                  }
                   if ($row->{channel_name} eq $self->{channel}) {
                       $ss = $row;
                       last;
                   }
+              }
+              if (!$ss && $slave_use_channels) {
+                 die 'This server is using replication channels but "channel" was not specified on the command line';
               }
           } else {
               if ($sss_rows->[0]->{channel_name} && $sss_rows->[0]->{channel_name} ne $self->{channel}) {
@@ -4174,6 +4214,9 @@ sub get_slave_status {
           if ( $ss && %$ss ) {
              $ss = { map { lc($_) => $ss->{$_} } keys %$ss }; # lowercase the keys
              return $ss;
+          }
+          if (!$ss && $self->{channel}) {
+              die "Specified channel name is invalid";
           }
       }
 
@@ -5248,7 +5291,7 @@ sub new {
    my $prev_dsn     = $args{prev_dsn};
    my $dsn          = $args{dsn};
    if ( !$dsn ) {
-      $args{dsn_string} ||= 'h=' . ($dsn_defaults->{h} || 'localhost');
+      $args{dsn_string} ||= 'h=' . ($dsn_defaults->{h} || '127.0.0.1');
 
       $dsn = $dp->parse(
          $args{dsn_string}, $prev_dsn, $dsn_defaults);
@@ -5621,7 +5664,7 @@ sub _split_url {
     $scheme     = lc $scheme;
     $path_query = "/$path_query" unless $path_query =~ m<\A/>;
 
-    my $host = (length($authority)) ? lc $authority : 'localhost';
+    my $host = (length($authority)) ? lc $authority : '127.0.0.1';
        $host =~ s/\A[^@]*@//;   # userinfo
     my $port = do {
        $host =~ s/:([0-9]*)\z// && length $1
@@ -6307,6 +6350,7 @@ sub main {
          dsn_string   => shift @ARGV,
          NAME_lc      => 0,
          parent       => $o->get('daemonize'),
+         host         => '127.0.0.1',
          DSNParser    => $dp,
          OptionParser => $o,
       );
@@ -6333,7 +6377,7 @@ sub main {
                # The 1st pattern means that MariaDB itself died or was stopped.
                # The 2nd pattern means that our cxn was killed (KILL <id>).
                if (    $error =~ m/MySQL server has gone away/
-                    || $error =~ m/Lost connection to MySQL server/ ) {
+                    || $error =~ m/Lost connection to server/ ) {
                   eval {
                      $dbh      = $cxn->connect();
                      $proc_sth = $dbh->prepare('SHOW FULL PROCESSLIST');
@@ -6682,13 +6726,20 @@ sub main {
          } # CLASS
          msg('Matched ' . scalar @queries . ' queries');
 
+         my $query = "placeholder";
+
          MATCHING_QUERY:
          foreach my $query ( @queries ) {
             if ( $o->get('print') ) {
+               my $qinfo = ($query->{Info} || 'NULL' );
+               if( $o->get('query-id') && $qinfo ne 'NULL' ) {
+                        $qinfo = $qr->fingerprint($query->{'Info'});
+               }
+
                printf "# %s %s %d (%s %d sec) %s\n",
                   ts(time), $o->get('kill-query') ? 'KILL QUERY' : 'KILL',
                   $query->{Id}, ($query->{Command} || 'NULL'), $query->{Time},
-                  ($query->{Info} || 'NULL');
+                  $qinfo};
             }
             if ( $o->get('query-id') ) {
                   my $fp = $qr->fingerprint($query->{'Info'});
@@ -6724,7 +6775,7 @@ sub main {
                }
             }
          }
-      }
+      
       else {
          msg('Processlist returned no queries');
       }
@@ -7770,7 +7821,7 @@ installed in any reasonably new version of Perl.
 
 =head1 AUTHORS
 
-Baron Schwartz and Daniel Nichter
+Cole Busby, Baron Schwartz and Daniel Nichter
 
 =head1 ABOUT THIS MARIADB TOOL
 
@@ -7781,7 +7832,7 @@ Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -7800,6 +7851,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-kill 3.0.13
+mariadb-kill 6.0.0rc
 
 =cut

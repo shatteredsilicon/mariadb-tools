@@ -515,7 +515,8 @@ rm_tmpdir() {
 # The main() function is called at the end of the script.  This makes it
 # testable.  Major bits of parsing are separated into functions for testability.
 # ##############################################################################
-main () { local PTFUNCNAME=main;
+main () { 
+   local PTFUNCNAME=main;
    trap sigtrap HUP INT TERM
 
    # Begin by setting the $PATH to include some common locations that are not
@@ -523,7 +524,7 @@ main () { local PTFUNCNAME=main;
    # locations for proprietary management software, such as RAID controllers.
    export PATH="${PATH}:/usr/local/bin:/usr/bin:/bin:/usr/libexec"
    export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
-
+   export BASEDIR=`pwd`
    
    # If the programs we need don't exist, try to get them.
    # Percona Toolkit tools:
@@ -565,7 +566,7 @@ main () { local PTFUNCNAME=main;
 
    dbsummary_cmd="$PR_databasesummary"
    for option in "all-databases" "ask-pass" "config" "databases" "defaults-file" \
-      "host" "list-encrypted-tables" "password" "port" "read-samples" \
+      "host" "password" "port" "read-samples" \
       "save-samples" "sleep" "socket" "user"
    do
       option_val=$(echo "OPT_$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')
@@ -700,13 +701,6 @@ short form: -h; type: string
 
 Host to connect to.
 
-=item --list-encrypted-tables
-
-default: false
-
-Include a list of the encrypted tables in all databases. This can cause slowdowns since
-querying Information Schema tables can be slow.
-
 =item --password
 
 short form: -p; type: string
@@ -784,7 +778,7 @@ This tool requires the Bourne shell (F</bin/sh>).
 
 =head1 AUTHORS
 
-Manjot Singh
+Cole Busby, Manjot Singh
 
 =head1 ABOUT THIS MARIADB TOOL
 
@@ -795,7 +789,7 @@ were created by Baron Schwartz and primarily developed by him and Daniel Nichter
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -814,7 +808,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-summary 3.0.13
+mariadb-summary 6.0.0rc
 
 =cut
 

@@ -1081,11 +1081,10 @@ collect_mysql_info () {
 # ###########################################################################
 # report_mysql_info package
 # This package is a copy without comments from the original.  The original
-# with comments and its test file can be found in the Bazaar repository at,
+# with comments and its test file can be found in the repository at,
 #   lib/bash/report_mysql_info.sh
 #   t/lib/bash/report_mysql_info.sh
 # ###########################################################################
-
 
 set -u
 POSIXLY_CORRECT=1
@@ -1931,6 +1930,18 @@ section_mariadb_server_features () {
    name_val "Multiple I/O Threads"  \
             "$(feat_on "$file" innodb_read_io_threads gt 1)"
    
+   name_val "Corruption Resilient"  \
+            "$(feat_on_renamed "$file" innodb_pass_corrupt_table innodb_corrupt_table_action)"
+
+   name_val "Durable Replication"   \
+            "$(feat_on_renamed "$file" innodb_overwrite_relay_log_info innodb_recovery_update_relay_log)"
+
+   name_val "Import InnoDB Tables"  \
+            "$(feat_on_renamed "$file" innodb_expand_import innodb_import_table_from_xtrabackup)"
+
+   name_val "Fast Server Restarts"  \
+            "$(feat_on_renamed "$file" innodb_auto_lru_dump innodb_buffer_pool_restore_at_startup)"
+
    name_val "Enhanced Logging"      \
             "$(feat_on "$file" log_slow_verbosity ne microtime)"
    name_val "Replica Perf Logging"  \
@@ -1938,9 +1949,22 @@ section_mariadb_server_features () {
 
    name_val "Response Time Hist."   \
             "$(feat_on_renamed "$file" enable_query_response_time_stats query_response_time_stats)"
+
+   local smooth_flushing="$(feat_on_renamed "$file" innodb_adaptive_checkpoint innodb_adaptive_flushing_method)"
+   if  [ "${smooth_flushing:-""}" != "Not Supported" ]; then
+      if [ -n "$(get_var innodb_adaptive_checkpoint "$file")" ]; then
+         smooth_flushing="$(feat_on "$file" "innodb_adaptive_checkpoint" ne none)"
+      else
+         smooth_flushing="$(feat_on "$file" "innodb_adaptive_flushing_method" ne native)"
+      fi
+   fi
+   name_val "Smooth Flushing" "$smooth_flushing"
    
    name_val "HandlerSocket NoSQL"   \
             "$(feat_on "$file" handlersocket_port)"
+
+   name_val "Fast Hash UDFs"   \
+            "$(get_var "pt-summary-internal-FNV_64" "$file")"
 }
 
 section_myisam () {
@@ -2004,7 +2028,15 @@ section_innodb () {
    name_val "Page Size"           $(shorten $(get_var Innodb_page_size "$status_file") 0)
 
    local log_size="$(get_var innodb_log_file_size "$variables_file")"
-   local log_file="$(get_var innodb_log_files_in_group "$variables_file")"
+   major_version=`echo $version | cut -d '.' -f 1`
+   minor_version=`echo $version | cut -d '.' -f 2`
+   dep_major_version="10"
+   dep_minor_version="6" # innodb_log_files_in_group removed in 10.6 (https://mariadb.com/kb/en/innodb-system-variables/#innodb_log_files_in_group)
+   if [ "$major_version" -ge "$dep_major_version" ] && [ "$minor_version" -ge "$dep_minor_version" ]; then 
+      log_file="1"
+   else
+      local log_file="$(get_var innodb_log_files_in_group "$variables_file")"
+   fi
    local log_total=$(awk "BEGIN {printf \"%.2f\n\", ${log_size}*${log_file}}" )
    name_val "Log File Size"       \
             "${log_file} * $(shorten ${log_size} 1) = $(shorten ${log_total} 1)"
@@ -2504,13 +2536,15 @@ report_mysql_summary () {
        format_mysql_roles "$dir/mariadb-roles"
    fi
 
-   section "Encryption"
-   local keyring_plugins="$(collect_keyring_plugins)"
-   local encrypted_tables=""
-   local encrypted_tablespaces=""
-   if [ "${OPT_LIST_ENCRYPTED_TABLES}" = 'yes' ]; then 
-       encrypted_tables="$(collect_encrypted_tables)"
-       encrypted_tablespaces="$(collect_encrypted_tablespaces)"
+   if [ ! -z "$OPT_LIST_ENCRYPTED_TABLES" ]; then 
+       section "Encryption"
+       local keyring_plugins="$(collect_keyring_plugins)"
+       local encrypted_tables=""
+       local encrypted_tablespaces=""
+       if [ "${OPT_LIST_ENCRYPTED_TABLES}" = 'yes' ]; then 
+           encrypted_tables="$(collect_encrypted_tables)"
+           encrypted_tablespaces="$(collect_encrypted_tablespaces)"
+       fi
    fi
 
    format_keyring_plugins "$keyring_plugins" "$encrypted_tables"
@@ -3210,7 +3244,7 @@ On BSD systems, it may require a mounted procfs.
 
 =head1 AUTHORS
 
-Baron Schwartz, Brian Fraser, and Daniel Nichter
+Cole Busby,Baron Schwartz, Brian Fraser, and Daniel Nichter
 
 =head1 ABOUT THIS MARIADB TOOL
 
@@ -3221,7 +3255,7 @@ created by Baron Schwartz and primarily developed by him and Daniel Nichter.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -3240,7 +3274,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-database-summary 3.0.13
+mariadb-database-summary 6.0.0rc
 
 =cut
 

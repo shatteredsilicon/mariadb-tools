@@ -15,7 +15,7 @@ Tools that connect to MySQL require:
    * Perl modules DBI and DBD::mysql
    * MySQL 5.0 or newer
 
-MariaDB Toolkit is only tested on UNIX systems, primarily Debian and
+MariaDB Tools is only tested on UNIX systems, primarily Debian and
 Red Hat derivatives; other operating systems are not supported.
 
 Tools that connect to MySQL may work with MySQL v4.1, but this is not
@@ -34,8 +34,8 @@ Detailed Install
 
 Extract the tarball and cd to the resulting directory:
 
-   tar zxvf mariadb-toolkit-<version>.tar.gz
-   cd mariadb-toolkit-<version>
+   tar zxvf mariadb-tools-<version>.tar.gz
+   cd mariadb-tools-<version>
 
 Generate the Makefile, which will check Perl module dependencies and
 so forth:

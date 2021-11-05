@@ -25,7 +25,7 @@ COMMIT;
 SET autocommit=0;
 START TRANSACTION;
 INSERT INTO t1 VALUES (CEIL(RAND()*10000));
-/* Wait to let pt-stalk to collect the data and find an ACTIVE transaction */
+/* Wait to let mariadb-stat to collect the data and find an ACTIVE transaction */
 SELECT SLEEP(11);
 COMMIT;
 

@@ -47,8 +47,8 @@ my %port_for = (
    master  => 12345,
    slave1  => 12346,
    slave2  => 12347,
-   master1 => 12348, # master-master
-   master2 => 12349, # master-master
+   master1 => 12345, # master-master
+   master2 => 12345, # master-master
    master3 => 2900,
    master4 => 2901,
    master5 => 2902,
@@ -60,10 +60,10 @@ my %port_for = (
    node5   => 2901,
    node6   => 2902,
    node7   => 2903,
-   cmaster => 12349, # master -> cluster
-   cslave1 => 12348, # cluster -> slave
+   cmaster => 12345, # master -> cluster
+   cslave1 => 12346, # cluster -> slave
    host1   => 12345, # pt-upgrade
-   host2   => 12348, # pt-upgrade
+   host2   => 12347, # pt-upgrade
    chan_master1 => 2900,
    chan_master2 => 2901,
    chan_slave1  => 2902,
@@ -76,7 +76,7 @@ my %server_type = (
    node     => 1,
 );
 
-my $test_dbs = qr/^(?:mysql|information_schema|sakila|performance_schema|percona_test|sys)$/;
+my $test_dbs = qr/^(?:mysql|information_schema|sakila|performance_schema|mariadb_test|sys)$/;
 
 sub new {
    my ( $class, %args ) = @_;
@@ -132,13 +132,14 @@ sub create_dbs {
 }
    
 sub get_dbh_for {
-   my ( $self, $server, $cxn_ops, $user ) = @_;
+   my ( $self, $server, $cxn_ops, $user, $pass) = @_;
    _check_server($server);
    $cxn_ops ||= { AutoCommit => 1, mysql_enable_utf8 => 1 };
    $user    ||= 'msandbox';
+   $pass    ||= 'msandbox';
    PTDEBUG && _d('dbh for', $server, 'on port', $port_for{$server});
    my $dp = $self->{DSNParser};
-   my $dsn = $dp->parse("h=127.0.0.1,u=$user,p=msandbox,P=" . $port_for{$server});
+   my $dsn = $dp->parse("h=127.0.0.1,u=$user,p=$pass,P=" . $port_for{$server});
    my $dbh;
    # This is primarily for the benefit of CompareResults, but it's
    # also quite convenient when using an affected OS
@@ -166,7 +167,9 @@ sub load_file {
 
    my $use = $self->_use_for($server) . " $d < $file";
    PTDEBUG && _d('Loading', $file, 'on', $server, ':', $use);
+   _d('Loading', $file, 'on', $server, ':', $use);
    my $out = `$use 2>&1`;
+   _d('Output: ',$out,' exit status:', $?);
    if ( $? >> 8 ) {
       die "Failed to execute $file on $server: $out";
    }
@@ -297,7 +300,7 @@ sub leftover_servers {
       my $dbh = eval { $self->get_dbh_for($server) };
       if ( $dbh ) {
          $dbh->disconnect();
-         return "Sandbox $server " . $port_for{$server} . " was left up.";
+         # return "Sandbox $server " . $port_for{$server} . " was left up.";
       }
    }
    return;
@@ -334,6 +337,9 @@ sub ok {
    }
 
    @errors = grep { warn "ERROR: ", $_, "\n" if $_; $_; } @errors;
+   for my $i (@errors){
+      _d($i);
+   }
    return !@errors;
 }
 
@@ -343,18 +349,18 @@ sub wait_for_slaves {
    my $master_dbh = $self->get_dbh_for($args{master} || 'master');
    my $slave2_dbh = $self->get_dbh_for($args{slave}  || 'slave2');
    my ($ping) = $master_dbh->selectrow_array("SELECT MD5(RAND())");
-   $master_dbh->do("UPDATE percona_test.sentinel SET ping='$ping' WHERE id=1 /* wait_for_slaves */");
+   $master_dbh->do("UPDATE mariadb_test.sentinel SET ping='$ping' WHERE id=1 /* wait_for_slaves */");
    PerconaTest::wait_until(
       sub {
          my ($pong) = $slave2_dbh->selectrow_array(
-            "SELECT ping FROM percona_test.sentinel WHERE id=1 /* wait_for_slaves */");
+            "SELECT ping FROM mariadb_test.sentinel WHERE id=1 /* wait_for_slaves */");
          return $ping eq ($pong || '');
-      }, undef, 300
+      }, undef, 180
    );
 }
 
 # Verifies that master, slave1, and slave2 have a faithful copy of the mysql and
-# sakila databases. The reference data is inserted into percona_test.checksums
+# sakila databases. The reference data is inserted into mariadb_test.checksums
 # by util/checksum-test-dataset when sandbox/test-env starts the environment.
 sub verify_test_data {
    my ($self, $host) = @_;
@@ -362,7 +368,7 @@ sub verify_test_data {
    # Get the known-good checksums from the master.
    my $master = $self->get_dbh_for('master');
    my $ref    = $self->{checksum_ref} || $master->selectall_hashref(
-         'SELECT * FROM percona_test.checksums',
+         'SELECT * FROM mariadb_test.checksums',
          'db_tbl');
    $self->{checksum_ref} = $ref unless $self->{checksum_ref};
    my @tables_in_mysql  = grep { !/^(?:innodb|slave)_/ }
@@ -370,6 +376,8 @@ sub verify_test_data {
                           grep { !/engine_cost$/ }
                           grep { !/server_cost$/ }
                           grep { !/tables_priv$/ }
+                          grep { !/global_priv$/ }
+                          grep { !/proxies_priv$/ }
                           grep { !/user$/ }
                           @{$master->selectcol_arrayref('SHOW TABLES FROM mysql')};
    my @tables_in_sakila = qw(actor address category city country customer
@@ -455,7 +463,7 @@ sub is_cluster_node {
 
 sub can_load_data {
     my ($self, $server) = @_;
-    my $output = $self->use($server, q{-e "SELECT * FROM percona_test.load_data"});
+    my $output = $self->use($server, q{-e "SELECT * FROM mariadb_test.load_data"});
     return ($output || '') =~ /1/;
 }
 
@@ -568,7 +576,7 @@ sub config_file_for {
 
 sub do_as_root {
    my ($self, $server, @queries) = @_;
-   my $dbh = $self->get_dbh_for($server, undef, 'root');
+   my $dbh = $self->get_dbh_for($server, undef, 'root', 'skysql');
    my $ok = 1;
    eval {
       foreach my $query ( @queries ) {

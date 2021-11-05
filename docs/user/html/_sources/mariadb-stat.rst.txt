@@ -672,7 +672,7 @@ This tool requires Bash v3 or newer.  Certain options require other programs:
 AUTHORS
 =======
 
-Baron Schwartz, Justin Swanhart, Fernando Ipar, Daniel Nichter,
+Cole Busby, Baron Schwartz, Justin Swanhart, Fernando Ipar, Daniel Nichter,
 and Brian Fraser
 
 ABOUT THIS MARIADB TOOL
@@ -686,7 +686,7 @@ Baron Schwartz and primarily developed by him and Daniel Nichter.
 COPYRIGHT, LICENSE, AND WARRANTY
 ================================
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -706,5 +706,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-stat` 3.0.13
+:program:`mariadb-stat` 6.0.0rc
 

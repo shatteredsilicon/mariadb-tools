@@ -330,7 +330,7 @@ This tool requires the Bourne shell (*/bin/sh*).
 AUTHORS
 =======
 
-Baron Schwartz, Kevin van Zonneveld, and Brian Fraser
+Cole Busby, Baron Schwartz, Kevin van Zonneveld, and Brian Fraser
 
 ABOUT THIS MARIADB TOOL
 =======================
@@ -343,7 +343,7 @@ were created by Baron Schwartz and primarily developed by him and Daniel Nichter
 COPYRIGHT, LICENSE, AND WARRANTY
 ================================
 
-This program is copyright 2019 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -363,5 +363,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-system-summary` 3.0.13
+:program:`mariadb-system-summary` 6.0.0rc
 

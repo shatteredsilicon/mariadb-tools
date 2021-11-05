@@ -65,8 +65,8 @@ fi
 
 echo "#!/usr/bin/env perl
 
-# This program is part of Percona Toolkit: http://www.percona.com/software/
-# See \"COPYRIGHT, LICENSE, AND WARRANTY\" at the end of this file for legal
+# This program is part of MariaDB client tools
+# See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
 # notices and disclaimers.
 
 use strict;

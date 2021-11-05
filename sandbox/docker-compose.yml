@@ -1,0 +1,35 @@
+version: "3"
+services:
+  mariaprimary:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=skysql
+    volumes:
+      - "./tmp/primary/data/:/var/lib/mysql/"
+      - "./tmp/primary/configs/:/etc/mysql/"
+      - "./tmp/primary/run/:/run/mysqld/"
+      - "../bin:/usr/local/bin/tools"
+    ports:
+     - "12345:3306"
+  mariatertiary:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=skysql
+    volumes:
+      - "./tmp/tertiary/data/:/var/lib/mysql/"
+      - "./tmp/tertiary/configs/:/etc/mysql/"
+      - "./tmp/tertiary/run/:/run/mysqld/"
+      - "../bin:/usr/local/bin/tools"
+    ports:
+     - "12347:3306"
+  mariasecondary:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=skysql
+    volumes:
+      - "./tmp/secondary/data/:/var/lib/mysql/"
+      - "./tmp/secondary/configs/:/etc/mysql/"
+      - "./tmp/secondary/run/:/run/mysqld/"
+      - "../bin:/usr/local/bin/tools"
+    ports:
+     - "12346:3306"
