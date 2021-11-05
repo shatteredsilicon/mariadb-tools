@@ -2032,7 +2032,7 @@ section_innodb () {
    minor_version=`echo $version | cut -d '.' -f 2`
    dep_major_version="10"
    dep_minor_version="6" # innodb_log_files_in_group removed in 10.6 (https://mariadb.com/kb/en/innodb-system-variables/#innodb_log_files_in_group)
-   if [[ "$major_version" -ge "$dep_major_version" ]] && [[ "$minor_version" -ge "$dep_minor_version" ]]; then 
+   if [ "$major_version" -ge "$dep_major_version" ] && [ "$minor_version" -ge "$dep_minor_version" ]; then 
       log_file="1"
    else
       local log_file="$(get_var innodb_log_files_in_group "$variables_file")"
