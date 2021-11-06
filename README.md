@@ -9,6 +9,14 @@ they are professionally developed, formally tested, and fully documented.
 They are also fully self-contained, so installation is quick and easy and
 no libraries are installed.
 
+## Documentation 
+
+[Click Here for Official Documentation](https://mariadb-corporation.github.io/mariadb-tools/index.html)
+
+Alternatively, Run `man mariadb-tools` to see a list of installed tools, then `man tool`
+to read the embedded documentation for a specific tool.
+
+
 ## Installing
 
 MariaDB provides packages for most popular 64-bit Linux distributions via the [MariaDB-Tools Repository](https://mariadb.com/kb/en/mariadb-package-repository-setup-and-usage/):
@@ -48,16 +56,9 @@ It is recommended to install MariaDB software from official repositories:
 * Download RPM/DEB from MariaDB
 
 You can also download the packages from the
-`MariaDB Customer Portal <https://customers.mariadb.com>`_
+`MariaDB Downloads Portal <https://downloads.mariadb.com>`_
 and install it using tools like ``dpkg`` and ``rpm``,
 depending on your system.
-
-If you want to download a specific tool, use the following address:
-http://tools.mariadb.com/get
-
-For example, to download the ``mariadb-summary`` tool, run::
-
- wget tools.mariadb.com/get/mariadb-summary
 
 * From Source
 
@@ -83,12 +84,4 @@ Problem: conflicting requests
   - nothing provides perl(DateTime::Format::Strptime) >= 1.54 needed by mariadb-tools-6.0.0rc-1.x86_64
 (try to add '--skip-broken' to skip uninstallable packages or '--nobest' to use not only best candidate packages)
 ```
-
-## Documentation 
-
-[Click Here for Official Documentation](https://mariadb-corporation.github.io/mariadb-tools/index.html)
-
-Alternatively, Run `man mariadb-tools` to see a list of installed tools, then `man tool`
-to read the embedded documentation for a specific tool.
-
 
