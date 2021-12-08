@@ -1,15 +1,20 @@
-# Installing MariaDB Tools {#install}
+---
+title: Installing MariaDB Tools
+---
 
-MariaDB provides packages for most popular 64-bit Linux distributions:
+MariaDB provides packages for most popular 64-bit Linux distributions
+via the [MariaDB-Tools
+Repository](https://mariadb.com/kb/en/mariadb-package-repository-setup-and-usage/):
 
--   Debian 7 (\"wheezy\")
--   Debian 8 (\"jessie\")
--   Ubuntu 14.04 LTS (Trusty Tahr)
--   Ubuntu 16.04 LTS (Xenial Xerus)
--   Ubuntu 16.10 (Yakkety Yak)
--   Ubuntu 17.04 (Zesty Zapus)
--   Red Hat Enterprise Linux or CentOS 6 (Santiago)
--   Red Hat Enterprise Linux or CentOS 7 (Maipo)
+-   Debian 9 (\"stretch\")
+-   Debian 10 (\"buster\")
+-   Debian 11 (\"bullseye\")
+-   Ubuntu 18.04 LTS (Bionic Beaver)
+-   Ubuntu 20.04 LTS (Focal Fossa)
+-   Ubuntu 21.04 (Hirsute Hippo)
+-   Ubuntu 21.10 (Impish Indri)
+-   Red Hat Enterprise Linux or CentOS 7
+-   Red Hat Enterprise Linux or CentOS 8
 
 ::: note
 ::: title
@@ -26,16 +31,32 @@ repositories:
 
 1.  Configure repositories as described in [MariaDB Enterprise
     Documentation](https://mariadb.com/docs/deploy/installation/#install-repository).
-2.  Install MariaDB Tools using the corresponding package manager:
+
+2.  Ensure Pre-Requisties are installed and configured:
+
+      ------------- ------------------------------------------------------------------------------------
+      OS            Requirement
+
+      CentOS/RHEL 7 `epel-release` repository installed and enabled.
+
+      CentOS 8      `powertools` repository installed and enabled.
+
+      RHEL 8        `codeready-builder-for-rhel-8-x86_64-rpmscodeready-builder-for-rhel-8-x86_64-rpms`
+                    repository installed and enabled.
+      ------------- ------------------------------------------------------------------------------------
+
+3.  Install MariaDB Tools using the corresponding package manager:
+
     -   For Debian or Ubuntu:
 
-            sudo apt-get install MariaDB-Tools
+            sudo apt-get install mariadb-tools
 
     -   For RHEL or CentOS:
 
-            sudo yum install MariaDB-Tools
+            sudo yum install mariadb-tools
+            sudo dnf install mariadb-tools
 
-## Alternative Install Methods
+# Alternative Install Methods
 
 You can also download the packages from the [MariaDB Customer
 Portal](https://customers.mariadb.com) and install it using tools like

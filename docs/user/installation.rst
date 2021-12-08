@@ -4,16 +4,17 @@
 Installing MariaDB Tools
 ==========================
 
-MariaDB provides packages for most popular 64-bit Linux distributions:
+MariaDB provides packages for most popular 64-bit Linux distributions via the `MariaDB-Tools Repository <https://mariadb.com/kb/en/mariadb-package-repository-setup-and-usage/>`_:
 
-* Debian 7 ("wheezy")
-* Debian 8 ("jessie")
-* Ubuntu 14.04 LTS (Trusty Tahr)
-* Ubuntu 16.04 LTS (Xenial Xerus)
-* Ubuntu 16.10 (Yakkety Yak)
-* Ubuntu 17.04 (Zesty Zapus)
-* Red Hat Enterprise Linux or CentOS 6 (Santiago)
-* Red Hat Enterprise Linux or CentOS 7 (Maipo)
+* Debian 9 ("stretch")
+* Debian 10 ("buster")
+* Debian 11 ("bullseye")
+* Ubuntu 18.04 LTS (Bionic Beaver)
+* Ubuntu 20.04 LTS (Focal Fossa)
+* Ubuntu 21.04 (Hirsute Hippo)
+* Ubuntu 21.10 (Impish Indri)
+* Red Hat Enterprise Linux or CentOS 7
+* Red Hat Enterprise Linux or CentOS 8
 
 .. note:: MariaDB Tools should work on other DEB-based and RPM-based systems
    (for example, Oracle Linux and Amazon Linux AMI),
@@ -28,12 +29,15 @@ It is recommended to install MariaDB software from official repositories:
 #. Install MariaDB Tools using the corresponding package manager:
 
    * For Debian or Ubuntu::
+.. code-block:: shell
 
       sudo apt-get install MariaDB-Tools
 
    * For RHEL or CentOS::
+.. code-block:: shell
 
       sudo yum install MariaDB-Tools
+      sudo dnf install MariaDB-Tools
 
 Alternative Install Methods
 ===========================

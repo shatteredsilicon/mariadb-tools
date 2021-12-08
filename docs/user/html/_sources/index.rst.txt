@@ -50,6 +50,15 @@ Configuration
    environment
    system_requirements
 
+Troubleshooting
+=============
+
+.. toctree::
+   :maxdepth: 1
+
+   locale_issues
+   centos_install_issues
+
 Miscellaneous
 =============
 
@@ -57,7 +66,5 @@ Miscellaneous
    :maxdepth: 2
 
    bugs
-   authors
-   copyright_license_and_warranty
    version
    release_notes
