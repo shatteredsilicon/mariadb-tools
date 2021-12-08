@@ -86,6 +86,7 @@ are installed in /usr/local/bin.  See the INSTALL file for more information.
 --
 It has been identified that you must enable the powertools repo in order to install `perl(DateTime::Format::Strptime)`. This package is required to run `mariadb-parted`.
 
+
       sudo yum install --enablerepo=powertools epel-release MariaDB-Tools      
 
       sudo dnf config-manager --set-enabled powertools
@@ -104,5 +105,3 @@ Problem: conflicting requests
 
 Alternatively, Run `man mariadb-tools` to see a list of installed tools, then `man tool`
 to read the embedded documentation for a specific tool.
-
-
