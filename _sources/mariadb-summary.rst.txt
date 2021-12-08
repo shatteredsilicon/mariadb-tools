@@ -86,6 +86,10 @@ OPTIONS
  Only read mariadb options from the given file.  You must give an absolute
  pathname.
 
+.. option:: --debug
+
+ Development use only.
+
 .. option:: --help
 
  Print help and exit.
@@ -151,6 +155,106 @@ OPTIONS
 
  Report on top processes and ``vmstat`` output.
 
+.. option:: --support
+
+ type: integer; default: -1
+
+ Option intended for development use only.
+
+.. option:: --support-annotation
+
+ type: string; default: ""
+
+ Option intended for development use only.
+
+.. option:: --support-checkall
+
+ type: boolean; default: true
+
+ Option intended for development use only.
+
+.. option:: --support-env
+
+ Option intended for development use only.
+
+.. option:: --support-innodb-mutex
+
+ type: boolean; default: true
+
+ Option intended for development use only.
+
+.. option:: --support-limit
+
+ type: integer; default: 10000
+
+ Option intended for development use only.
+
+.. option:: --support-memory
+
+ type: boolean; default: true
+
+ Option intended for development use only.
+
+.. option:: --support-metrics
+
+ type: integer; default: -1
+
+ Option intended for development use only.
+
+.. option:: --support-mounts
+
+ type: boolean; default: true
+
+ Option intended for development use only.
+
+.. option:: --support-not-root
+
+ type: boolean; default: false
+
+ Option intended for development use only.
+
+.. option:: --support-output-dir
+
+ type: string;
+
+ Option intended for development use only.
+
+.. option:: --support-pid
+
+ type: integer
+
+ Option intended for development use only.
+
+.. option:: --support-process-list
+
+ type: boolean; default: true
+
+ Option intended for development use only.
+
+.. option:: --support-replica-status
+
+ type: boolean; default: false
+
+ Option intended for development use only.
+
+.. option:: --support-sky
+
+ type: boolean; default: false
+
+ Option intended for development use only.
+
+.. option:: --support-variables
+
+ type: boolean; default: true
+
+ Option intended for development use only.
+
+.. option:: --support-tar-result
+
+ type: boolean; default: true
+
+ Option intended for development use only.\`
+
 .. option:: --user
 
  short form: -u; type: string
@@ -207,5 +311,5 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 VERSION
 =======
 
-:program:`mariadb-summary` 6.0.0rc
+:program:`mariadb-summary` 6.0.1rc
 
