@@ -34,7 +34,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '6.0.0rc',
+        VERSION:     '6.0.1rc',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -250,6 +250,12 @@ pathname.</p>
 </dd></dl>
 
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Development use only.</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-mariadb-summary-help">
 <span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print help and exit.</p>
@@ -327,6 +333,124 @@ If password contains commas they must be escaped with a backslash: “exam,ple�
 </dd></dl>
 
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support">
+<span class="sig-name descname"><span class="pre">--support</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: integer; default: -1</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-annotation">
+<span class="sig-name descname"><span class="pre">--support-annotation</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: string; default: “”</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-checkall">
+<span class="sig-name descname"><span class="pre">--support-checkall</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-checkall" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: true</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-env">
+<span class="sig-name descname"><span class="pre">--support-env</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-innodb-mutex">
+<span class="sig-name descname"><span class="pre">--support-innodb-mutex</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-innodb-mutex" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: true</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-limit">
+<span class="sig-name descname"><span class="pre">--support-limit</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: integer; default: 10000</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-memory">
+<span class="sig-name descname"><span class="pre">--support-memory</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: true</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-metrics">
+<span class="sig-name descname"><span class="pre">--support-metrics</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: integer; default: -1</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-mounts">
+<span class="sig-name descname"><span class="pre">--support-mounts</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-mounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: true</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-not-root">
+<span class="sig-name descname"><span class="pre">--support-not-root</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-not-root" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: false</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-output-dir">
+<span class="sig-name descname"><span class="pre">--support-output-dir</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-output-dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: string;</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-pid">
+<span class="sig-name descname"><span class="pre">--support-pid</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-pid" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: integer</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-process-list">
+<span class="sig-name descname"><span class="pre">--support-process-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-process-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: true</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-replica-status">
+<span class="sig-name descname"><span class="pre">--support-replica-status</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-replica-status" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: false</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-sky">
+<span class="sig-name descname"><span class="pre">--support-sky</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-sky" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: false</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-variables">
+<span class="sig-name descname"><span class="pre">--support-variables</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: true</p>
+<p>Option intended for development use only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-mariadb-summary-support-tar-result">
+<span class="sig-name descname"><span class="pre">--support-tar-result</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-support-tar-result" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: boolean; default: true</p>
+<p>Option intended for development use only.`</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-mariadb-summary-user">
 <span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-mariadb-summary-user" title="Permalink to this definition">¶</a></dt>
 <dd><p>short form: -u; type: string</p>
@@ -377,7 +501,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.</p>
 </section>
 <section id="version">
 <h2>VERSION<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h2>
-<p><strong class="program">mariadb-summary</strong> 6.0.0rc</p>
+<p><strong class="program">mariadb-summary</strong> 6.0.1rc</p>
 </section>
 </section>
 
@@ -471,3 +595,4 @@ Place, Suite 330, Boston, MA  02111-1307  USA.</p>
 </footer>
 </body>
 </html>
+

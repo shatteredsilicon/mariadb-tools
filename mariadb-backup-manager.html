@@ -34,7 +34,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '6.0.0rc',
+        VERSION:     '6.0.1rc',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -47,7 +47,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="MariaDB Tools Documentation" href="index.html" />
-    <link rel="next" title="mariadb-database-summary" href="mariadb-database-summary.html" />
+    <link rel="next" title="mariadb-config-diff" href="mariadb-config-diff.html" />
     <link rel="prev" title="mariadb-archiver" href="mariadb-archiver.html" /> 
 </head>
 <body class="d-flex flex-column">
@@ -157,7 +157,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="mariadb-database-summary.html" title="mariadb-database-summary"
+          <a href="mariadb-config-diff.html" title="mariadb-config-diff"
              accesskey="N">next</a></li>
         <li class="right" >
           <a href="mariadb-archiver.html" title="mariadb-archiver"
@@ -200,12 +200,10 @@ and can include both full and incremental levels (for binary backups). You can t
 both binary and logical backups by specifying them at different times, eg. the
 following crontab file will take a full binary backup every night at midnight,
 incrementals every hour at the half hour, and a logical backup on mondays at 5am:</p>
-<ul class="simple">
-<li><p>0 0 * * * root /usr/local/sbin/mariadb-backup-manager backup mariabackup full</p></li>
-<li><p>30 * * * * root /usr/local/sbin/mariadb-backup-manager backup mariabackup incr</p></li>
-<li><p>0 5 * * 1 root /usr/local/sbin/mariadb-backup-manager backup mysqldump</p></li>
-<li><p>0 4 * * * root /usr/local/sbin/mariadb-backup-manager purge</p></li>
-</ul>
+<p>0 0 * * * root /usr/local/sbin/mariadb-backup-manager backup mariabackup full</p>
+<p>30 * * * * root /usr/local/sbin/mariadb-backup-manager backup mariabackup incr</p>
+<p>0 5 * * 1 root /usr/local/sbin/mariadb-backup-manager backup mysqldump</p>
+<p>0 4 * * * root /usr/local/sbin/mariadb-backup-manager purge</p>
 <p>Backup retention is automatically handled by running the purge command nightly.
 You can specify the desired retention by configuring the <em>purge_days</em> option, this will
 keep backups for the specified number of days. If you have abundant disk space for
@@ -219,9 +217,7 @@ last month, and monthly full backups for up to <em>smart_purge_months</em> month
 requirement when using a binary backup tool that needs to read the tablespace files.
 The actual database user, however, should not be root, but a dedicated user instead,
 having the following grants:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>GRANT SELECT, RELOAD, PROCESS, LOCK TABLES, REPLICATION CLIENT ON <span class="se">\*</span>.<span class="se">\*</span>
-</pre></div>
-</div>
+<p><em>GRANT SELECT, RELOAD, PROCESS, LOCK TABLES, REPLICATION CLIENT ON *.*</em></p>
 <p>The password for the dedicated backup user must be specified in the configuration
 file, which should have mode 600 to avoid people on the system to be able to read it.</p>
 </section>
@@ -245,7 +241,7 @@ save the new ones on every invocation.</p>
 <section id="browsing-backups">
 <h2>BROWSING BACKUPS<a class="headerlink" href="#browsing-backups" title="Permalink to this headline">¶</a></h2>
 <p>To browse the inventory of available backups, and see their &lt;backup_id&gt;,  you can run:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mariadb-backup-manager inventory pretty <span class="o">(</span>can be abbreviated *inv pretty*<span class="o">)</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mariadb-backup-manager inventory pretty* <span class="o">(</span>can be abbreviated *inv pretty*
 </pre></div>
 </div>
 <p>If you omit the <em>pretty</em> option, script will show more inventory details including
@@ -297,7 +293,7 @@ working for binary backups.</p>
 <em>target_dir</em>, this can be used to stream the restore to another server via ssh.
 When this option is used only the full backup is restored, even if there are available
 incrementals.  Example of streaming-restore a mariabackup:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mariadb-backup-manager restore &lt;backup_id&gt; - <span class="p">|</span> ssh anotherhost mbstream -x ...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mariadb-backup-manager restore &lt;backup_id&gt; - <span class="p">|</span> ssh anotherhost * *mbstream -x ...
 </pre></div>
 </div>
 <p>You can restore to a specific point in time if you are taking backups of binary logs.
@@ -307,7 +303,7 @@ to prevent the shell from eating the whitespace).</p>
 <p>The result of a restore of a binary backup to a folder will be a prepared datadir
 that can be used to start a MariaDB server (remember to change ownership of the files
 before starting). When restoring a logical backup taken with mysqldump, you need
-to pipe the output of mariadb-backup-manager to the mysql command line client using the
+to pipe the output of :program:<a href="#id1"><span class="problematic" id="id2">`</span></a>mariadb-backup-manager to the mysql command line client using the
 appropriate options. When restoring a logical backup taken with mydumper, you are
 left with a manual task due to the way this backup tool works; just use myloader
 and give <em>target_dir</em> as source directory.</p>
@@ -326,7 +322,7 @@ alternatively perform a dump of selected schemas.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>to dump <cite>schema1</cite> and <cite>schema2</cite> only:</p></li>
+<li><p>to dump <em>schema1</em> and <em>schema2</em> only:</p></li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mariadb-backup-manager backup mysqldump schema1,schema2
 </pre></div>
@@ -342,7 +338,7 @@ alternatively perform a dump of selected schemas.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>to purge the specified <cite>backup_id</cite> only:</p></li>
+<li><p>to purge the specified <em>backup_id</em> only:</p></li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mariadb-backup-manager purge &lt;backup_id&gt;
 </pre></div>
@@ -371,7 +367,7 @@ The syntax is as follows:</p>
 </pre></div>
 </div>
 <p>The new slave will be build using the most recent available binary full backup.
-<cite>target_server</cite> must be the hostname or IP address of a running server and <cite>target_directory</cite>
+<em>target_server</em> must be the hostname or IP address of a running server and <em>target_directory</em>
 the data directory on such server, which should be empty. Additionally, for the entire
 process to complete, the target server should already have a meaningful config file in place.</p>
 <p>Backup manager will check if there is a private/public key equivalence set up for the root
@@ -389,16 +385,16 @@ without the need to stream the backup over again.</p>
 <section id="notifications">
 <h2>NOTIFICATIONS<a class="headerlink" href="#notifications" title="Permalink to this headline">¶</a></h2>
 <p>Backup manager can notify by email both on successful and failed backups.
-If <cite>failure_notify</cite> is defined in configuration file, the specified email(s) will be
-notified on failures of both full and incremental backups.  If <cite>success_notify</cite> is defined,
+If <em>failure_notify</em> is defined in configuration file, the specified email(s) will be
+notified on failures of both full and incremental backups.  If <em>success_notify</em> is defined,
 the specified email(s) will be notified on successful full backups.
-<cite>notify_label</cite> option can be used to customize the email subject to include server details,
+<em>notify_label</em> option can be used to customize the email subject to include server details,
 should you have multiple backup servers running.</p>
 </section>
 <section id="calling-out-urls">
 <h2>CALLING OUT URLS<a class="headerlink" href="#calling-out-urls" title="Permalink to this headline">¶</a></h2>
 <p>It is possible to call external URLs before and after each backup session, eg. to disable
-monitoring of the backup server. See options <cite>callout_url_before</cite> and <cite>callout_url_after</cite>
+monitoring of the backup server. See options <em>callout_url_before</em> and <em>callout_url_after</em>
 in configuration file.</p>
 </section>
 <section id="backup-encryption">
@@ -421,12 +417,8 @@ server, passing the encryption key via the ssh environment.</p>
 <p>Example:</p>
 <ol class="arabic simple">
 <li><p>Pick a server which can reach the backup server via a ssh connection.</p></li>
-<li><p>On this server edit <cite>/etc/ssh/sshd_config</cite> and add <cite>AcceptEnv=enc_key</cite> to the configuration,</p></li>
-</ol>
-<blockquote>
-<div><p>then save the change and restart the sshd service.</p>
-</div></blockquote>
-<ol class="arabic simple" start="3">
+<li><p>On this server edit <em>/etc/ssh/sshd_config</em> and add <em>AcceptEnv=enc_key</em> to the configuration,
+then save the change and restart the sshd service.</p></li>
 <li><p>Create a random key and save it to a file, eg:</p></li>
 </ol>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>openssl rand -base64 <span class="m">32</span> &gt; /etc/backup.key
@@ -439,11 +431,12 @@ server, passing the encryption key via the ssh environment.</p>
 /usr/local/sbin/mariadb-backup-manager backup mariabackup full
 </pre></div>
 </div>
-<p>Example of restoring an encrypted backup (assumes key is still in the above file):</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nv">enc_key</span><span class="o">=</span><span class="k">$(</span>cat /etc/backup.key<span class="k">)</span> ssh -oSendEnv<span class="o">=</span>enc_key backup_server
-/usr/local/sbin/mariadb-backup-manager restore &lt;backup_id&gt; &lt;target_dir&gt;
-</pre></div>
-</div>
+<p>Example of restoring an encrypted backup (assumes key is still in the above file):
+.. code-block:: shell</p>
+<blockquote>
+<div><p>/enc_key=$(cat /etc/backup.key) ssh -oSendEnv=enc_key backup_server
+/usr/local/sbin/mariadb-backup-manager restore &lt;backup_id&gt; &lt;target_dir&gt;</p>
+</div></blockquote>
 </section>
 <section id="author">
 <h2>AUTHOR<a class="headerlink" href="#author" title="Permalink to this headline">¶</a></h2>
@@ -455,7 +448,7 @@ server, passing the encryption key via the ssh environment.</p>
 </section>
 <section id="copyright-license-and-warranty">
 <h2>COPYRIGHT, LICENSE, AND WARRANTY<a class="headerlink" href="#copyright-license-and-warranty" title="Permalink to this headline">¶</a></h2>
-<p>This program is copyright 2019 MariaDB Corporation and/or its affiliates.
+<p>This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates.
 THIS PROGRAM IS PROVIDED “AS IS” AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
 MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -470,7 +463,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.</p>
 </section>
 <section id="version">
 <h2>VERSION<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h2>
-<p>backup manager v6.0.0rc</p>
+<p>mariadb-backup-manager v6.0.1rc</p>
 </section>
 </section>
 
@@ -484,7 +477,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="mariadb-database-summary.html" title="mariadb-database-summary"
+          <a href="mariadb-config-diff.html" title="mariadb-config-diff"
              >next</a></li>
         <li class="right" >
           <a href="mariadb-archiver.html" title="mariadb-archiver"
@@ -523,8 +516,8 @@ Place, Suite 330, Boston, MA  02111-1307  USA.</p>
   <p class="topless"><a href="mariadb-archiver.html"
                         title="previous chapter"><strong class="program">mariadb-archiver</strong></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="mariadb-database-summary.html"
-                        title="next chapter"><strong class="program">mariadb-database-summary</strong></a></p>
+  <p class="topless"><a href="mariadb-config-diff.html"
+                        title="next chapter"><strong class="program">mariadb-config-diff</strong></a></p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
