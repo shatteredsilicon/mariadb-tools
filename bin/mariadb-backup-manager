@@ -8,7 +8,7 @@
 
 # begin 
 
-VERSION="6.0.1" # based off 2.3.32
+VERSION="6.0.3" # based off of 3.3.5
 CONFIGDIR=/etc/mariadb
 CONFIGNAME=backup_manager.cnf
 CONFIGFILE=$CONFIGDIR/$CONFIGNAME
@@ -29,7 +29,7 @@ get_binlogs_lock()
 			exit 0
 		fi
 	fi
-	trap 'rm -f $binlog_lockfile $error_log $aux_log $dbq_stderr' 0
+	trap 'rm -f $binlog_lockfile $error_log $aux_log $dbq_stderr $dumptail 2>/dev/null' 0
 	echo $runtime_id > $binlog_lockfile
 }
 
@@ -45,7 +45,7 @@ get_lock()
 			exit 1
 		fi
 	fi
-	trap 'rm -f $lockfile $error_log $aux_log $dbq_stderr' 0
+	trap 'rm -f $lockfile $error_log $aux_log $dbq_stderr $dumptail 2>/dev/null' 0
 	echo $runtime_id > $lockfile
 }
 
@@ -53,6 +53,7 @@ safe_defaults()
 {
 	error_log=/tmp/bm.error.$$
 	aux_log=/tmp/bm.aux.$$
+	dumptail=/tmp/bm.dt.$$
 	dbq_stderr=/tmp/dbq.stderr.$$
 	parallelism=4
 	port=3306
@@ -76,6 +77,7 @@ safe_defaults()
 	enc_key_local=0
 	kill_query_time=0
 	skysql=0
+	status=0
 	expire_days=7
         [ "$(which less 2>/dev/null)" != "" ] && pager="less -em -Pm--more--"  || pager="cat"
 	perldoc=0
@@ -85,6 +87,7 @@ safe_defaults()
 	set_maintenance=0
 	ignore_errors=0
 	master_slave=0
+	skip_notification=0
 	dbtype="sqlite"
 }
 
@@ -145,6 +148,9 @@ setup_sqlite_db()
 		echo "binlog_first varchar(64) DEFAULT NULL,"
 		echo "binlog_last varchar(64) DEFAULT NULL,"
   		echo "binlog_last_ts timestamp NULL DEFAULT NULL,"
+		echo "skysql_bucket_id varchar(64) DEFAULT NULL,"
+		echo "skysql_bucket_secret varchar(64) DEFAULT NULL,"
+  		echo "level13_alert tinyint DEFAULT NULL,"
   		echo "PRIMARY KEY (uuid),"
   		echo "FOREIGN KEY (ref_full_backup) REFERENCES backup_history(uuid) ON DELETE CASCADE);"
 		echo "CREATE INDEX start_time ON backup_history(start_time);"
@@ -162,7 +168,7 @@ patch_sqlite_db()
 	rev=$(echo "PRAGMA table_info(backup_history);" | dbquery $1 | tail -1 | cut -d "|" -f 1)
 	case "$rev" in
 		'17') 	echo "ALTER TABLE backup_history ADD COLUMN xid bigint DEFAULT NULL;" | dbquery $1
-			patch_db $1
+			patch_sqlite_db $1
 			return
 			;;
 		'18') 	echo "ALTER TABLE backup_history ADD COLUMN dumplist varchar(2000) DEFAULT NULL;" | dbquery $1
@@ -170,25 +176,34 @@ patch_sqlite_db()
 			echo "ALTER TABLE backup_history ADD COLUMN skysql_bucket varchar(256) DEFAULT NULL;" | dbquery $1
 			echo "ALTER TABLE backup_history ADD COLUMN skysql_db varchar(64) DEFAULT NULL;" | dbquery $1
 			echo "ALTER TABLE backup_history ADD COLUMN checkpoint varchar(64) DEFAULT NULL;" | dbquery $1
-			patch_db $1
+			patch_sqlite_db $1
 			return
 			;;
 		'23') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_file varchar(64) DEFAULT NULL;" | dbquery $1
-			patch_db $1
+			patch_sqlite_db $1
 			return
 			;;
 		'24') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_position varchar(16) DEFAULT NULL;" | dbquery $1
-			patch_db $1
+			patch_sqlite_db $1
 			return
 			;;
 		'25') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_first varchar(16) DEFAULT NULL;" | dbquery $1
 			echo "ALTER TABLE backup_history ADD COLUMN binlog_last varchar(16) DEFAULT NULL;" | dbquery $1
-			patch_db $1
+			patch_sqlite_db $1
 			return
 			;;
 		'27') 	echo "ALTER TABLE backup_history ADD COLUMN binlog_last_ts timestamp DEFAULT NULL;" | dbquery $1
 			echo "CREATE INDEX binlog_last_ts ON backup_history(binlog_last_ts);" | dbquery $1
-			patch_db $1
+			patch_sqlite_db $1
+			return
+			;;
+		'28') 	echo "ALTER TABLE backup_history ADD COLUMN skysql_bucket_id varchar(64) DEFAULT NULL;" | dbquery $1
+			echo "ALTER TABLE backup_history ADD COLUMN skysql_bucket_secret varchar(64) DEFAULT NULL;" | dbquery $1
+			patch_sqlite_db $1
+			return
+			;;
+		'30') 	echo "ALTER TABLE backup_history ADD COLUMN level13_alert tinyint DEFAULT NULL;" | dbquery $1
+			patch_sqlite_db $1
 			return
 			;;
 	esac
@@ -290,6 +305,7 @@ check_free_space()
 email_notification()
 {
 	[ -t 0 ] && return
+	[ $skip_notification -eq 1 ] && return
 	if [ "$failure_notify" != "" ]
 	then
 		if [ $status -eq 1 ]
@@ -308,6 +324,7 @@ run_with_timeout()
 	then
 		wait 
 		status=$?
+                echo "DEBUG: backup tool exit status: $status" >> $logfile
 		return
 	fi
 	echo "NOTICE: backup_timeout in effect, timeout ${timeout}m, controller id $pid"
@@ -825,14 +842,18 @@ rm -f /tmp/bmdoc.$$
 
 dbquery()
 {
+	dbq=$(cat)
 	case "$dbtype" in
-		'sqlite')       while true
+		'sqlite')       qtr=0
+				while true
                                 do
-                                        sqlite3 $* 2>$dbq_stderr
+                                        echo "$dbq" | sqlite3 $* 2>$dbq_stderr
                                         if [ -s $dbq_stderr ]
                                         then
+						qtr=$((qtr+1))
+						echo "DEBUG: dbquery($dbq) failed with: $(cat $dbq_stderr), retrying ($qtr/10)"
                                                 sleep $((RANDOM%5+1))
-                                                continue
+                                                [ $qtr -lt 10 ] && continue || clean_exit 1
                                         fi
                                         break
                                 done
@@ -847,12 +868,6 @@ inv_dbquery()
 		'sqlite') sqlite3 -column -header $*;;
 		'maria') mysql -At backup_manager;;
 	esac
-}
-
-dim_prepare_memory()
-{
-	avail=$(grep ^MemTotal  /proc/meminfo | sed -re "s/^MemTotal:(\s*)([0-9]*) kB/\2/")
-	prepare_memory=$((avail/8))
 }
 
 # end
@@ -1006,8 +1021,8 @@ save_bootstrap()
 inventory_init()
 {
 	case "$level" in
-		1) echo "insert into backup_history values('$backup_id', $runtime_id, '$(date +%Y-%m-%d\ %T)', NULL, '$location', '$logfile', NULL, $level, '$compressor', '$uncompressor', '$encryptor', '$unencryptor', '$local_key', NULL, '$tool', '$(mysql_variable version)', NULL, '$ref_full', NULL, '$dumplist', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);" | dbquery $DB;;
-		*) echo "insert into backup_history values('$backup_id', $runtime_id, '$(date +%Y-%m-%d\ %T)', NULL, '$location', '$logfile', NULL, $level, '$compressor', '$uncompressor', '$encryptor', '$unencryptor', '$local_key', NULL, '$tool', '$(mysql_variable version)', NULL, NULL, NULL, '$dumplist', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);" | dbquery $DB;;
+		1) echo "insert into backup_history values('$backup_id', $runtime_id, '$(date +%Y-%m-%d\ %T)', NULL, '$location', '$logfile', NULL, $level, '$compressor', '$uncompressor', '$encryptor', '$unencryptor', '$local_key', NULL, '$tool', '$(mysql_variable version)', NULL, '$ref_full', NULL, '$dumplist', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);" | dbquery $DB;;
+		*) echo "insert into backup_history values('$backup_id', $runtime_id, '$(date +%Y-%m-%d\ %T)', NULL, '$location', '$logfile', NULL, $level, '$compressor', '$uncompressor', '$encryptor', '$unencryptor', '$local_key', NULL, '$tool', '$(mysql_variable version)', NULL, NULL, NULL, '$dumplist', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);" | dbquery $DB;;
 	esac
 }
 
@@ -1124,6 +1139,7 @@ check_status()
 			;;
 		'mysqldump')
 			[ -s $logfile ] && status=1
+                        grep -q "^-- Dump completed" $dumptail || status=1
 			echo "update backup_history set status = $status where uuid = '$backup_id';" | dbquery $DB
 			;;
 		*)	echo "update backup_history set status = $status where uuid = '$backup_id';" | dbquery $DB
@@ -1567,7 +1583,7 @@ perform_mysqldump_backup()
 	[ "$password" != "" ] && pass_str="-p$password"
 	[ "$socket" != "" ] && sock_str="-S$socket"
 	[ $master_position -eq 1 ] && mp_str="--dump-slave=2"
-	$mysqldump --single-transaction --routines --triggers $mp_str $sock_str --log-error=$logfile --max_allowed_packet=1G -h $host -P $port -u $user $pass_str $dbstr | $compressor | $encryptor > $tt/$fn &
+	$mysqldump --single-transaction --routines --triggers $mp_str $sock_str --log-error=$logfile --max_allowed_packet=1G -h $host -P $port -u $user $pass_str $dbstr | tee >(tail -1 > $dumptail) | $compressor | $encryptor > $tt/$fn &
 	run_with_timeout
 	update_backup_status
 }
@@ -1686,7 +1702,7 @@ build_slave()
 			exit 1
 		fi
 		echo "*** Preparing backup on $1"
-		ssh -q $1 $tool --prepare --use-memory=$prepare_memory --target-dir=$2
+		ssh -q $1 $tool --prepare --use-memory=${prepare_memory}K --target-dir=$2
 		echo "*** Fixing permissions on $1"
 		ssh -q $1 chown -R mysql:mysql $2
 		echo "*** Starting MariaDB on $1"
@@ -1746,8 +1762,8 @@ perform_xtra_restore()
 	echo
 	[ $status -ne 0 ] && return
 	echo -n "applying redo logs for $uuid... "
-	echo "--> xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile
-	xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	echo "--> xtrabackup --prepare --apply-log-only --use-memory=${prepare_memory}K --target-dir=$target/full" >> $logfile
+	xtrabackup --prepare --apply-log-only --use-memory=${prepare_memory}K --target-dir=$target/full >> $logfile 2>&1
 	status=$?
 	echo
 	[ $status -ne 0 ] && return
@@ -1770,8 +1786,8 @@ perform_xtra_restore()
 		echo
 		[ $status -ne 0 ] && break
 		echo -n "applying redo logs for $id... "
-		echo "--> xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir" >> $logfile
-		xtrabackup --prepare --apply-log-only --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir >> $logfile 2>&1
+		echo "--> xtrabackup --prepare --apply-log-only --use-memory=${prepare_memory}K --target-dir=$target/full --incremental-dir=$target/$incdir" >> $logfile
+		xtrabackup --prepare --apply-log-only --use-memory=${prepare_memory}K --target-dir=$target/full --incremental-dir=$target/$incdir >> $logfile 2>&1
 		status=$?
 		echo
 		[ $status -ne 0 ] && break
@@ -1783,8 +1799,8 @@ perform_xtra_restore()
 	done
 	[ $status -ne 0 ] && return
 	echo -n "final preparation of backup... "
-	echo "--> xtrabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile 
-	xtrabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	echo "--> xtrabackup --prepare --use-memory=${prepare_memory}K --target-dir=$target/full" >> $logfile 
+	xtrabackup --prepare --use-memory=${prepare_memory}K --target-dir=$target/full >> $logfile 2>&1
 	status=$?
 	echo
 	[ $status -ne 0 ] && return
@@ -1829,8 +1845,8 @@ perform_maria_restore()
 	echo
 	[ $status -ne 0 ] && return
 	echo -n "applying redo logs for $uuid... "
-	echo "--> mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile
-	mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	echo "--> mariabackup --prepare $mb_all --use-memory=${prepare_memory}K --target-dir=$target/full" >> $logfile
+	mariabackup --prepare $mb_all --use-memory=${prepare_memory}K --target-dir=$target/full >> $logfile 2>&1
 	status=$?
 	echo
 	[ $status -ne 0 ] && return
@@ -1855,8 +1871,8 @@ perform_maria_restore()
 		echo
 		[ $status -ne 0 ] && break
 		echo -n "applying redo logs for $id... "
-		echo "--> mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir" >> $logfile
-		mariabackup --prepare $mb_all --use-memory=$prepare_memory --target-dir=$target/full --incremental-dir=$target/$incdir >> $logfile 2>&1
+		echo "--> mariabackup --prepare $mb_all --use-memory=${prepare_memory}K --target-dir=$target/full --incremental-dir=$target/$incdir" >> $logfile
+		mariabackup --prepare $mb_all --use-memory=${prepare_memory}K --target-dir=$target/full --incremental-dir=$target/$incdir >> $logfile 2>&1
 		status=$?
 		echo
 		[ $status -ne 0 ] && break
@@ -1869,8 +1885,8 @@ perform_maria_restore()
 	done
 	[ $status -ne 0 ] && return
 	echo -n "Finalizing backup... "
-	echo "--> mariabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full" >> $logfile 
-	mariabackup --prepare --use-memory=$prepare_memory --target-dir=$target/full >> $logfile 2>&1
+	echo "--> mariabackup --prepare --use-memory=${prepare_memory}K --target-dir=$target/full" >> $logfile 
+	mariabackup --prepare --use-memory=${prepare_memory}K --target-dir=$target/full >> $logfile 2>&1
 	status=$?
 	echo
 	[ $status -ne 0 ] && return
@@ -1986,34 +2002,7 @@ get_lsn()
 
 check_for_update()
 {
-	[ ! -f $UPDATE_KEYFILE ] && return
-	check_root update
-	myself=$(which backup_manager)
-	mysum=$(md5sum $myself | cut -d" " -f1)
-	curl --silent --connect-timeout 10 --output /tmp/backup_manager_common.$$ --header "Authorization: token $(cat $UPDATE_KEYFILE)" --header 'Accept: application/vnd.github.v3.raw' --remote-name --location https://raw.githubusercontent.com/mariadb-corporation/mariadb-backup-manager/master/backup_manager.common
-	[ $? -ne 0 ] && return
-	tail -1 /tmp/backup_manager_common.$$ | fgrep -q "backup manager integrity check" || return
-	curl --silent --connect-timeout 10 --output /tmp/backup_manager_packaged.$$ --header "Authorization: token $(cat $UPDATE_KEYFILE)" --header 'Accept: application/vnd.github.v3.raw' --remote-name --location https://raw.githubusercontent.com/mariadb-corporation/mariadb-backup-manager/master/backup_manager.packaged
-	[ $? -ne 0 ] && return
-	tail -1 /tmp/backup_manager_packaged.$$ | fgrep -q "backup manager integrity check" || return
-	curl --silent --connect-timeout 10 --output /tmp/backup_manager_main.$$ --header "Authorization: token $(cat $UPDATE_KEYFILE)" --header 'Accept: application/vnd.github.v3.raw' --remote-name --location https://raw.githubusercontent.com/mariadb-corporation/mariadb-backup-manager/master/backup_manager.main
-	[ $? -ne 0 ] && return
-	tail -1 /tmp/backup_manager_main.$$ | fgrep -q "backup manager integrity check" || return
-	cat /tmp/backup_manager_common.$$ /tmp/backup_manager_packaged.$$ /tmp/backup_manager_main.$$ > /tmp/backup_manager.$$
-	head -1 /tmp/backup_manager.$$ 2>/dev/null | fgrep -q /bin/bash || return
-	reposum=$(md5sum /tmp/backup_manager.$$ | cut -d" " -f1)
-	if [ "$mysum" != "$reposum" ]
-	then
-		cp $myself $myself.old
-		cp /tmp/backup_manager.$$ $(dirname $myself)/backup_manager
-		echo 
-		echo "Script updated from GIT repository"	
-		echo
-		rm -f /tmp/backup_manager_common.$$ /tmp/backup_manager_packaged.$$ /tmp/backup_manager.$$ /tmp/backup_manager_main.$$
-		rm -f $lockfile
-		exec $0 $*
-	fi
-	rm -f /tmp/backup_manager_common.$$ /tmp/backup_manager_packaged.$$ /tmp/backup_manager.$$ /tmp/backup_manager_main.$$
+	return
 }
 
 build_config()
@@ -2096,6 +2085,18 @@ mariadb_instance()
 
 # end
 
+dim_prepare_memory()
+{
+        avail=$(grep ^MemTotal  /proc/meminfo | sed -re "s/^MemTotal:(\s*)([0-9]*) kB/\2/")
+        prepare_memory=$((avail/4))
+}
+
+browse_inventory()
+{
+	echo "This functionality is not available in this version of backup manager."
+	exit 1
+}
+
 # backup manager integrity check
 # begin
 
@@ -2109,7 +2110,7 @@ then
 	[ "$LOGNAME" != "root" ] && echo "Since you are not running as root, it will be created in your home directory."
 	exit 1
 fi
-[ "$1" = "help" ] || [ "$1" = "--help" ] && self_doc && exit
+[ "$1" = "help" ] && self_doc
 parse_config $*
 setup_db
 disk_space
@@ -2133,9 +2134,9 @@ exit 0
 # end
 
 # backup manager integrity check
-
 # Docs
 :<<DOCUMENTATION
+
 =pod
 
 =head1 NAME
@@ -2176,14 +2177,14 @@ binlogs (backup of binary logs)
 
 =back
 
-Backup manager uses a configuration file called I<backup_manager.cnf> and located
+Backup manager uses a configuration file called I<backup_manager.cnf> and located 
 in I</etc/mariadb>. You can generate a template file (with comments) by running 
 the following command:
 
 =over
 
 =item Z<>
-I<mariadb-backup-manager build-config>
+I<backup_manager build-config>
 
 =back
 
@@ -2200,16 +2201,16 @@ incrementals every hour at the half hour, and a logical backup on mondays at 5am
 =over
 
 =item Z<>
-S<0 0 * * * root /usr/local/sbin/mariadb-backup-manager backup mariabackup full>
+S<0 0 * * * root /usr/local/sbin/backup_manager backup mariabackup full>
 
 =item Z<>
-S<30 * * * * root /usr/local/sbin/mariadb-backup-manager backup mariabackup incr>
+S<30 * * * * root /usr/local/sbin/backup_manager backup mariabackup incr>
 
 =item Z<>
-S<0 5 * * 1 root /usr/local/sbin/mariadb-backup-manager backup mysqldump>
+S<0 5 * * 1 root /usr/local/sbin/backup_manager backup mysqldump>
 
 =item Z<>
-S<0 4 * * * root /usr/local/sbin/mariadb-backup-manager purge>
+S<0 4 * * * root /usr/local/sbin/backup_manager purge>
 
 =back
 
@@ -2246,7 +2247,7 @@ To manually perform a backup, just run:
 =over
 
 =item Z<>
-I<mariadb-backup-manager backup E<lt>backup_toolE<gt> E<lt>levelE<gt>>
+I<backup_manager backup E<lt>backup_toolE<gt> E<lt>levelE<gt>>
 
 =back
 
@@ -2259,7 +2260,7 @@ To backup binary logs for the server, just run the following
 =over
 
 =item Z<>
-I<mariadb-backup-manager backup binlogs>
+I<backup_manager backup binlogs>
 
 =back
 
@@ -2276,7 +2277,7 @@ To browse the inventory of available backups, and see their <backup_id>,  you ca
 =over
 
 =item Z<>
-I<mariadb-backup-manager inventory pretty> (can be abbreviated I<inv pretty>)
+I<backup_manager inventory pretty> (can be abbreviated I<inv pretty>)
 
 =back
 
@@ -2289,7 +2290,7 @@ by running:
 =over
 
 =item Z<>
-I<mariadb-backup-manager list binlogs>
+I<backup_manager list binlogs>
 
 =back
 
@@ -2302,7 +2303,7 @@ To perform a restore, just run:
 =over
 
 =item Z<>
-I<mariadb-backup-manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt>>
+I<backup_manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt>>
 
 =back
 
@@ -2313,19 +2314,19 @@ These are the possible restore options:
 
 =item *
 	classic restore to a destination folder:
-	S<I<mariadb-backup-manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt>>>
+	S<I<backup_manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt>>>
 
 =item *
 	performing an automatic restore test:
-	S<I<mariadb-backup-manager restore test>>
+	S<I<backup_manager restore test>>
 
 =item *
 	streaming a restore to stdout (notice the final "-"):
-	S<I<mariadb-backup-manager restore E<lt>backup_idE<gt> ->>
+	S<I<backup_manager restore E<lt>backup_idE<gt> ->>
 
 =item *
 	restoring to a specified point in time:
-	S<I<mariadb-backup-manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt> E<lt>point-in-timeE<gt>>>
+	S<I<backup_manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt> E<lt>point-in-timeE<gt>>>
 
 =back
 
@@ -2343,8 +2344,7 @@ incrementals.  Example of streaming-restore a mariabackup:
 =over
 
 =item Z<>
-S<I<mariadb-backup-manager restore E<lt>backup_idE<gt> - | ssh anotherhost \>>
-S<I<mbstream -x ...>>
+S<I<backup_manager restore E<lt>backup_idE<gt> - | ssh anotherhost mbstream -x ...>>
 
 =back
 
@@ -2356,7 +2356,7 @@ to prevent the shell from eating the whitespace).
 The result of a restore of a binary backup to a folder will be a prepared datadir 
 that can be used to start a MariaDB server (remember to change ownership of the files
 before starting). When restoring a logical backup taken with mysqldump, you need 
-to pipe the output of mariadb-backup-manager to the mysql command line client using the 
+to pipe the output of backup_manager to the mysql command line client using the 
 appropriate options. When restoring a logical backup taken with mydumper, you are 
 left with a manual task due to the way this backup tool works; just use myloader 
 and give I<target_dir> as source directory.
@@ -2376,11 +2376,11 @@ alternatively perform a dump of selected schemas.
 
 =item *
 to dump all schemas:
-S<I<mariadb-backup-manager backup mysqldump>>
+S<I<backup_manager backup mysqldump>>
 
 =item *
 to dump I<schema1> and I<schema2> only:
-S<I<mariadb-backup-manager backup mysqldump schema1,schema2>>
+S<I<backup_manager backup mysqldump schema1,schema2>>
 
 =back
 
@@ -2393,11 +2393,11 @@ To purge old backups, just run one of the following:
 
 =item *
 to purge any expired backup based on the configured retention:
-S<I<mariadb-backup-manager purge>>
+S<I<backup_manager purge>>
 
 =item *
 to purge the specified I<backup_id> only:
-S<I<mariadb-backup-manager purge E<lt>backup_idE<gt>>>
+S<I<backup_manager purge E<lt>backup_idE<gt>>>
 
 =back
 
@@ -2408,7 +2408,7 @@ anything, you can run:
 =over
 
 =item Z<>
-I<mariadb-backup-manager purge dry-run>
+I<backup_manager purge dry-run>
 
 =back
 
@@ -2421,7 +2421,7 @@ To see logfiles for a specific backup id just run the following command:
 =over
 
 =item Z<>
-I<mariadb-backup-manager logs E<lt>backup_idE<gt>>
+I<backup_manager logs E<lt>backup_idE<gt>>
 
 =back
 
@@ -2439,7 +2439,7 @@ The syntax is as follows:
 =over
 
 =item Z<>
-I<mariadb-backup-manager build-slave E<lt>target_serverE<gt> E<lt>target_directoryE<gt>>
+I<backup_manager build-slave E<lt>target_serverE<gt> E<lt>target_directoryE<gt>>
 
 =back
 
@@ -2527,7 +2527,7 @@ S<I<openssl rand -base64 32 E<gt> /etc/backup.key>>
 
 Run the secure backup by connecting via ssh to the backup server:
 S<I<enc_key=$(cat /etc/backup.key) ssh -oSendEnv=enc_key backup_server \>>
-S<I</usr/local/sbin/mariadb-backup-manager backup mariabackup full>>
+S<I</usr/local/sbin/backup_manager backup mariabackup full>>
 
 =back
 
@@ -2538,7 +2538,7 @@ Example of restoring an encrypted backup (assumes key is still in the above file
 =item Z<>
 
 S<I<enc_key=$(cat /etc/backup.key) ssh -oSendEnv=enc_key backup_server \>>
-S<I</usr/local/sbin/mariadb-backup-manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt>>>
+S<I</usr/local/sbin/backup_manager restore E<lt>backup_idE<gt> E<lt>target_dirE<gt>>>
 
 =back
 
@@ -2553,7 +2553,7 @@ This tool is part of MariaDB client tools.
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates.
+This program is copyright 2019-2022 MariaDB Corporation and/or its affiliates.
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
 MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -2568,7 +2568,8 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-backup manager v6.0.0
+mariadb-backup-manager 6.0.2
+
 
 =cut
 DOCUMENTATION

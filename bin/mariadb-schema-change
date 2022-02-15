@@ -4320,7 +4320,7 @@ sub recurse_to_slaves {
    }
 }
 
-sub find_slave_hosts {
+sub find_slave_hosts { 
    my ( $self, $dsn_parser, $dbh, $dsn, $methods ) = @_;
 
    PTDEBUG && _d('Looking for slaves on', $dsn_parser->as_string($dsn),
@@ -4344,6 +4344,10 @@ sub _find_slaves_by_processlist {
    my @connected_slaves = $self->get_connected_slaves($dbh);
    my @slaves = $self->_process_slaves_list($dsn_parser, $dsn, \@connected_slaves);
    return @slaves;
+}
+
+sub _find_replicas_by_mariadb {
+
 }
 
 sub _process_slaves_list {
@@ -4372,7 +4376,11 @@ sub _find_slaves_by_hosts {
    my ( $self, $dsn_parser, $dbh, $dsn ) = @_;
 
    my @slaves;
-   my $sql = 'SHOW SLAVE HOSTS';
+   if ( $o->get('sky') ) {
+      my $sql = 'SHOW SLAVE HOSTS -- maxscale route to master'; # Perl is using binary mode, so no semicolon needed - CB - 2022
+   }else{
+      my $sql = 'SHOW SLAVE HOSTS';
+   }
    PTDEBUG && _d($dbh, $sql);
    @slaves = @{$dbh->selectall_arrayref($sql, { Slice => {} })};
 
@@ -7990,6 +7998,11 @@ sub main {
       close STDOUT;
       open  STDOUT, '>', '/dev/null'
          or warn "Cannot reopen STDOUT to /dev/null: $OS_ERROR";
+   }
+
+   # CB: While we had all the verification above. It missed validation checks...
+   if ( my $err = @{$o->errors} ){
+       $o->usage_or_errors();
    }
 
    # ########################################################################
@@ -12751,7 +12764,7 @@ were created by Baron Schwartz and primarily developed by him and Daniel Nichter
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2022 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -12770,6 +12783,6 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-schema-change 6.0.1rc
+mariadb-schema-change 6.0.2
 
 =cut

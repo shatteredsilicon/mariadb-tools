@@ -519,6 +519,7 @@ rm_tmpdir() {
 function audit_metrics() {
 
 local dir="${OPT_SUPPORT_OUTPUT_DIR:-`pwd`}"
+## TODO: Make sure we honor support metrics if passed in here.
 if [ "${OPT_SUPPORT}" == "yes" ] 2>/dev/null || [ "${OPT_SUPPORT}" -le 0 ] 2>/dev/null ; then
    echo "WARN: Either 0 or no value was provided to --support, this will require"
    echo "you to manually ^C (Control-C) when you're satisfied collecting metrics."
@@ -639,7 +640,7 @@ function kill_collection() {
 
   if [ $TARRESULT == true ]; then
     echo 'Archiving...'
-    tar -czf ${outputdir}.mdbo -C $(dirname ${outputdir}) $(basename ${outputdir})
+    tar -czf ${outputdir}.mdbo -C $(dirname ${outputdir}) ./
     rm -rf ${outputdir}
     echo "Filename: ${outputdir}.mdbo"
     else
@@ -698,7 +699,7 @@ check_binary cat
 check_binary gzip
 check_binary tar
 
-if [ $ISRDS == false ]; then
+if [ "$ISRDS" == "false" ]; then
    check_binary mpstat
    check_binary vmstat
    check_binary iostat
@@ -755,8 +756,8 @@ date "+%Y-%m-%d %H:%M:%S" > ${outputdir}/collection_start
 
 ## PUT ALL THE NECESSARY TESTS IN HERE
 
-if [ $ISRDS == false ]; then
-    mpstat 1 | gzip >> ${outputdir}/mpstat.mdbs &
+if [ "$ISRDS" == "false" ]; then
+    mpstat 1 -I SUM -u | gzip >> ${outputdir}/mpstat.mdbs & # This will also provide intr/s removed in 2014.
     vmstat 1 | gzip >> ${outputdir}/vmstat.mdbs &
     iostat -mx 1 | gzip >> ${outputdir}/iostat.mdbs &
 fi
@@ -870,7 +871,7 @@ function collect_diskstats {
      cat /proc/diskstats
   done  
 }
-if [ ! "$ISRDS" ]; then
+if [ "$ISRDS" == "false" ]; then
     collect_diskstats | gzip >> ${outputdir}/diskstats.mdbs &
 fi
 
@@ -1089,7 +1090,7 @@ function audit_environment(){
    ### Main
 
    # Don't need to be root if RDS
-   if [ ! "${ISRDS}" -a `whoami` != 'root' -a ! "${SKIPROOTCHECK}" ]
+   if [ "${ISRDS}" == false -a `whoami` != 'root' -a ! "${SKIPROOTCHECK}" ]
    then
        echo "ERROR: $0 must be run by root"
        exit 1
@@ -1404,7 +1405,7 @@ function audit_environment(){
    DBMS_NAME=`mariadb $mariadb_options $options --skip-column-names -e "SELECT IF(@@global.version_comment LIKE '%mariadb%', 'MariaDB', IF(@@global.version_comment LIKE '%percona%', 'Percona Server', 'MariaDB'));"`
 
    #############################
-   if [ ! "${ISRDS}" -a ! -z $variables_datadir ]; then
+   if [ "${ISRDS}" == false -a ! -z $variables_datadir ]; then
      echo -n "Collecting MariaDB usage info (datadir = $variables_datadir)... "
      du -sh "$variables_datadir" >> "$out_dir/data_usage_raw"
      find "$variables_datadir" -name "*.ibd" -or -name "ibdata*" | xargs du -shc  | tail -1 > "$out_dir/data_usage_innodb_raw"
@@ -2067,9 +2068,12 @@ function audit_environment(){
 
    if [ $TARRESULT == true ]; then
      echo "Compressing..."
-     tar -czf ${out_dir}.mdbo ${out_dir}
+     dir=`cwd`
+     pushd ${out_dir}
+     tar -czf ${dir}/${out_dir}.mdbo ./
+     popd
      rm -rf ${out_dir}
-     echo "Filename:" ${out_dir}.mdbo
+     echo "Filename:" ${dir}/${out_dir}.mdbo
    else
      echo "Skipped results compression."
      echo "Directory name:" ${out_dir}
@@ -2540,7 +2544,7 @@ were created by Baron Schwartz and primarily developed by him and Daniel Nichter
 
 =head1 COPYRIGHT, LICENSE, AND WARRANTY
 
-This program is copyright 2019-2021 MariaDB Corporation and/or its affiliates,
+This program is copyright 2019-2022 MariaDB Corporation and/or its affiliates,
 2011-2018 Percona LLC and/or its affiliates, 2010-2011 Baron Schwartz.
 
 THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
@@ -2559,7 +2563,7 @@ Place, Suite 330, Boston, MA  02111-1307  USA.
 
 =head1 VERSION
 
-mariadb-summary 6.0.1rc
+mariadb-summary 6.0.2
 
 =cut
 
